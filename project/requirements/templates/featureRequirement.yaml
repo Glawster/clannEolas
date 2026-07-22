@@ -1,5 +1,5 @@
 schemaVersion: 1
-id: FH-000
+id: AREA-000
 name: Replace with feature name
 summary: >-
   Describe the user outcome in one or two sentences without implying that it
@@ -15,6 +15,11 @@ completedDate: null
 userNeeds:
   - As a type of user, I need an outcome so that I receive a benefit.
 
+personas:
+  - id: P-000
+    path: docs/personas/example.md
+    relevance: Explain how this feature helps the persona in their situation.
+
 scope:
   included:
     - Describe an included outcome.
@@ -23,17 +28,17 @@ scope:
 
 requirements:
   functional:
-    - id: FH-000-FR-01
+    - id: AREA-000-FR-01
       statement: The feature must provide a testable outcome.
   content:
-    - id: FH-000-CR-01
+    - id: AREA-000-CR-01
       statement: Content must use clear, accessible language.
   privacyAndSecurity:
-    - id: FH-000-PS-01
+    - id: AREA-000-PS-01
       statement: The feature must not require secrets in ordinary handbook content.
 
 acceptanceCriteria:
-  - id: FH-000-AC-01
+  - id: AREA-000-AC-01
     statement: A reviewer can verify the intended outcome.
     verificationMethod: review
 
@@ -46,12 +51,12 @@ principles:
   - privacyFirst
 
 risks:
-  - id: FH-000-R-01
+  - id: AREA-000-R-01
     description: Describe a feature-specific risk.
     mitigation: Describe how the risk will be reduced.
 
 unresolvedQuestions:
-  - id: FH-000-Q-01
+  - id: AREA-000-Q-01
     question: Record a question or use an empty list when none remain.
     owner: project maintainers
 
@@ -60,11 +65,11 @@ implementationNotes:
 
 traceability:
   projectRequirements:
-    - requirements/project.yaml
+    - project/project.yaml
   documentation: []
   code: []
   tests: []
-  decisions: []
+  adrs: []
   supersedes: []
   supersededBy: []
 

@@ -40,7 +40,7 @@ pre-existing untracked, empty `requirements/featureRequirement.yaml` and
   private copies.
 - Content standards for prompts, accessibility, print use, jurisdiction
   layering and professional-advice boundaries.
-- Approved requirements, decisions, acceptance evidence and traceability.
+- Approved requirements, ADRs, acceptance evidence and traceability.
 - A clearly fictional, privacy-reviewed example household.
 - A licence decision and actual licence text; the current `LICENSE` file is
   empty, so the repository should not yet claim a specific open-source licence.
@@ -62,14 +62,15 @@ pre-existing untracked, empty `requirements/featureRequirement.yaml` and
 ## Guidance conflicts
 
 The master Copilot instructions say living documentation belongs under
-`documentation/`, while this repository already uses `docs/` and the requested
-requirements workflow requires `requirements/`. The repository-specific
+`documentation/`, while this repository uses `docs/` for handbook guidance and
+`project/` for planning and governance. The repository-specific
 instructions also describe unrelated top-level domains such as football
 manager, walking football and Linux, and prescribe `chapters/` directories that
 do not match this repository's `handbook/` structure. These rules should be
 corrected separately; this change does not move useful existing content merely
 to satisfy conflicting boilerplate.
 
-The requirements workflow complements the existing handbook: it governs why
-and how content changes, while `handbook/` remains the user-facing content area.
+The project area complements the existing handbook: requirements govern why
+and how content changes, while vision, roadmap, ADRs and reviews provide
+the wider planning context. `handbook/` remains the user-facing content area.
 No current feature requirement is marked completed.

@@ -20,7 +20,7 @@ scope:
     - Guidance for safely recording or locating practical family information
     - Fictional examples that demonstrate the handbook without exposing private data
     - Review processes that help households keep their handbook current
-    - Requirements and decision records for future content or software
+    - Requirements and architecture decision records for content or future software
   excluded:
     - Storing passwords, PINs or recovery codes in ordinary handbook content
     - Publishing or committing real household data
@@ -58,7 +58,7 @@ constraints:
   - All repository examples must be explicitly fictional and safe to publish.
   - Planned features must not be described as implemented.
   - Content must distinguish general organisation guidance from professional advice.
-  - Files and directories use camelCase unless an established convention takes precedence.
+  - Files and directories use camelCase unless an established record convention, such as requirement or ADR IDs, takes precedence.
   - Completed requirements retain stable IDs and version-control history.
 
 risks:

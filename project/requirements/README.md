@@ -1,30 +1,31 @@
 # Requirements workflow
 
-This directory is the source of truth for what familyHandbook intends to
-deliver and why. Requirements describe outcomes and constraints before content
-or software is implemented. They must distinguish current behaviour from
-planned work.
+This directory is the source of truth for specific outcomes familyHandbook
+intends to deliver and why. Requirements can govern handbook content, project
+processes or future software. They describe outcomes and constraints before
+implementation and must distinguish current behaviour from planned work.
 
 ## Directory layout
 
-- `project.yaml` defines the shared purpose, scope, principles, risks and
-  milestones.
+- `../project.yaml` defines the shared purpose, scope, principles, risks and
+  milestones for the wider project.
 - `features/` contains active feature requirements.
-- `decisions/` contains durable decisions that affect multiple requirements.
+- `../adr/` contains architecture decision records (ADRs) that affect multiple
+  requirements.
 - `completed/` contains completed or retired requirements without erasing their
   history.
 - `templates/featureRequirement.yaml` is copied when proposing a feature.
-- `repositoryAssessment.md` records the baseline from which this workflow was
-  introduced.
+- `../reviews/` contains point-in-time assessments and reviews.
 
 ## Workflow
 
 1. **Propose:** copy the feature template into `features/`, assign the next
    stable ID and set `status: proposed`. Describe the user need, scope,
-   acceptance criteria, privacy impact, dependencies and open questions.
-2. **Review:** check the proposal against `project.yaml`, existing requirements
-   and handbook content. Resolve material questions or record a decision under
-   `decisions/`. A reviewed requirement may become `approved`.
+   acceptance criteria, privacy impact, dependencies and open questions. Link
+   at least one persona and explain the concrete benefit to them.
+2. **Review:** check the proposal against `../project.yaml`, existing requirements
+   and handbook content. Resolve material questions or record an ADR under
+   `../adr/`. A reviewed requirement may become `approved`.
 3. **Implement:** change the status to `inProgress`, update `traceability` with
    the documents or code being changed, and keep implementation notes factual.
    Do not claim acceptance criteria are met until evidence exists.
@@ -40,13 +41,19 @@ and moved to `completed/`. Superseding requirements link to the retired ID.
 
 ## Naming conventions
 
-- YAML and Markdown filenames use camelCase, except the conventional
-  `README.md`.
-- Feature files use `fh<number><ShortName>.yaml`, for example
-  `fh001HandbookFoundation.yaml`. IDs inside the files are uppercase and
-  permanent; names may be clarified later.
-- Decision files use `dec<number><ShortName>.md`, for example
-  `dec001CanonicalFormat.md`, and link to affected feature IDs.
+- YAML and Markdown filenames generally use camelCase, except `README.md` and
+  records whose stable identifier is deliberately exposed in the filename.
+- Requirement IDs use a short area prefix and a three-digit sequence. Current
+  and anticipated namespaces include `HB` (handbook), `APP` (application),
+  `DOC` (documentation) and `WEB` (website). Adding a namespace requires review
+  to avoid overlapping meanings.
+- Feature files use `<ID>-<Name>.yaml`, for example
+  `HB-001-HandbookFoundation.yaml`. This mirrors ADR filenames, makes the stable
+  ID visible and keeps related records together when sorted. IDs are permanent;
+  descriptive names may be clarified later.
+- ADR files use `ADR-<fourDigitNumber>-<shortName>.md`, for example
+  `ADR-0005-canonicalFormat.md`. The established ADR prefix and number take
+  precedence over the general camelCase filename convention.
 - YAML keys use camelCase. Dates use ISO 8601 `YYYY-MM-DD` format.
 - Requirements use normative words deliberately: **must** is mandatory,
   **should** is the expected default, and **may** is optional.
@@ -70,8 +77,9 @@ Valid statuses are:
 
 Reviewers should look for duplicate requirements, contradictions, accidental
 UK or vendor coupling, private data, inaccessible language and claims that get
-ahead of implementation. Changes to project principles require explicit review
-and normally a decision record. Feature requirements should link both to the
+ahead of implementation. A feature without a credible benefit to at least one
+documented persona is not ready for approval. Changes to project principles require explicit review
+and normally an ADR. Feature requirements should link both to the
 project principles they satisfy and to the relevant handbook, documentation,
 tests or future code paths.
 

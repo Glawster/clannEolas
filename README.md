@@ -11,9 +11,12 @@ human-readable and printable documents without future software.
 
 ## Documentation
 
-- [Requirements and contribution workflow](requirements/README.md)
-- [Project requirements](requirements/project.yaml)
-- [Repository assessment](requirements/repositoryAssessment.md)
+- [Product vision](docs/productVision.md)
+- [Personas](docs/personas/README.md)
+- [Glossary](docs/glossary.md)
+- [Project planning and governance](project/README.md)
+- [Requirements workflow](project/requirements/README.md)
+- [Repository assessment](project/reviews/repositoryAssessment.md)
 - [Handbook outline](handbook/01-GettingStarted.md)
 
 Do not put real household data, passwords, PINs, recovery codes or other
