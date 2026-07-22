@@ -5,7 +5,8 @@
 ### Children
 
 ### Pets
-Someone to look after Kira?
+
+Who can care for each pet?
 
 ### Neighbours
 

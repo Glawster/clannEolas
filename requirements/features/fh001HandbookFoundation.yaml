@@ -1,0 +1,69 @@
+schemaVersion: 1
+id: FH-001
+name: Handbook foundation
+summary: Establish a trustworthy, application-independent foundation for the handbook.
+status: proposed
+priority: critical
+owners: [project maintainers]
+createdDate: 2026-07-22
+reviewedDate: null
+completedDate: null
+userNeeds:
+  - As a household member, I need to understand the handbook's purpose, limits and safe use before adding information.
+scope:
+  included:
+    - Purpose, audience, usage, storage, maintenance and limitations
+    - A usable human-readable source and print-oriented structure
+  excluded:
+    - A web or desktop application
+    - Detailed content for every handbook topic
+requirements:
+  functional:
+    - id: FH-001-FR-01
+      statement: The handbook must be usable without software beyond a reader for its open source format.
+    - id: FH-001-FR-02
+      statement: Getting-started guidance must explain how to create, store, share, review and safely dispose of a household copy.
+  content:
+    - id: FH-001-CR-01
+      statement: The introduction must distinguish reusable public guidance from a private completed handbook.
+    - id: FH-001-CR-02
+      statement: The handbook must state that it is organisational guidance, not legal, medical or financial advice.
+  privacyAndSecurity:
+    - id: FH-001-PS-01
+      statement: The foundation must direct users to the privacy and security guidance before entering sensitive information.
+acceptanceCriteria:
+  - id: FH-001-AC-01
+    statement: A first-time reader can identify the purpose, audience, limitations and safe first steps from the getting-started section.
+    verificationMethod: content review
+  - id: FH-001-AC-02
+    statement: The source remains readable offline and has a documented path to print-friendly use.
+    verificationMethod: source and print review
+  - id: FH-001-AC-03
+    statement: No foundation content depends on an application or vendor account.
+    verificationMethod: dependency review
+dependencies:
+  requires: [FH-002]
+  enables: [FH-003, FH-004, FH-005]
+  related: []
+principles: [privacyFirst, offlineFirst, openHumanReadableFormats, printFriendly, accessible, noVendorLockIn, publicPrivateSeparation, usefulWithoutApplication]
+risks:
+  - id: FH-001-R-01
+    description: Introductory guidance may overwhelm people facing a stressful event.
+    mitigation: Use short steps, plain language and progressive detail.
+unresolvedQuestions:
+  - id: FH-001-Q-01
+    question: Which open source format should be the canonical printable handbook source?
+    owner: project maintainers
+implementationNotes:
+  - Refine the existing handbook outline incrementally; do not replace useful topic coverage merely to impose a new structure.
+traceability:
+  projectRequirements: [requirements/project.yaml]
+  documentation: [handbook/01-GettingStarted.md, README.md]
+  code: []
+  tests: []
+  decisions: []
+  supersedes: []
+  supersededBy: []
+verification:
+  status: notStarted
+  evidence: []

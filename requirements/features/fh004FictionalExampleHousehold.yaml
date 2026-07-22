@@ -1,0 +1,69 @@
+schemaVersion: 1
+id: FH-004
+name: Fictional example household
+summary: Provide a clearly fictional example that demonstrates safe handbook completion.
+status: proposed
+priority: high
+owners: [project maintainers]
+createdDate: 2026-07-22
+reviewedDate: null
+completedDate: null
+userNeeds:
+  - As a first-time handbook owner, I need a safe example so that I understand the expected detail without copying risky patterns.
+scope:
+  included:
+    - A coherent fictional household covering representative handbook sections
+    - Explicit labels and safe placeholders for sensitive information
+  excluded:
+    - Real or lightly anonymised household data
+    - Usable credentials, government identifiers, account numbers or precise addresses
+requirements:
+  functional:
+    - id: FH-004-FR-01
+      statement: The example must demonstrate references to securely stored sensitive documents rather than reproducing their contents.
+    - id: FH-004-FR-02
+      statement: The example must remain separate from reusable blank handbook content.
+  content:
+    - id: FH-004-CR-01
+      statement: Every example page must state that its people, organisations and details are fictional.
+    - id: FH-004-CR-02
+      statement: The household must demonstrate varied family, care, accessibility and practical needs without presenting one family form as universal.
+  privacyAndSecurity:
+    - id: FH-004-PS-01
+      statement: The example must contain no passwords, PINs, recovery codes, account numbers, phone PINs, passport details or realistic private identifiers.
+acceptanceCriteria:
+  - id: FH-004-AC-01
+    statement: A privacy review confirms that all data is fictional, non-identifying and unusable for account or identity access.
+    verificationMethod: privacy review
+  - id: FH-004-AC-02
+    statement: The example demonstrates safe completion of at least one prompt from each agreed core chapter.
+    verificationMethod: coverage review
+  - id: FH-004-AC-03
+    statement: Removing the example does not remove instructions required to use the blank handbook.
+    verificationMethod: separation review
+dependencies:
+  requires: [FH-002, FH-003]
+  enables: []
+  related: [FH-005]
+principles: [privacyFirst, noOrdinarySecretStorage, referenceSensitiveInformation, publicPrivateSeparation, accessible]
+risks:
+  - id: FH-004-R-01
+    description: Fictional values may accidentally resemble real identifiers or teach unsafe detail levels.
+    mitigation: Use conspicuous non-values and review every example against the privacy model.
+unresolvedQuestions:
+  - id: FH-004-Q-01
+    question: Which representative household scenarios provide useful breadth without making the example unwieldy?
+    owner: project maintainers
+implementationNotes:
+  - The existing templates/fictionalExample directory is empty and may be used after the content structure is approved.
+traceability:
+  projectRequirements: [requirements/project.yaml]
+  documentation: [templates/fictionalExample]
+  code: []
+  tests: []
+  decisions: []
+  supersedes: []
+  supersededBy: []
+verification:
+  status: notStarted
+  evidence: []

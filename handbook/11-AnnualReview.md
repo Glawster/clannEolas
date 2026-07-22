@@ -16,6 +16,6 @@ One page.
 
 ## Changed will
 
-## Updated passwords
+## Updated password-manager and digital-access instructions
 
 ## Completed by

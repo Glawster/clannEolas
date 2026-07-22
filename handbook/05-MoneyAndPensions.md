@@ -6,11 +6,11 @@
 
 ## Mortgages
 
-None
+Record the provider and where supporting documents can be found, if applicable.
 
 ## Loans
 
- None
+Record the provider and where supporting documents can be found, if applicable.
 
 ## Insurance
 

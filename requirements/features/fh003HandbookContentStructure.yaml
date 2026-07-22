@@ -1,0 +1,86 @@
+schemaVersion: 1
+id: FH-003
+name: Handbook content structure
+summary: Define consistent, safe and adaptable sections while preserving the useful existing outline.
+status: proposed
+priority: high
+owners: [project maintainers]
+createdDate: 2026-07-22
+reviewedDate: null
+completedDate: null
+userNeeds:
+  - As a handbook owner, I need predictable sections and prompts so that I can find and maintain important information.
+  - As a contributor, I need content rules that avoid duplication and jurisdiction lock-in.
+scope:
+  included:
+    - Section taxonomy, prompt pattern, cross-references, optionality and jurisdiction layering
+    - Review of the eleven existing handbook chapter outlines
+  excluded:
+    - Fully authored guidance for every topic
+    - Application navigation or data-entry screens
+requirements:
+  functional:
+    - id: FH-003-FR-01
+      statement: Each practical topic must have one primary home, with cross-references used instead of duplicated instructions.
+    - id: FH-003-FR-02
+      statement: Sections must support not applicable, unknown and action required without household-specific defaults in public content.
+  content:
+    - id: FH-003-CR-01
+      statement: Prompts must explain why information helps, what is safe to record and when it should be reviewed.
+    - id: FH-003-CR-02
+      statement: Core topic names must be jurisdiction-neutral, with UK-specific guidance in a separable layer.
+    - id: FH-003-CR-03
+      statement: Headings, ordering and terminology must be consistent and accessible across chapters.
+  privacyAndSecurity:
+    - id: FH-003-PS-01
+      statement: Every field must follow the data classification established by FH-002.
+acceptanceCriteria:
+  - id: FH-003-AC-01
+    statement: All existing chapter topics are mapped to a primary section and duplicate concepts are identified.
+    verificationMethod: content inventory
+  - id: FH-003-AC-02
+    statement: A representative chapter follows the agreed prompt pattern and passes privacy and plain-language review.
+    verificationMethod: exemplar review
+  - id: FH-003-AC-03
+    statement: UK-specific concepts can be removed or replaced without changing the core household domain structure.
+    verificationMethod: portability review
+dependencies:
+  requires: [FH-001, FH-002]
+  enables: [FH-004, FH-005]
+  related: []
+principles: [privacyFirst, accessible, adaptableJurisdiction, publicPrivateSeparation, usefulWithoutApplication]
+risks:
+  - id: FH-003-R-01
+    description: Restructuring may discard useful early topic ideas.
+    mitigation: Inventory and map existing headings before moving or consolidating content.
+unresolvedQuestions:
+  - id: FH-003-Q-01
+    question: Should emergency information remain a chapter or become a short generated summary sourced from several chapters?
+    owner: project maintainers
+  - id: FH-003-Q-02
+    question: Where should overlapping contacts be maintained to avoid conflicting copies?
+    owner: project maintainers
+implementationNotes:
+  - Existing filenames use zero-padded numeric prefixes and PascalCase topic names; retain them until a deliberate migration decision is approved.
+traceability:
+  projectRequirements: [requirements/project.yaml]
+  documentation:
+    - handbook/01-GettingStarted.md
+    - handbook/02-EmergencyPlan.md
+    - handbook/03-FamilyAndCare.md
+    - handbook/04-LegalAffairs.md
+    - handbook/05-MoneyAndPensions.md
+    - handbook/06-HomeAndProperty.md
+    - handbook/07-Health.md
+    - handbook/08-DigitalLife.md
+    - handbook/09-FinalWishes.md
+    - handbook/10-FamilyKnowledge.md
+    - handbook/11-AnnualReview.md
+  code: []
+  tests: []
+  decisions: []
+  supersedes: []
+  supersededBy: []
+verification:
+  status: notStarted
+  evidence: []
