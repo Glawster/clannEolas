@@ -1,0 +1,57 @@
+project:
+  name: familyHandbook
+  purpose: >
+    Help families organise practical knowledge needed during emergencies,
+    incapacity and end-of-life administration.
+
+audience:
+  primary:
+    - individuals planning for their household
+    - families and trusted helpers
+  secondary:
+    - attorneys
+    - executors
+    - carers
+
+scope:
+  included:
+    - reusable handbook guidance
+    - printable templates
+    - emergency and continuity planning
+    - household, financial, legal, health and digital-life organisation
+  excluded:
+    - legal advice
+    - financial advice
+    - password management
+    - storage of live personal secrets
+    - probate case management
+
+principles:
+  - privacyFirst
+  - handbookBeforeSoftware
+  - offlineCapable
+  - humanReadable
+  - openFormats
+  - accessible
+  - printFriendly
+  - reusableByDifferentFamilies
+  - fictionalPublicExamplesOnly
+
+dataSeparation:
+  publicRepository:
+    - reusable content
+    - blank templates
+    - fictional examples
+    - source code
+  privateHouseholdData:
+    - real names
+    - account information
+    - medical details
+    - document locations
+    - personal wishes
+  prohibitedInPublicRepository:
+    - passwords
+    - PINs
+    - recovery codes
+    - identity document numbers
+    - live financial account numbers

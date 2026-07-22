@@ -43,6 +43,8 @@ requirements:
   privacyAndSecurity:
     - id: HB-003-PS-01
       statement: Every field must follow the data classification established by HB-002.
+    - id: HB-003-PS-02
+      statement: Classification labels must remain visible in human-readable and printed handbook output.
 acceptanceCriteria:
   - id: HB-003-AC-01
     statement: All existing chapter topics are mapped to a primary section and duplicate concepts are identified.
@@ -56,6 +58,9 @@ acceptanceCriteria:
   - id: HB-003-AC-04
     statement: A reader can find plain-language definitions for specialised terms used in the handbook and see when meaning varies by jurisdiction.
     verificationMethod: glossary and link review
+  - id: HB-003-AC-05
+    statement: Every handbook section has a reviewed default classification and any stricter field-level classifications are explicit.
+    verificationMethod: classification inventory
 dependencies:
   requires: [HB-001, HB-002]
   enables: [HB-004, HB-005]
@@ -78,6 +83,7 @@ traceability:
   projectRequirements: [project/project.yaml]
   documentation:
     - docs/glossary.md
+    - docs/informationClassification.md
     - handbook/01-GettingStarted.md
     - handbook/02-EmergencyPlan.md
     - handbook/03-FamilyAndCare.md
@@ -94,6 +100,7 @@ traceability:
   adrs:
     - project/adr/ADR-0001-handbookBeforeSoftware.md
     - project/adr/ADR-0004-publicTemplatesPrivateData.md
+    - project/adr/ADR-0005-informationClassification.md
   supersedes: []
   supersededBy: []
 verification:

@@ -14,6 +14,7 @@ human-readable and printable documents without future software.
 - [Product vision](docs/productVision.md)
 - [Personas](docs/personas/README.md)
 - [Glossary](docs/glossary.md)
+- [Information classification](docs/informationClassification.md)
 - [Project planning and governance](project/README.md)
 - [Requirements workflow](project/requirements/README.md)
 - [Repository assessment](project/reviews/repositoryAssessment.md)
