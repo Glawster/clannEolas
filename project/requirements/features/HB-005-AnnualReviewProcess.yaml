@@ -11,10 +11,10 @@ completedDate: null
 userNeeds:
   - As a handbook owner, I need a repeatable review checklist so that trusted readers are not relying on stale information.
 personas:
-  - id: P-002
+  - id: PER-002
     path: docs/personas/david.md
     relevance: David needs a short routine for keeping distant-family access information current.
-  - id: P-003
+  - id: PER-003
     path: docs/personas/amina.md
     relevance: Amina needs to identify outdated instructions, gaps and follow-up actions across shared care.
 scope:
@@ -51,7 +51,7 @@ dependencies:
   requires: [HB-001, HB-002, HB-003]
   enables: []
   related: [HB-004]
-principles: [privacyFirst, offlineFirst, accessible, noVendorLockIn, usefulWithoutApplication]
+principles: [P-001, P-002, P-004, P-005, P-006, P-010]
 risks:
   - id: HB-005-R-01
     description: A long checklist may be skipped, while a short checklist may miss important changes.
@@ -64,12 +64,13 @@ implementationNotes:
   - Refine the existing handbook/11-AnnualReview.md page after the content structure and privacy terminology are agreed.
 traceability:
   projectRequirements: [project/project.yaml]
-  documentation: [handbook/11-AnnualReview.md]
+  documentation: [docs/domainModel.md, handbook/11-AnnualReview.md]
   code: []
   tests: []
   adrs:
     - project/adr/ADR-0002-offlineFirst.md
     - project/adr/ADR-0003-neverStorePasswords.md
+    - project/adr/ADR-0006-sharedDomainModel.md
   supersedes: []
   supersededBy: []
 verification:

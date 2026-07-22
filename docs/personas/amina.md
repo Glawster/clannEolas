@@ -1,4 +1,4 @@
-# P-003: Amina
+# PER-003: Amina
 
 > Fictional persona. Amina is not a real person and these details are not
 > household data.

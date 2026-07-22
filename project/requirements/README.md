@@ -9,6 +9,8 @@ implementation and must distinguish current behaviour from planned work.
 
 - `../project.yaml` defines the shared purpose, scope, principles, risks and
   milestones for the wider project.
+- `../../docs/principles.md` explains the north-star principles referenced by
+  stable ID from each requirement.
 - `features/` contains active feature requirements.
 - `../adr/` contains architecture decision records (ADRs) that affect multiple
   requirements.
@@ -78,8 +80,10 @@ Valid statuses are:
 Reviewers should look for duplicate requirements, contradictions, accidental
 UK or vendor coupling, private data, inaccessible language and claims that get
 ahead of implementation. A feature without a credible benefit to at least one
-documented persona is not ready for approval. Changes to project principles require explicit review
-and normally an ADR. Feature requirements should link both to the
+documented persona is not ready for approval. Reviewers must also test the
+outcome against every linked principle rather than treating principle IDs as
+labels. Changes to project principles require explicit review and normally an
+ADR. Feature requirements should link both to the
 project principles they satisfy and to the relevant handbook, documentation,
 tests or future code paths.
 

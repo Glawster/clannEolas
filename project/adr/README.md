@@ -19,3 +19,4 @@ Valid statuses are `proposed`, `accepted`, `deprecated` and `superseded`.
 - [ADR-0003: Never store passwords](ADR-0003-neverStorePasswords.md)
 - [ADR-0004: Public templates and private data](ADR-0004-publicTemplatesPrivateData.md)
 - [ADR-0005: Information classification](ADR-0005-informationClassification.md)
+- [ADR-0006: One shared domain model, many projections](ADR-0006-sharedDomainModel.md)

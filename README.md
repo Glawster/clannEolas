@@ -12,9 +12,11 @@ human-readable and printable documents without future software.
 ## Documentation
 
 - [Product vision](docs/productVision.md)
+- [Project principles](docs/principles.md)
 - [Personas](docs/personas/README.md)
 - [Glossary](docs/glossary.md)
 - [Information classification](docs/informationClassification.md)
+- [Domain model](docs/domainModel.md)
 - [Project planning and governance](project/README.md)
 - [Requirements workflow](project/requirements/README.md)
 - [Repository assessment](project/reviews/repositoryAssessment.md)

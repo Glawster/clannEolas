@@ -12,10 +12,10 @@ userNeeds:
   - As a handbook owner, I need predictable sections and prompts so that I can find and maintain important information.
   - As a contributor, I need content rules that avoid duplication and jurisdiction lock-in.
 personas:
-  - id: P-001
+  - id: PER-001
     path: docs/personas/sarah.md
     relevance: Sarah needs prioritised information that is easy to navigate under stress.
-  - id: P-003
+  - id: PER-003
     path: docs/personas/amina.md
     relevance: Amina needs one reliable home for guidance shared across several family members.
 scope:
@@ -31,6 +31,8 @@ requirements:
       statement: Each practical topic must have one primary home, with cross-references used instead of duplicated instructions.
     - id: HB-003-FR-02
       statement: Sections must support not applicable, unknown and action required without household-specific defaults in public content.
+    - id: HB-003-FR-03
+      statement: Handbook chapters, summaries, examples and future implementations must be projections of one shared, technology-independent domain model.
   content:
     - id: HB-003-CR-01
       statement: Prompts must explain why information helps, what is safe to record and when it should be reviewed.
@@ -61,11 +63,14 @@ acceptanceCriteria:
   - id: HB-003-AC-05
     statement: Every handbook section has a reviewed default classification and any stricter field-level classifications are explicit.
     verificationMethod: classification inventory
+  - id: HB-003-AC-06
+    statement: Every existing handbook topic maps to a documented domain concept or identifies a reviewed gap in the model.
+    verificationMethod: domain mapping review
 dependencies:
   requires: [HB-001, HB-002]
   enables: [HB-004, HB-005]
   related: []
-principles: [privacyFirst, accessible, adaptableJurisdiction, publicPrivateSeparation, usefulWithoutApplication]
+principles: [P-001, P-002, P-003, P-004, P-005, P-006, P-008, P-009, P-010]
 risks:
   - id: HB-003-R-01
     description: Restructuring may discard useful early topic ideas.
@@ -83,6 +88,8 @@ traceability:
   projectRequirements: [project/project.yaml]
   documentation:
     - docs/glossary.md
+    - docs/domainModel.md
+    - docs/domainModel.mmd
     - docs/informationClassification.md
     - handbook/01-GettingStarted.md
     - handbook/02-EmergencyPlan.md
@@ -101,6 +108,7 @@ traceability:
     - project/adr/ADR-0001-handbookBeforeSoftware.md
     - project/adr/ADR-0004-publicTemplatesPrivateData.md
     - project/adr/ADR-0005-informationClassification.md
+    - project/adr/ADR-0006-sharedDomainModel.md
   supersedes: []
   supersededBy: []
 verification:

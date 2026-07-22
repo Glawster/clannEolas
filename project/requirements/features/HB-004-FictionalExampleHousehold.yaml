@@ -11,10 +11,10 @@ completedDate: null
 userNeeds:
   - As a first-time handbook owner, I need a safe example so that I understand the expected detail without copying risky patterns.
 personas:
-  - id: P-002
+  - id: PER-002
     path: docs/personas/david.md
     relevance: David benefits from a concrete example of safe, proportionate completion.
-  - id: P-004
+  - id: PER-004
     path: docs/personas/morgan.md
     relevance: Morgan needs examples that cannot be mistaken for publishable private household data.
 scope:
@@ -52,7 +52,7 @@ dependencies:
   requires: [HB-002, HB-003]
   enables: []
   related: [HB-005]
-principles: [privacyFirst, noOrdinarySecretStorage, referenceSensitiveInformation, publicPrivateSeparation, accessible]
+principles: [P-003, P-004, P-007, P-008, P-010]
 risks:
   - id: HB-004-R-01
     description: Fictional values may accidentally resemble real identifiers or teach unsafe detail levels.
@@ -65,12 +65,13 @@ implementationNotes:
   - The existing templates/fictionalExample directory is empty and may be used after the content structure is approved.
 traceability:
   projectRequirements: [project/project.yaml]
-  documentation: [templates/fictionalExample]
+  documentation: [docs/domainModel.md, templates/fictionalExample]
   code: []
   tests: []
   adrs:
     - project/adr/ADR-0003-neverStorePasswords.md
     - project/adr/ADR-0004-publicTemplatesPrivateData.md
+    - project/adr/ADR-0006-sharedDomainModel.md
   supersedes: []
   supersededBy: []
 verification:

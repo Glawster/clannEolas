@@ -12,12 +12,12 @@ technology constraints described.
 
 The initial personas are deliberately varied but are not exhaustive:
 
-- [P-001: Sarah](sarah.md) needs practical guidance after her partner dies
+- [PER-001: Sarah](sarah.md) needs practical guidance after her partner dies
   unexpectedly.
-- [P-002: David](david.md) wants to prepare useful information while living
+- [PER-002: David](david.md) wants to prepare useful information while living
   independently from distant family.
-- [P-003: Amina](amina.md) coordinates care after her mother loses capacity.
-- [P-004: Morgan](morgan.md) wants to prepare a handbook without exposing their
+- [PER-003: Amina](amina.md) coordinates care after her mother loses capacity.
+- [PER-004: Morgan](morgan.md) wants to prepare a handbook without exposing their
   household's private data.
 
 ## Using and maintaining personas

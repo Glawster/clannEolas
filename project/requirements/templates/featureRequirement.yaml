@@ -16,7 +16,7 @@ userNeeds:
   - As a type of user, I need an outcome so that I receive a benefit.
 
 personas:
-  - id: P-000
+  - id: PER-000
     path: docs/personas/example.md
     relevance: Explain how this feature helps the persona in their situation.
 
@@ -48,7 +48,7 @@ dependencies:
   related: []
 
 principles:
-  - privacyFirst
+  - P-001
 
 risks:
   - id: AREA-000-R-01

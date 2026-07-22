@@ -1,4 +1,4 @@
-# P-002: David
+# PER-002: David
 
 > Fictional persona. David is not a real person and these details are not
 > household data.

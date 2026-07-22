@@ -12,10 +12,10 @@ userNeeds:
   - As a handbook owner, I need to understand what to record and what only to reference so that I do not create avoidable harm.
   - As a trusted reader, I need access guidance that does not disclose reusable credentials.
 personas:
-  - id: P-002
+  - id: PER-002
     path: docs/personas/david.md
     relevance: David needs to reference protected records without building an unsafe collection of private details.
-  - id: P-004
+  - id: PER-004
     path: docs/personas/morgan.md
     relevance: Morgan needs explicit data boundaries and safe alternatives to storing credentials.
 scope:
@@ -64,7 +64,7 @@ dependencies:
   requires: []
   enables: [HB-001, HB-003, HB-004, HB-005]
   related: []
-principles: [privacyFirst, noOrdinarySecretStorage, referenceSensitiveInformation, noVendorLockIn, publicPrivateSeparation]
+principles: [P-003, P-004, P-007, P-008, P-009]
 risks:
   - id: HB-002-R-01
     description: Safety warnings may be too vague to change user behaviour.

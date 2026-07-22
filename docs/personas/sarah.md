@@ -1,4 +1,4 @@
-# P-001: Sarah
+# PER-001: Sarah
 
 > Fictional persona. Sarah is not a real person and these details are not
 > household data.

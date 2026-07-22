@@ -29,30 +29,36 @@ scope:
     - Requiring a future application to read, maintain or print the handbook
 
 principles:
-  - id: privacyFirst
+  - id: P-001
+    name: People before paperwork
+    statement: Clarity, dignity and people's immediate needs take priority over administrative completeness.
+  - id: P-002
+    name: Help families continue confidently
+    statement: The handbook must help trusted people identify what matters and take the next appropriate step.
+  - id: P-003
+    name: Explain before asking
+    statement: Prompts must explain purpose, use and sensitivity before asking for information.
+  - id: P-004
+    name: Privacy by default
     statement: Privacy and data minimisation must guide content and design decisions.
-  - id: offlineFirst
-    statement: The handbook must work offline where practical.
-  - id: noOrdinarySecretStorage
-    statement: Ordinary handbook content must not store passwords, PINs or recovery codes.
-  - id: referenceSensitiveInformation
-    statement: Sensitive information should normally be referenced by location rather than reproduced.
-  - id: openHumanReadableFormats
-    statement: Project-controlled data must use human-readable, open formats.
-  - id: printFriendly
-    statement: Core handbook output must be practical to print and use on paper.
-  - id: accessible
-    statement: Language and layouts must be understandable and accessible.
-  - id: noVendorLockIn
-    statement: Core content and data must not depend on a single vendor or proprietary service.
-  - id: publicPrivateSeparation
-    statement: Reusable public content must be clearly separated from private household data.
-  - id: adaptableJurisdiction
-    statement: >-
-      The initial content may be UK-oriented, but the core domain model must not
-      hard-code UK or Northern Ireland assumptions.
-  - id: usefulWithoutApplication
-    statement: The handbook must remain useful without any future software application.
+  - id: P-005
+    name: Technology should disappear
+    statement: Technology must reduce effort without becoming necessary to use or understand the handbook.
+  - id: P-006
+    name: The handbook must remain useful on paper
+    statement: Core handbook output must be practical to print and use without interactive technology.
+  - id: P-007
+    name: Reference sensitive information; never reproduce secrets
+    statement: Sensitive information should normally be referenced, while passwords, PINs and recovery codes must not be stored.
+  - id: P-008
+    name: Public project, private household
+    statement: Reusable public content must remain clearly separated from private household data.
+  - id: P-009
+    name: Open and adaptable
+    statement: Open formats and a jurisdiction-neutral core must prevent vendor, application or country lock-in.
+  - id: P-010
+    name: Accessible by design
+    statement: Language, structure and layouts must be accessible from the start.
 
 constraints:
   - All repository examples must be explicitly fictional and safe to publish.

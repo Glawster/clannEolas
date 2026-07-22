@@ -1,4 +1,4 @@
-# P-004: Morgan
+# PER-004: Morgan
 
 > Fictional persona. Morgan is not a real person and these details are not
 > household data.
