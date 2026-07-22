@@ -68,7 +68,7 @@ acceptanceCriteria:
     verificationMethod: domain mapping review
 dependencies:
   requires: [HB-001, HB-002]
-  enables: [HB-004, HB-005]
+  enables: [HB-004, HB-005, HB-006]
   related: []
 principles: [P-001, P-002, P-003, P-004, P-005, P-006, P-008, P-009, P-010]
 risks:
@@ -108,7 +108,7 @@ traceability:
     - project/adr/ADR-0001-handbookBeforeSoftware.md
     - project/adr/ADR-0004-publicTemplatesPrivateData.md
     - project/adr/ADR-0005-informationClassification.md
-    - project/adr/ADR-0006-sharedDomainModel.md
+    - project/adr/ADR-0007-knowledgeBeforeDocuments.md
   supersedes: []
   supersededBy: []
 verification:

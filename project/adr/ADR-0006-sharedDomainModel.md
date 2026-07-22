@@ -1,10 +1,15 @@
 # ADR-0006: One shared domain model, many projections
 
-- Status: accepted
+- Status: superseded
 - Date: 2026-07-22
 - Related requirements: HB-003, HB-004, HB-005
+- Superseded by: ADR-0007
 
 ## Context
+
+This decision was expanded and superseded by
+[ADR-0007: Knowledge before documents](ADR-0007-knowledgeBeforeDocuments.md).
+It remains here as a historical record.
 
 The handbook already contains topic-based chapters, and future work may add an
 emergency summary, fictional examples, printed layouts or software. If each

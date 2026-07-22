@@ -50,7 +50,7 @@ acceptanceCriteria:
 dependencies:
   requires: [HB-001, HB-002, HB-003]
   enables: []
-  related: [HB-004]
+  related: [HB-004, HB-006]
 principles: [P-001, P-002, P-004, P-005, P-006, P-010]
 risks:
   - id: HB-005-R-01
@@ -70,7 +70,7 @@ traceability:
   adrs:
     - project/adr/ADR-0002-offlineFirst.md
     - project/adr/ADR-0003-neverStorePasswords.md
-    - project/adr/ADR-0006-sharedDomainModel.md
+    - project/adr/ADR-0007-knowledgeBeforeDocuments.md
   supersedes: []
   supersededBy: []
 verification:

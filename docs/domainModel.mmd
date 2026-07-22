@@ -5,6 +5,7 @@ flowchart TB
     Household --> Asset
     Household --> Account
     Household --> Contact
+    Household --> Instruction
     Household --> Wish
     Household --> Review
 
@@ -19,6 +20,12 @@ flowchart TB
     Asset <--> Document
     Asset <--> Account
     Account <--> Contact
+    Instruction <--> Person
+    Instruction <--> Property
+    Instruction <--> Document
+    Instruction <--> Asset
+    Instruction <--> Account
+    Instruction <--> Contact
     Wish <--> Document
     Wish <--> Contact
     Review -. checks .-> Person
@@ -27,4 +34,5 @@ flowchart TB
     Review -. checks .-> Asset
     Review -. checks .-> Account
     Review -. checks .-> Contact
+    Review -. checks .-> Instruction
     Review -. checks .-> Wish

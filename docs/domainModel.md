@@ -4,10 +4,21 @@ The domain model describes the real-world concepts familyHandbook organises and
 how they relate. It is not a database schema, file format, API design or
 application architecture.
 
+# Mission
+
+**familyHandbook provides a shared language for organising the practical
+knowledge families need before, during and after life's unexpected events.**
+
 The model gives handbook chapters, emergency summaries, fictional examples,
 printed output and any future software a shared language. Each output is a
 projection: it selects and presents relevant parts of the same model for a
 particular person and situation.
+
+The project's keystone architectural test is:
+
+> **Am I modelling knowledge, or am I modelling a document?**
+
+See [ADR-0007: Knowledge before documents](../project/adr/ADR-0007-knowledgeBeforeDocuments.md).
 
 ## Model principles
 
@@ -31,6 +42,7 @@ Household
 ├── Assets
 ├── Accounts
 ├── Contacts
+├── Instructions
 ├── Wishes
 └── Reviews
 ```
@@ -42,6 +54,19 @@ items.
 
 The relationship diagram is maintained as
 [Mermaid source](domainModel.mmd).
+
+## Concepts and Instances
+
+The domain model describes concepts.
+
+Individual households create instances of those concepts.
+
+Fictional example:
+
+Concept:
+Person
+
+Instance: Example Person A
 
 ## Household
 
@@ -172,6 +197,27 @@ Candidate information:
 
 Contact does not imply legal authority. Roles such as attorney, executor and
 next of kin must retain the distinctions in the [glossary](glossary.md).
+
+## Instruction
+
+Practical knowledge about how, when or why to do something for the household.
+An instruction can support a person, property, account, asset, document or wish
+without belonging exclusively to one handbook chapter.
+
+Candidate information:
+
+- title and purpose;
+- steps or guidance;
+- circumstances or trigger;
+- responsible person or role;
+- related concepts and contacts;
+- classification;
+- last reviewed date; and
+- follow-up action.
+
+Instructions must distinguish practical guidance from legal, medical or
+financial advice. They must not contain passwords, PINs, recovery codes or
+other Highly Confidential values.
 
 ## Wish
 

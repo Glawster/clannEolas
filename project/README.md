@@ -16,7 +16,8 @@ reviews, whether or not software is ever created.
 - [Roadmap](roadmap.md) will communicate sequencing once priorities have been
   reviewed.
 - [Architecture decision records](adr/README.md) preserve cross-cutting choices
-  and their consequences.
+  and their consequences. ADR-0007, “Knowledge before documents”, is the
+  keystone decision used to challenge future designs.
 - [Reviews](reviews/repositoryAssessment.md) preserve assessments and other
   point-in-time reviews.
 

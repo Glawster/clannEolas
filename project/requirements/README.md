@@ -27,7 +27,8 @@ implementation and must distinguish current behaviour from planned work.
    at least one persona and explain the concrete benefit to them.
 2. **Review:** check the proposal against `../project.yaml`, existing requirements
    and handbook content. Resolve material questions or record an ADR under
-   `../adr/`. A reviewed requirement may become `approved`.
+   `../adr/`. Apply the ADR-0007 keystone test: “Am I modelling knowledge, or am
+   I modelling a document?” A reviewed requirement may become `approved`.
 3. **Implement:** change the status to `inProgress`, update `traceability` with
    the documents or code being changed, and keep implementation notes factual.
    Do not claim acceptance criteria are met until evidence exists.
@@ -86,6 +87,11 @@ labels. Changes to project principles require explicit review and normally an
 ADR. Feature requirements should link both to the
 project principles they satisfy and to the relevant handbook, documentation,
 tests or future code paths.
+
+Presentation requirements are legitimate when they concern matters such as
+readability, navigation, accessibility or print layout. They must describe a
+projection of shared knowledge rather than introduce a competing source of
+truth.
 
 No requirement file contains private household data. Fictional examples must
 be clearly labelled, safe to publish and free of usable credentials or

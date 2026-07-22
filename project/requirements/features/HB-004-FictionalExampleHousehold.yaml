@@ -71,7 +71,7 @@ traceability:
   adrs:
     - project/adr/ADR-0003-neverStorePasswords.md
     - project/adr/ADR-0004-publicTemplatesPrivateData.md
-    - project/adr/ADR-0006-sharedDomainModel.md
+    - project/adr/ADR-0007-knowledgeBeforeDocuments.md
   supersedes: []
   supersededBy: []
 verification:
