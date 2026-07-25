@@ -109,6 +109,7 @@ traceability:
     - project/adr/ADR-0004-publicTemplatesPrivateData.md
     - project/adr/ADR-0005-informationClassification.md
     - project/adr/ADR-0007-knowledgeBeforeDocuments.md
+    - project/adr/ADR-0008-handbookAsProjection.md
   supersedes: []
   supersededBy: []
 verification:

@@ -1,12 +1,12 @@
 # Domain model
 
-The domain model describes the real-world concepts familyHandbook organises and
+The domain model describes the real-world concepts clanneolas.com organises and
 how they relate. It is not a database schema, file format, API design or
 application architecture.
 
 # Mission
 
-**familyHandbook provides a shared language for organising the practical
+**clanneolas.com provides a shared language for organising the practical
 knowledge families need before, during and after life's unexpected events.**
 
 The model gives handbook chapters, emergency summaries, fictional examples,
@@ -19,6 +19,14 @@ The project's keystone architectural test is:
 > **Am I modelling knowledge, or am I modelling a document?**
 
 See [ADR-0007: Knowledge before documents](../project/adr/ADR-0007-knowledgeBeforeDocuments.md).
+
+The handbook is the first foundational projection, not the domain model or the
+source of truth. [ADR-0008](../project/adr/ADR-0008-handbookAsProjection.md)
+defines the relationship used for future content and interface design:
+
+```text
+Knowledge → Projection → User Experience
+```
 
 ## Model principles
 

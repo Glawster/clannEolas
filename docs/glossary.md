@@ -1,6 +1,6 @@
 # Glossary
 
-This glossary explains words used in familyHandbook in plain language. It is a
+This glossary explains words used in clanneolas.com in plain language. It is a
 starting point, not legal, medical or financial advice. Meanings and procedures
 can differ between England and Wales, Scotland, Northern Ireland and other
 countries. Follow current guidance for the place and circumstances involved and

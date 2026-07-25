@@ -6,7 +6,7 @@
 
 ## Context
 
-familyHandbook is a public, reusable project, while a completed household
+clanneolas.com is a public, reusable project, while a completed household
 handbook may contain sensitive personal, health, financial and family
 information. Mixing these concerns risks publishing private data and makes the
 public project harder for other families to reuse.

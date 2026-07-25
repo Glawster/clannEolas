@@ -20,7 +20,7 @@ knowledge itself.
 
 ## Context
 
-familyHandbook is intended to help people organise the practical knowledge
+clanneolas.com is intended to help people organise the practical knowledge
 their family may need during emergencies, illness, loss of capacity and
 end-of-life administration.
 
@@ -125,7 +125,7 @@ while referencing the same underlying knowledge.
 
 ## Relationship to the domain model
 
-The domain model defines the concepts used by familyHandbook. The knowledge
+The domain model defines the concepts used by clanneolas.com. The knowledge
 model records instances of those concepts. Presentation layers transform that
 knowledge into formats suitable for people.
 
@@ -197,5 +197,5 @@ another format is an implementation detail.
 
 The principle established by this ADR remains unchanged:
 
-> **familyHandbook is a knowledge project. Documents, applications and printed
+> **clanneolas.com is a knowledge project. Documents, applications and printed
 > handbooks are different ways of presenting that knowledge.**

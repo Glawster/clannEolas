@@ -1,7 +1,7 @@
 # Project planning
 
 This directory contains the planning and governance material for
-familyHandbook. It is broader than software requirements: it covers the
+clanneolas.com. It is broader than software requirements: it covers the
 project's purpose, content, safety principles, priorities, architectural decisions and
 reviews, whether or not software is ever created.
 

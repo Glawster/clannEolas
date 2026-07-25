@@ -1,6 +1,6 @@
 # Requirements workflow
 
-This directory is the source of truth for specific outcomes familyHandbook
+This directory is the source of truth for specific outcomes clanneolas.com
 intends to deliver and why. Requirements can govern handbook content, project
 processes or future software. They describe outcomes and constraints before
 implementation and must distinguish current behaviour from planned work.

@@ -14,7 +14,7 @@ decisions while grieving, worried or exhausted. They may know that information
 exists without knowing where it is, whom to contact or what needs to happen
 next.
 
-familyHandbook exists to make that situation less confusing.
+clanneolas.com exists to make that situation less confusing.
 
 ## The problem we are solving
 
@@ -43,7 +43,7 @@ The handbook should be:
   financial and legal administration;
 - adaptable to different households, countries and circumstances;
 - built from open, human-readable formats; and
-- usable without a vendor account or future familyHandbook application.
+- usable without a vendor account or future clanneolas.com application.
 
 Success is not measured by how much information a household records. It is
 measured by whether trusted people can find reliable guidance when it matters,

@@ -22,7 +22,7 @@ organises without prematurely choosing a database or application design.
 
 ## Decision
 
-familyHandbook will maintain a technology-independent domain model for concepts
+clanneolas.com will maintain a technology-independent domain model for concepts
 such as household, person, property, document, asset, account, contact, wish and
 review.
 

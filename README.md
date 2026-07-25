@@ -1,4 +1,4 @@
-# familyHandbook
+# clanneolas.com
 
 An open-source, privacy-conscious project for creating a practical record of the
 information a family may need during an emergency, serious illness, loss of

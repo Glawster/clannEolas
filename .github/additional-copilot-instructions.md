@@ -1,4 +1,4 @@
-# Additional Copilot Instructions for myHandbook
+# Additional Copilot Instructions for clanneolas.com
 
 These instructions are repository-specific and extend the Python-first master rules in `.github/copilot-instructions.md`.
 

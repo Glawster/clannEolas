@@ -71,6 +71,7 @@ traceability:
     - project/adr/ADR-0002-offlineFirst.md
     - project/adr/ADR-0003-neverStorePasswords.md
     - project/adr/ADR-0007-knowledgeBeforeDocuments.md
+    - project/adr/ADR-0008-handbookAsProjection.md
   supersedes: []
   supersededBy: []
 verification:

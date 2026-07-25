@@ -33,3 +33,4 @@ valid, but presentation must not become the source of truth.
 - [ADR-0005: Information classification](ADR-0005-informationClassification.md)
 - [ADR-0006: One shared domain model, many projections](ADR-0006-sharedDomainModel.md) — superseded by ADR-0007
 - [ADR-0007: Knowledge before documents](ADR-0007-knowledgeBeforeDocuments.md) — keystone ADR
+- [ADR-0008: Handbook as a projection of household knowledge](ADR-0008-handbookAsProjection.md)

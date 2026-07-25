@@ -1,6 +1,6 @@
 # Project principles
 
-Principles are familyHandbook's north star. The product vision explains why the
+Principles are clanneolas.com's north star. The product vision explains why the
 project exists, requirements define what outcomes are needed, and ADRs preserve
 why important choices were made. Principles guide all three.
 

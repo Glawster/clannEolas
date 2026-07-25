@@ -17,7 +17,7 @@ particularly sensitive information to receive stricter treatment.
 
 ## Decision
 
-familyHandbook will use four ordered classifications: `Public`, `Private`,
+clanneolas.com will use four ordered classifications: `Public`, `Private`,
 `Confidential` and `Highly Confidential`.
 
 Every handbook section will declare a default classification. Individual fields

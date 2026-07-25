@@ -72,6 +72,7 @@ traceability:
     - project/adr/ADR-0001-handbookBeforeSoftware.md
     - project/adr/ADR-0002-offlineFirst.md
     - project/adr/ADR-0004-publicTemplatesPrivateData.md
+    - project/adr/ADR-0008-handbookAsProjection.md
   supersedes: []
   supersededBy: []
 verification:
