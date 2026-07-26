@@ -17,6 +17,7 @@ human-readable and printable documents without future software.
 - [Glossary](docs/glossary.md)
 - [Information classification](docs/informationClassification.md)
 - [Domain model](docs/domainModel.md)
+- [Clann bootstrap wizard](docs/clannBootstrap.md)
 - [Project planning and governance](project/README.md)
 - [Requirements workflow](project/requirements/README.md)
 - [Repository assessment](project/reviews/repositoryAssessment.md)
