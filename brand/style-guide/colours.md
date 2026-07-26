@@ -1,0 +1,6 @@
+- Palette
+- HEX values
+- RGB
+- Usage examples
+- Contrast
+- Accessibility

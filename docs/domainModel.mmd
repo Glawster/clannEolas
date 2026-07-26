@@ -1,0 +1,38 @@
+flowchart TB
+    Household --> Person
+    Household --> Property
+    Household --> Document
+    Household --> Asset
+    Household --> Account
+    Household --> Contact
+    Household --> Instruction
+    Household --> Wish
+    Household --> Review
+
+    Person <--> Contact
+    Person <--> Document
+    Person <--> Wish
+    Person <--> Account
+    Property <--> Document
+    Property <--> Asset
+    Property <--> Account
+    Property <--> Contact
+    Asset <--> Document
+    Asset <--> Account
+    Account <--> Contact
+    Instruction <--> Person
+    Instruction <--> Property
+    Instruction <--> Document
+    Instruction <--> Asset
+    Instruction <--> Account
+    Instruction <--> Contact
+    Wish <--> Document
+    Wish <--> Contact
+    Review -. checks .-> Person
+    Review -. checks .-> Property
+    Review -. checks .-> Document
+    Review -. checks .-> Asset
+    Review -. checks .-> Account
+    Review -. checks .-> Contact
+    Review -. checks .-> Instruction
+    Review -. checks .-> Wish

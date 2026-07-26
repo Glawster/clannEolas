@@ -1,0 +1,94 @@
+schemaVersion: 1
+id: HB-002
+name: Privacy and security model
+summary: Define safe information-handling rules for public guidance and private household copies.
+status: proposed
+priority: critical
+owners: [project maintainers]
+createdDate: 2026-07-22
+reviewedDate: null
+completedDate: null
+userNeeds:
+  - As a handbook owner, I need to understand what to record and what only to reference so that I do not create avoidable harm.
+  - As a trusted reader, I need access guidance that does not disclose reusable credentials.
+personas:
+  - id: PER-002
+    path: docs/personas/david.md
+    relevance: David needs to reference protected records without building an unsafe collection of private details.
+  - id: PER-004
+    path: docs/personas/morgan.md
+    relevance: Morgan needs explicit data boundaries and safe alternatives to storing credentials.
+scope:
+  included:
+    - Data classification, minimisation, safe references, access, storage, sharing, backup and disposal guidance
+    - Separation of reusable public material from private household data
+  excluded:
+    - Guaranteeing the security of a user's chosen storage method
+    - Storing or managing credentials
+requirements:
+  functional:
+    - id: HB-002-FR-01
+      statement: Each handbook section must declare a default classification using the approved Public, Private, Confidential or Highly Confidential model.
+    - id: HB-002-FR-02
+      statement: Guidance must explain risks and practical safeguards for paper and digital copies.
+    - id: HB-002-FR-03
+      statement: A field or content block may declare a stricter classification than its section, and the most restrictive applicable classification must control handling.
+  content:
+    - id: HB-002-CR-01
+      statement: Guidance must give safe patterns for referencing documents and credential stores by location.
+    - id: HB-002-CR-02
+      statement: Examples must be explicitly fictional and contain no usable credentials or realistic identifiers.
+  privacyAndSecurity:
+    - id: HB-002-PS-01
+      statement: Ordinary handbook content must never request passwords, PINs or recovery codes.
+    - id: HB-002-PS-02
+      statement: The project must collect only information needed for a stated household outcome.
+    - id: HB-002-PS-03
+      statement: Public repository content and private household data must have an explicit boundary.
+    - id: HB-002-PS-04
+      statement: Highly Confidential values must not be stored in ordinary handbook content, examples, logs, exports or tests.
+acceptanceCriteria:
+  - id: HB-002-AC-01
+    statement: A section author can classify every proposed field using the documented model.
+    verificationMethod: classification exercise
+  - id: HB-002-AC-02
+    statement: A repository scan finds no real household data, passwords, PINs or recovery codes in examples.
+    verificationMethod: manual and automated content review
+  - id: HB-002-AC-03
+    statement: Paper and digital storage, controlled sharing, backup and secure disposal are covered without mandating a vendor.
+    verificationMethod: content review
+  - id: HB-002-AC-04
+    statement: The classification guide defines allowed values, ordering, examples, handling rules and a safe rule for unknown or missing classifications.
+    verificationMethod: classification model review
+dependencies:
+  requires: []
+  enables: [HB-001, HB-003, HB-004, HB-005, HB-006]
+  related: []
+principles: [P-003, P-004, P-007, P-008, P-009]
+risks:
+  - id: HB-002-R-01
+    description: Safety warnings may be too vague to change user behaviour.
+    mitigation: Put concise warnings next to risky fields and include safer alternatives.
+  - id: HB-002-R-02
+    description: Location references may reveal enough detail to assist unauthorised access.
+    mitigation: Describe locations only as precisely as trusted readers need and explain that trade-off.
+unresolvedQuestions:
+  - id: HB-002-Q-02
+    question: Should private household copies live outside the repository by default, or in an ignored directory with prominent warnings?
+    owner: project maintainers
+implementationNotes:
+  - The existing empty docs/privacyAndSecurity.md is the intended documentation target.
+traceability:
+  projectRequirements: [project/project.yaml]
+  documentation: [docs/informationClassification.md, docs/privacyAndSecurity.md, handbook/08-DigitalLife.md]
+  code: []
+  tests: []
+  adrs:
+    - project/adr/ADR-0003-neverStorePasswords.md
+    - project/adr/ADR-0004-publicTemplatesPrivateData.md
+    - project/adr/ADR-0005-informationClassification.md
+  supersedes: []
+  supersededBy: []
+verification:
+  status: notStarted
+  evidence: []

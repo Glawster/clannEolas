@@ -1,0 +1,79 @@
+schemaVersion: 1
+id: HB-005
+name: Annual review process
+summary: Define a manageable annual and event-triggered process for keeping a private handbook accurate and safe.
+status: proposed
+priority: high
+owners: [project maintainers]
+createdDate: 2026-07-22
+reviewedDate: null
+completedDate: null
+userNeeds:
+  - As a handbook owner, I need a repeatable review checklist so that trusted readers are not relying on stale information.
+personas:
+  - id: PER-002
+    path: docs/personas/david.md
+    relevance: David needs a short routine for keeping distant-family access information current.
+  - id: PER-003
+    path: docs/personas/amina.md
+    relevance: Amina needs to identify outdated instructions, gaps and follow-up actions across shared care.
+scope:
+  included:
+    - Annual review, significant-life-event triggers, responsibility, change recording and disposal of obsolete copies
+  excluded:
+    - Automatic reminders or software notifications
+    - Recording passwords or other secrets during review
+requirements:
+  functional:
+    - id: HB-005-FR-01
+      statement: The process must cover scheduled annual review and review after significant household changes.
+    - id: HB-005-FR-02
+      statement: The process must verify references, trusted-reader access, backups and obsolete-copy disposal.
+  content:
+    - id: HB-005-CR-01
+      statement: The checklist must be short enough for routine use and link to detailed guidance where needed.
+    - id: HB-005-CR-02
+      statement: Review records must capture the review date, responsible role, areas checked and follow-up actions without requiring a signature or real name in public examples.
+  privacyAndSecurity:
+    - id: HB-005-PS-01
+      statement: The checklist must ask whether access instructions remain valid without asking users to copy passwords, PINs or recovery codes.
+acceptanceCriteria:
+  - id: HB-005-AC-01
+    statement: The checklist covers contact, care, legal, financial, home, health, digital, final-wishes and family-knowledge changes.
+    verificationMethod: checklist coverage review
+  - id: HB-005-AC-02
+    statement: The process includes secure handling of superseded paper and digital copies.
+    verificationMethod: privacy review
+  - id: HB-005-AC-03
+    statement: A fictional walkthrough can complete the review without software or vendor services.
+    verificationMethod: scenario walkthrough
+dependencies:
+  requires: [HB-001, HB-002, HB-003]
+  enables: []
+  related: [HB-004, HB-006]
+principles: [P-001, P-002, P-004, P-005, P-006, P-010]
+risks:
+  - id: HB-005-R-01
+    description: A long checklist may be skipped, while a short checklist may miss important changes.
+    mitigation: Use a concise overview with chapter-level follow-up prompts.
+unresolvedQuestions:
+  - id: HB-005-Q-01
+    question: Which life events should trigger an immediate review in addition to the annual cycle?
+    owner: project maintainers
+implementationNotes:
+  - Refine the existing handbook/11-AnnualReview.md page after the content structure and privacy terminology are agreed.
+traceability:
+  projectRequirements: [project/project.yaml]
+  documentation: [docs/domainModel.md, handbook/11-AnnualReview.md]
+  code: []
+  tests: []
+  adrs:
+    - project/adr/ADR-0002-offlineFirst.md
+    - project/adr/ADR-0003-neverStorePasswords.md
+    - project/adr/ADR-0007-knowledgeBeforeDocuments.md
+    - project/adr/ADR-0008-handbookAsProjection.md
+  supersedes: []
+  supersededBy: []
+verification:
+  status: notStarted
+  evidence: []

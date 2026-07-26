@@ -1,0 +1,80 @@
+schemaVersion: 1
+id: HB-001
+name: Handbook foundation
+summary: Establish a trustworthy, application-independent foundation for the handbook.
+status: proposed
+priority: critical
+owners: [project maintainers]
+createdDate: 2026-07-22
+reviewedDate: null
+completedDate: null
+userNeeds:
+  - As a household member, I need to understand the handbook's purpose, limits and safe use before adding information.
+personas:
+  - id: PER-002
+    path: docs/personas/david.md
+    relevance: David needs a manageable, accessible starting process that is not tied to an application.
+  - id: PER-004
+    path: docs/personas/morgan.md
+    relevance: Morgan needs the public/private boundary and privacy expectations to be clear before entering information.
+scope:
+  included:
+    - Purpose, audience, usage, storage, maintenance and limitations
+    - A usable human-readable source and print-oriented structure
+  excluded:
+    - A web or desktop application
+    - Detailed content for every handbook topic
+requirements:
+  functional:
+    - id: HB-001-FR-01
+      statement: The handbook must be usable without software beyond a reader for its open source format.
+    - id: HB-001-FR-02
+      statement: Getting-started guidance must explain how to create, store, share, review and safely dispose of a household copy.
+  content:
+    - id: HB-001-CR-01
+      statement: The introduction must distinguish reusable public guidance from a private completed handbook.
+    - id: HB-001-CR-02
+      statement: The handbook must state that it is organisational guidance, not legal, medical or financial advice.
+  privacyAndSecurity:
+    - id: HB-001-PS-01
+      statement: The foundation must direct users to the privacy and security guidance before entering sensitive information.
+acceptanceCriteria:
+  - id: HB-001-AC-01
+    statement: A first-time reader can identify the purpose, audience, limitations and safe first steps from the getting-started section.
+    verificationMethod: content review
+  - id: HB-001-AC-02
+    statement: The source remains readable offline and has a documented path to print-friendly use.
+    verificationMethod: source and print review
+  - id: HB-001-AC-03
+    statement: No foundation content depends on an application or vendor account.
+    verificationMethod: dependency review
+dependencies:
+  requires: [HB-002]
+  enables: [HB-003, HB-004, HB-005, HB-006]
+  related: []
+principles: [P-001, P-002, P-003, P-004, P-005, P-006, P-008, P-009, P-010]
+risks:
+  - id: HB-001-R-01
+    description: Introductory guidance may overwhelm people facing a stressful event.
+    mitigation: Use short steps, plain language and progressive detail.
+unresolvedQuestions:
+  - id: HB-001-Q-01
+    question: Which open source format should be the canonical printable handbook source?
+    owner: project maintainers
+implementationNotes:
+  - Refine the existing handbook outline incrementally; do not replace useful topic coverage merely to impose a new structure.
+traceability:
+  projectRequirements: [project/project.yaml]
+  documentation: [docs/productVision.md, handbook/01-GettingStarted.md, README.md]
+  code: []
+  tests: []
+  adrs:
+    - project/adr/ADR-0001-handbookBeforeSoftware.md
+    - project/adr/ADR-0002-offlineFirst.md
+    - project/adr/ADR-0004-publicTemplatesPrivateData.md
+    - project/adr/ADR-0008-handbookAsProjection.md
+  supersedes: []
+  supersededBy: []
+verification:
+  status: notStarted
+  evidence: []

@@ -1,0 +1,117 @@
+schemaVersion: 1
+id: HB-003
+name: Handbook content structure
+summary: Define consistent, safe and adaptable sections while preserving the useful existing outline.
+status: proposed
+priority: high
+owners: [project maintainers]
+createdDate: 2026-07-22
+reviewedDate: null
+completedDate: null
+userNeeds:
+  - As a handbook owner, I need predictable sections and prompts so that I can find and maintain important information.
+  - As a contributor, I need content rules that avoid duplication and jurisdiction lock-in.
+personas:
+  - id: PER-001
+    path: docs/personas/sarah.md
+    relevance: Sarah needs prioritised information that is easy to navigate under stress.
+  - id: PER-003
+    path: docs/personas/amina.md
+    relevance: Amina needs one reliable home for guidance shared across several family members.
+scope:
+  included:
+    - Section taxonomy, prompt pattern, cross-references, optionality and jurisdiction layering
+    - Review of the eleven existing handbook chapter outlines
+  excluded:
+    - Fully authored guidance for every topic
+    - Application navigation or data-entry screens
+requirements:
+  functional:
+    - id: HB-003-FR-01
+      statement: Each practical topic must have one primary home, with cross-references used instead of duplicated instructions.
+    - id: HB-003-FR-02
+      statement: Sections must support not applicable, unknown and action required without household-specific defaults in public content.
+    - id: HB-003-FR-03
+      statement: Handbook chapters, summaries, examples and future implementations must be projections of one shared, technology-independent domain model.
+  content:
+    - id: HB-003-CR-01
+      statement: Prompts must explain why information helps, what is safe to record and when it should be reviewed.
+    - id: HB-003-CR-02
+      statement: Core topic names must be jurisdiction-neutral, with UK-specific guidance in a separable layer.
+    - id: HB-003-CR-03
+      statement: Headings, ordering and terminology must be consistent and accessible across chapters.
+    - id: HB-003-CR-04
+      statement: Legal, care and project-specific terms must link to plain-language glossary definitions with jurisdiction differences identified.
+  privacyAndSecurity:
+    - id: HB-003-PS-01
+      statement: Every field must follow the data classification established by HB-002.
+    - id: HB-003-PS-02
+      statement: Classification labels must remain visible in human-readable and printed handbook output.
+acceptanceCriteria:
+  - id: HB-003-AC-01
+    statement: All existing chapter topics are mapped to a primary section and duplicate concepts are identified.
+    verificationMethod: content inventory
+  - id: HB-003-AC-02
+    statement: A representative chapter follows the agreed prompt pattern and passes privacy and plain-language review.
+    verificationMethod: exemplar review
+  - id: HB-003-AC-03
+    statement: UK-specific concepts can be removed or replaced without changing the core household domain structure.
+    verificationMethod: portability review
+  - id: HB-003-AC-04
+    statement: A reader can find plain-language definitions for specialised terms used in the handbook and see when meaning varies by jurisdiction.
+    verificationMethod: glossary and link review
+  - id: HB-003-AC-05
+    statement: Every handbook section has a reviewed default classification and any stricter field-level classifications are explicit.
+    verificationMethod: classification inventory
+  - id: HB-003-AC-06
+    statement: Every existing handbook topic maps to a documented domain concept or identifies a reviewed gap in the model.
+    verificationMethod: domain mapping review
+dependencies:
+  requires: [HB-001, HB-002]
+  enables: [HB-004, HB-005, HB-006]
+  related: []
+principles: [P-001, P-002, P-003, P-004, P-005, P-006, P-008, P-009, P-010]
+risks:
+  - id: HB-003-R-01
+    description: Restructuring may discard useful early topic ideas.
+    mitigation: Inventory and map existing headings before moving or consolidating content.
+unresolvedQuestions:
+  - id: HB-003-Q-01
+    question: Should emergency information remain a chapter or become a short generated summary sourced from several chapters?
+    owner: project maintainers
+  - id: HB-003-Q-02
+    question: Where should overlapping contacts be maintained to avoid conflicting copies?
+    owner: project maintainers
+implementationNotes:
+  - Existing filenames use zero-padded numeric prefixes and PascalCase topic names; retain them until a deliberate migration decision is approved.
+traceability:
+  projectRequirements: [project/project.yaml]
+  documentation:
+    - docs/glossary.md
+    - docs/domainModel.md
+    - docs/domainModel.mmd
+    - docs/informationClassification.md
+    - handbook/01-GettingStarted.md
+    - handbook/02-EmergencyPlan.md
+    - handbook/03-FamilyAndCare.md
+    - handbook/04-LegalAffairs.md
+    - handbook/05-MoneyAndPensions.md
+    - handbook/06-HomeAndProperty.md
+    - handbook/07-Health.md
+    - handbook/08-DigitalLife.md
+    - handbook/09-FinalWishes.md
+    - handbook/10-FamilyKnowledge.md
+    - handbook/11-AnnualReview.md
+  code: []
+  tests: []
+  adrs:
+    - project/adr/ADR-0001-handbookBeforeSoftware.md
+    - project/adr/ADR-0004-publicTemplatesPrivateData.md
+    - project/adr/ADR-0005-informationClassification.md
+    - project/adr/ADR-0007-knowledgeBeforeDocuments.md
+    - project/adr/ADR-0008-handbookAsProjection.md
+  supersedes: []
+  supersededBy: []
+verification:
+  status: notStarted
+  evidence: []

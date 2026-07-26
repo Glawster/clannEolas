@@ -1,0 +1,131 @@
+schemaVersion: 1
+project:
+  name: clanneolas.com
+  purpose: >-
+    Help individuals organise the practical information their family may need
+    during an emergency, serious illness, loss of capacity or death.
+  currentState: >-
+    Early content and requirements design. A draft handbook outline exists; no
+    working web or desktop application exists.
+  audiences:
+    primary:
+      - People preparing practical information for their household
+      - Trusted family members, carers or representatives who may need that information
+    secondary:
+      - Open-source contributors adapting or improving the reusable handbook
+
+scope:
+  included:
+    - A reusable, human-readable family handbook structure
+    - Guidance for safely recording or locating practical family information
+    - Fictional examples that demonstrate the handbook without exposing private data
+    - Review processes that help households keep their handbook current
+    - Requirements and architecture decision records for content or future software
+  excluded:
+    - Storing passwords, PINs or recovery codes in ordinary handbook content
+    - Publishing or committing real household data
+    - Providing legal, medical or financial advice
+    - Implementing a web or desktop application at this stage
+    - Requiring a future application to read, maintain or print the handbook
+
+principles:
+  - id: P-001
+    name: People before paperwork
+    statement: Clarity, dignity and people's immediate needs take priority over administrative completeness.
+  - id: P-002
+    name: Help families continue confidently
+    statement: The handbook must help trusted people identify what matters and take the next appropriate step.
+  - id: P-003
+    name: Explain before asking
+    statement: Prompts must explain purpose, use and sensitivity before asking for information.
+  - id: P-004
+    name: Privacy by default
+    statement: Privacy and data minimisation must guide content and design decisions.
+  - id: P-005
+    name: Technology should disappear
+    statement: Technology must reduce effort without becoming necessary to use or understand the handbook.
+  - id: P-006
+    name: The handbook must remain useful on paper
+    statement: Core handbook output must be practical to print and use without interactive technology.
+  - id: P-007
+    name: Reference sensitive information; never reproduce secrets
+    statement: Sensitive information should normally be referenced, while passwords, PINs and recovery codes must not be stored.
+  - id: P-008
+    name: Public project, private household
+    statement: Reusable public content must remain clearly separated from private household data.
+  - id: P-009
+    name: Open and adaptable
+    statement: Open formats and a jurisdiction-neutral core must prevent vendor, application or country lock-in.
+  - id: P-010
+    name: Accessible by design
+    statement: Language, structure and layouts must be accessible from the start.
+
+constraints:
+  - All repository examples must be explicitly fictional and safe to publish.
+  - Planned features must not be described as implemented.
+  - Content must distinguish general organisation guidance from professional advice.
+  - Files and directories use camelCase unless an established record convention, such as requirement or ADR IDs, takes precedence.
+  - Completed requirements retain stable IDs and version-control history.
+
+risks:
+  - id: PR-01
+    description: Users may copy secrets or excessive personal data into the handbook.
+    impact: critical
+    mitigation: Provide prominent field-level guidance and safe examples.
+  - id: PR-02
+    description: A lost, stolen or shared handbook may expose sensitive information.
+    impact: high
+    mitigation: Minimise stored data and document storage, access and disposal choices.
+  - id: PR-03
+    description: UK-specific terminology may become embedded in the core structure.
+    impact: medium
+    mitigation: Separate jurisdiction-specific guidance from neutral domain concepts.
+  - id: PR-04
+    description: Content may become stale and provide misleading practical information.
+    impact: high
+    mitigation: Define an annual and event-triggered review process.
+  - id: PR-05
+    description: Future software could make the non-software handbook a second-class output.
+    impact: high
+    mitigation: Require source documents and print output to remain independently useful.
+  - id: PR-06
+    description: Empty placeholders may be mistaken for completed guidance.
+    impact: medium
+    mitigation: Use requirements status and honest repository-state descriptions.
+
+milestones:
+  - id: M1
+    name: Requirements foundation
+    status: inProgress
+    exitCriteria:
+      - Project principles and workflow are documented.
+      - Initial feature requirements are proposed.
+      - YAML and internal links validate.
+  - id: M2
+    name: Safe handbook foundation
+    status: proposed
+    exitCriteria:
+      - Foundation, privacy and content-structure requirements are approved and verified.
+      - Handbook prompts contain no household-specific data or secret-storage prompts.
+  - id: M3
+    name: Reusable example and review cycle
+    status: proposed
+    exitCriteria:
+      - A clearly fictional example household demonstrates safe completion.
+      - Annual and event-triggered review guidance is verified.
+  - id: M4
+    name: Content maturity
+    status: proposed
+    exitCriteria:
+      - Priority handbook sections have reviewed content requirements and guidance.
+      - Print and accessibility checks are defined and performed.
+
+unresolvedQuestions:
+  - id: PQ-01
+    question: Which open licence should govern project content and code?
+  - id: PQ-02
+    question: Which UK jurisdiction should be used for the first jurisdiction-specific guidance review?
+  - id: PQ-03
+    question: Which print-output format and accessibility baseline should be adopted?
+  - id: PQ-04
+    question: Where should users keep private household data relative to a reusable public source copy?
