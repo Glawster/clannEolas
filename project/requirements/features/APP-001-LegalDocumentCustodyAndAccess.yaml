@@ -1,0 +1,155 @@
+schemaVersion: 1
+id: APP-001
+name: Legal document custody and access
+summary: >-
+  Record where wills and powers of attorney are held, which copies exist and
+  how authorised people can find the relevant professional, physical and
+  government-service records without turning Eolas into a credential store.
+status: proposed
+priority: high
+owners: [project maintainers]
+createdDate: 2026-07-26
+reviewedDate: null
+completedDate: null
+
+userNeeds:
+  - As a Clann member, I need to know where an original legal document and its local copies are held so that an authorised person can find the correct document when it is needed.
+  - As an attorney, I need to find the relevant power-of-attorney reference and official online service without passwords being copied into Eolas.
+
+personas:
+  - id: PER-001
+    path: docs/personas/sarah.md
+    relevance: Sarah needs to locate authoritative legal documents and the responsible solicitor quickly during a stressful event.
+  - id: PER-002
+    path: docs/personas/david.md
+    relevance: David needs his daughter to know that protected paper and online records exist and how authorised access is arranged.
+  - id: PER-004
+    path: docs/personas/morgan.md
+    relevance: Morgan needs account and document references to remain useful without exposing reusable credentials.
+
+scope:
+  included:
+    - Wills and powers of attorney as legal document records
+    - Original-document custody and one or more physical or digital copy locations
+    - A solicitor, firm or other professional custodian linked by reference
+    - Jurisdiction, document status and relevant party roles
+    - Official online services, user or account identifiers and power-of-attorney reference numbers
+    - Safe references to a separate authorised credential or access arrangement
+  excluded:
+    - Storing the contents of a will or power of attorney by default
+    - Storing passwords, PINs, recovery codes or authentication secrets
+    - Treating a local copy as proof that it is current, registered or legally effective
+    - Giving legal advice or determining a person's authority from incomplete data
+    - Assuming that every jurisdiction provides an online power-of-attorney service
+
+requirements:
+  functional:
+    - id: APP-001-FR-01
+      statement: The system must represent each will and power of attorney as a distinct legal document with a stable reference.
+    - id: APP-001-FR-02
+      statement: A legal document must support one authoritative custody location and zero or more separately labelled copy locations.
+    - id: APP-001-FR-03
+      statement: A custody or copy location must be able to reference a solicitor, professional organisation, household or protected digital location without duplicating that entity's details.
+    - id: APP-001-FR-04
+      statement: A power-of-attorney record must support its jurisdiction, instrument type, status, canonical grantor references and attorney references independently of household membership and family relationships.
+    - id: APP-001-FR-05
+      statement: Jurisdiction-specific presentation may label the canonical grantor role as donor, granter, grantor or principal without changing the stored role semantics.
+    - id: APP-001-FR-06
+      statement: A power-of-attorney record must support zero or more official service access records containing the service name, service address, user or account identifier, relevant power-of-attorney reference numbers and a safe reference to the separate credential-access arrangement.
+    - id: APP-001-FR-07
+      statement: The system must support more than one power-of-attorney instrument for the same Clann, including separate instruments for different grantors or types of authority.
+  content:
+    - id: APP-001-CR-01
+      statement: The interface and handbook projection must distinguish an original held by a solicitor from a local household copy.
+    - id: APP-001-CR-02
+      statement: Access guidance must explain that possession of a reference or copy does not itself confer legal authority.
+    - id: APP-001-CR-03
+      statement: Jurisdiction-specific terminology and service guidance must be presented separately from the canonical data model.
+  privacyAndSecurity:
+    - id: APP-001-PS-01
+      statement: Passwords, PINs, recovery codes, authentication tokens and equivalent secrets must never be requested or stored in legal document, account, log, export or test records.
+    - id: APP-001-PS-02
+      statement: User or account identifiers, power-of-attorney reference numbers and precise document locations must be classified at least Confidential unless a stricter classification applies.
+    - id: APP-001-PS-03
+      statement: A credential-access field may identify an authorised process or external credential store but must not contain the credential itself.
+    - id: APP-001-PS-04
+      statement: Views and exports must disclose custody, copy, account and reference details only to an audience authorised for their classification.
+
+acceptanceCriteria:
+  - id: APP-001-AC-01
+    statement: A fictional scenario can record a will whose original is held by a solicitor and whose labelled copy is held in the home without duplicating the document or professional record.
+    verificationMethod: domain-model and scenario test
+  - id: APP-001-AC-02
+    statement: A fictional scenario can record two grantors appointing the same attorney using separate power-of-attorney instruments.
+    verificationMethod: domain-model and scenario test
+  - id: APP-001-AC-03
+    statement: A fictional power-of-attorney record can identify an official online service, a non-usable account placeholder and non-real reference placeholders while storing no password or authentication secret.
+    verificationMethod: privacy and scenario test
+  - id: APP-001-AC-04
+    statement: The same canonical grantor and attorney roles can be presented using the appropriate terminology for England and Wales, Scotland and Northern Ireland.
+    verificationMethod: jurisdiction presentation test
+  - id: APP-001-AC-05
+    statement: A repository scan finds no credential field or usable secret introduced by the feature.
+    verificationMethod: automated and manual security review
+
+dependencies:
+  requires: [HB-002, HB-003]
+  enables: []
+  related: [HB-004, HB-005, HB-006]
+
+principles: [P-001, P-003, P-004, P-005, P-007, P-008, P-009, P-010]
+
+risks:
+  - id: APP-001-R-01
+    description: Precise document locations and official reference numbers could help an unauthorised person locate or misuse sensitive legal records.
+    mitigation: Minimise detail, classify it at least Confidential and restrict views and exports by audience.
+  - id: APP-001-R-02
+    description: A user may place a password in a notes, location or access-reference field despite the dedicated credential prohibition.
+    mitigation: Put contextual warnings beside access fields and include prohibited-secret checks in validation and review.
+  - id: APP-001-R-03
+    description: A stale local copy or online status may be mistaken for the current legally effective instrument.
+    mitigation: Record copy type, status, verification date and authoritative custodian separately and prompt for periodic review.
+  - id: APP-001-R-04
+    description: Jurisdiction-specific terminology or services may change or may not apply to a particular instrument.
+    mitigation: Keep the core model jurisdiction-neutral and treat legal labels and service guidance as reviewed presentation metadata.
+
+unresolvedQuestions:
+  - id: APP-001-Q-01
+    question: Which statuses and copy types are required for the first legal-document schema?
+    owner: project maintainers
+  - id: APP-001-Q-02
+    question: Should official service access be modelled as an Account linked to a Document or as access metadata owned by the Document?
+    owner: project maintainers
+  - id: APP-001-Q-03
+    question: Which power-of-attorney instrument types and authority scopes should the first jurisdiction layer support?
+    owner: project maintainers
+
+implementationNotes:
+  - Model knowledge about custody, copies, parties and access separately from stored document files, following ADR-0007.
+  - Prefer professional, household, account and document references over repeated names, addresses or identifiers.
+  - Do not add password-shaped fields; use an accessArrangementRef whose target describes an authorised process without containing secrets.
+
+traceability:
+  projectRequirements: [project/project.yaml]
+  documentation:
+    - docs/domainModel.md
+    - docs/glossary.md
+    - docs/informationClassification.md
+    - docs/privacyAndSecurity.md
+    - handbook/04-LegalAffairs.md
+    - handbook/08-DigitalLife.md
+  code: []
+  tests: []
+  adrs:
+    - project/adr/ADR-0002-offlineFirst.md
+    - project/adr/ADR-0003-neverStorePasswords.md
+    - project/adr/ADR-0005-informationClassification.md
+    - project/adr/ADR-0006-sharedDomainModel.md
+    - project/adr/ADR-0007-knowledgeBeforeDocuments.md
+    - project/adr/ADR-0008-handbookAsProjection.md
+  supersedes: []
+  supersededBy: []
+
+verification:
+  status: notStarted
+  evidence: []
