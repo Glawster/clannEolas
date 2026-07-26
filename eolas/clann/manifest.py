@@ -1,4 +1,4 @@
-"""Central definitions for the initial household data structure."""
+"""Central definitions for a Clann data tree."""
 
 from typing import Dict, Tuple
 
@@ -9,12 +9,13 @@ PERSON_SECTIONS: Dict[str, Dict[str, str]] = {
     }
 }
 
-HOUSEHOLD_DIRECTORIES: Tuple[str, ...] = (
-    "addresses",
-    "properties",
-    "vehicles",
-    "finances",
+CLANN_DIRECTORIES: Tuple[str, ...] = (
+    "people",
+    "households",
+    "relationships",
     "contacts",
+    "professionals",
     "documents",
-    "backups",
+    "shared",
 )
+

@@ -1,6 +1,6 @@
-"""Eolas household information tools."""
+"""Eolas Clann information tools."""
 
-from eolas.household.models import HouseholdInput, PersonInput
-from eolas.household.service import householdCreate
+from eolas.clann.models import ClannInput, PersonInput
+from eolas.clann.service import clannCreate
 
-__all__ = ["HouseholdInput", "PersonInput", "householdCreate"]
+__all__ = ["ClannInput", "PersonInput", "clannCreate"]

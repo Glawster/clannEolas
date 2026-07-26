@@ -1,0 +1,39 @@
+schema: eolas/person/identity/v1
+personRef: person-kathryn-elizabeth-wilson
+personal:
+  title: null
+  firstName: Kathryn
+  middleNames:
+  - Elizabeth
+  lastName: Wilson
+  preferredName: Kathy
+  previousNames: []
+  dateOfBirth: null
+  placeOfBirth:
+    townOrCity: null
+    countyOrRegion: null
+    country: null
+  nationality: []
+  maritalStatus: null
+identifiers:
+  nationalInsuranceNumber: null
+  nhsNumber: null
+documents:
+  passportRef: null
+  drivingLicenceRef: null
+  birthCertificateRef: null
+  marriageCertificateRef: null
+  willRef: null
+  lastingPowerOfAttorneyRefs: []
+medicalSummary:
+  bloodGroup: null
+  allergiesKnown: null
+photograph:
+  fileRef: null
+notes: null
+metadata:
+  status: draft
+  created: '2026-07-26T10:54:33.304086+01:00'
+  modified: '2026-07-26T10:54:33.304086+01:00'
+  lastVerified: null
+  nextReview: null

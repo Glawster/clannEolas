@@ -4,15 +4,11 @@ import argparse
 from pathlib import Path
 from typing import List, Optional, Sequence
 
-from eolas.household.models import (
-    HouseholdInput,
-    HouseholdValidationError,
-    PersonInput,
-)
-from eolas.household.service import HouseholdCreationError, householdCreate
-from eolas.household.slugs import slugCreate
+from eolas.clann.models import ClannInput, ClannValidationError, PersonInput
+from eolas.clann.service import ClannCreationError, clannCreate
+from eolas.clann.slugs import slugCreate
 
-ROLE_SUGGESTIONS = "self, spouse, partner, child, parent, relative, other"
+ROLE_SUGGESTIONS = "householder, partner, family, carer, lodger, other"
 
 
 def cliRun(arguments: Optional[Sequence[str]] = None) -> int:
@@ -20,8 +16,10 @@ def cliRun(arguments: Optional[Sequence[str]] = None) -> int:
 
     parser = _parserBuild()
     args = parser.parse_args(arguments)
-    if args.command == "ask-household":
-        return _householdAsk(confirm=args.confirm)
+    if args.area == "clann" and args.action == "create":
+        return _clannAsk(confirm=args.confirm)
+    if args.area == "log" and args.action == "show":
+        return _logShow()
     parser.print_help()
     return 0
 
@@ -39,97 +37,148 @@ def _confirmationAsk(prompt: str, *, default: bool) -> bool:
         print("Please answer yes or no.")
 
 
-def _householdAsk(*, confirm: bool) -> int:
-    print("Eolas household setup")
+def _clannAsk(*, confirm: bool) -> int:
+    print("Eolas Clann setup")
     print("Generated records contain sensitive personal-data placeholders.")
-    print("Do not commit live household data to a public repository.\n")
+    print("Do not commit live Clann data to a public repository.\n")
 
     try:
-        name = _requiredAsk("Household name: ")
+        name = _requiredAsk("What should this Clann be called? ")
+        householdName = _requiredAsk(
+            "What is the primary household called? "
+        )
         outputDirectory = _outputDirectoryAsk()
-        personCount = _positiveIntegerAsk("Number of people in the household: ")
-        members = _membersAsk(personCount)
-        primaryIndex = _primaryAsk(members)
-        household = HouseholdInput(
+        residentCount = _positiveIntegerAsk(
+            "How many people currently live there? "
+        )
+        people = _peopleAsk(residentCount, resident=True)
+        while _confirmationAsk(
+            "Are there other Clann people to add who live elsewhere?",
+            default=False,
+        ):
+            people.extend(_peopleAsk(1, resident=False))
+        primaryIndex = _primaryAsk(people)
+        clann = ClannInput(
             name=name,
-            members=[
+            primary_household_name=householdName,
+            people=[
                 PersonInput(
-                    full_name=member.full_name,
-                    preferred_name=member.preferred_name,
-                    household_role=member.household_role,
-                    is_adult=member.is_adult,
+                    full_name=person.full_name,
+                    preferred_name=person.preferred_name,
+                    household_role=person.household_role,
+                    is_adult=person.is_adult,
                     is_primary=index == primaryIndex,
+                    lives_in_primary_household=(
+                        person.lives_in_primary_household
+                    ),
                 )
-                for index, member in enumerate(members)
+                for index, person in enumerate(people)
             ],
         )
-        household.householdValidate()
-        targetPath = outputDirectory / slugCreate(household.name)
-        _summaryPrint(household, targetPath)
-        if not confirm and not _confirmationAsk("Generate these files?", default=True):
-            print("Household setup cancelled; no files were created.")
+        clann.clannValidate()
+        targetPath = outputDirectory / "clanns" / slugCreate(clann.name)
+        _summaryPrint(clann, targetPath)
+        if not confirm and not _confirmationAsk(
+            "Generate these files?", default=True
+        ):
+            print("Clann setup cancelled; no files were created.")
             return 0
-        createdPath = householdCreate(household, outputDirectory)
+        createdPath = clannCreate(clann, outputDirectory)
     except (EOFError, KeyboardInterrupt):
-        print("\nHousehold setup cancelled; no files were created.")
+        print("\nClann setup cancelled; no files were created.")
         return 130
-    except (
-        HouseholdCreationError,
-        HouseholdValidationError,
-        OSError,
-        ValueError,
-    ) as error:
+    except (ClannCreationError, ClannValidationError, OSError, ValueError) as error:
         print(f"Error: {error}")
         return 1
 
-    print(f"\nHousehold created: {createdPath}")
-    print(f"Members created: {len(household.members)}")
+    residentCount = sum(
+        person.lives_in_primary_household for person in clann.people
+    )
+    print(f"\nClann created: {createdPath}")
+    print(f"People created: {len(clann.people)}")
+    print(f"Primary household residents: {residentCount}")
     return 0
 
 
-def _membersAsk(personCount: int) -> List[PersonInput]:
-    members: List[PersonInput] = []
+def _peopleAsk(personCount: int, *, resident: bool) -> List[PersonInput]:
+    people: List[PersonInput] = []
     for index in range(personCount):
-        print(f"\nPerson {index + 1} of {personCount}")
+        location = "resident" if resident else "non-resident Clann person"
+        print(f"\n{location.title()} {index + 1} of {personCount}")
         fullName = _requiredAsk("  Full name: ")
         preferredName = _requiredAsk("  Preferred name: ")
-        print(f"  Suggested roles: {ROLE_SUGGESTIONS}")
+        print(f"  Suggested practical roles: {ROLE_SUGGESTIONS}")
         householdRole = _requiredAsk("  Household role: ")
-        isAdult = _confirmationAsk("  Is this person an adult?", default=True)
-        members.append(
+        isAdult = _confirmationAsk(
+            "  Is this person legally an adult?", default=True
+        )
+        people.append(
             PersonInput(
                 full_name=fullName,
                 preferred_name=preferredName,
                 household_role=householdRole,
                 is_adult=isAdult,
+                lives_in_primary_household=resident,
             )
         )
-    return members
+    return people
 
 
 def _outputDirectoryAsk() -> Path:
-    defaultPath = Path.cwd()
-    answer = input(f"Output directory [{defaultPath}]: ").strip()
+    defaultPath = Path.cwd() / "data"
+    answer = input(f"Eolas data directory [{defaultPath}]: ").strip()
     return Path(answer).expanduser().resolve() if answer else defaultPath
 
 
 def _parserBuild() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="eolas",
-        description="Create and maintain private Eolas household records.",
+        description="Create and maintain private Eolas Clann records.",
     )
-    subparsers = parser.add_subparsers(dest="command")
-    householdParser = subparsers.add_parser(
-        "ask-household",
-        help="interactively create an initial household data structure",
+    areas = parser.add_subparsers(dest="area", title="functional areas")
+
+    clannParser = areas.add_parser("clann", help="work with a Clann")
+    clannActions = clannParser.add_mutually_exclusive_group(required=True)
+    clannActions.add_argument(
+        "--create",
+        action="store_const",
+        const="create",
+        dest="action",
+        help="interactively create a Clann and primary household",
     )
-    householdParser.add_argument(
+    clannParser.add_argument(
         "-y",
         "--confirm",
         action="store_true",
-        help="generate after displaying the summary without asking for confirmation",
+        help="generate after displaying the summary without asking",
     )
+
+    logParser = areas.add_parser("log", help="inspect Eolas logs")
+    logActions = logParser.add_mutually_exclusive_group(required=True)
+    logActions.add_argument(
+        "--show",
+        action="store_const",
+        const="show",
+        dest="action",
+        help="show data/eolas.log",
+    )
+
     return parser
+
+
+def _logShow() -> int:
+    logPath = Path.cwd() / "data" / "eolas.log"
+    try:
+        contents = logPath.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        print(f"No Eolas log file found: {logPath}")
+        return 1
+    except OSError as error:
+        print(f"Could not read Eolas log file {logPath}: {error}")
+        return 1
+
+    print(contents, end="" if contents.endswith("\n") or not contents else "\n")
+    return 0
 
 
 def _positiveIntegerAsk(prompt: str) -> int:
@@ -145,10 +194,10 @@ def _positiveIntegerAsk(prompt: str) -> int:
         print("Please enter a positive whole number.")
 
 
-def _primaryAsk(members: Sequence[PersonInput]) -> int:
+def _primaryAsk(people: Sequence[PersonInput]) -> int:
     print("\nPrimary person or record owner")
-    for index, member in enumerate(members, start=1):
-        print(f"  {index}. {member.full_name}")
+    for index, person in enumerate(people, start=1):
+        print(f"  {index}. {person.full_name}")
     while True:
         answer = input("Select the primary person by number: ").strip()
         try:
@@ -156,7 +205,7 @@ def _primaryAsk(members: Sequence[PersonInput]) -> int:
         except ValueError:
             print("Please enter one of the listed numbers.")
             continue
-        if 1 <= selected <= len(members):
+        if 1 <= selected <= len(people):
             return selected - 1
         print("Please enter one of the listed numbers.")
 
@@ -169,15 +218,22 @@ def _requiredAsk(prompt: str) -> str:
         print("A value is required.")
 
 
-def _summaryPrint(household: HouseholdInput, targetPath: Path) -> None:
+def _summaryPrint(clann: ClannInput, targetPath: Path) -> None:
     print("\nSummary")
-    print(f"  Household: {household.name}")
+    print(f"  Clann: {clann.name}")
+    print(f"  Primary household: {clann.primary_household_name}")
     print(f"  Target: {targetPath}")
-    print("  Members:")
-    for member in household.members:
-        primaryMarker = " (primary)" if member.is_primary else ""
-        adultLabel = "adult" if member.is_adult else "minor"
+    print("  People:")
+    for person in clann.people:
+        primaryMarker = " (primary)" if person.is_primary else ""
+        residence = (
+            "resident"
+            if person.lives_in_primary_household
+            else "lives elsewhere"
+        )
+        ageLabel = "adult" if person.is_adult else "minor"
         print(
-            f"    - {member.full_name} [{member.household_role}, "
-            f"{adultLabel}]{primaryMarker}"
+            f"    - {person.full_name} [household role: "
+            f"{person.household_role}; age: {ageLabel}; "
+            f"residence: {residence}]{primaryMarker}"
         )
