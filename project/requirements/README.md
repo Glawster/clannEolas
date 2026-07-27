@@ -9,7 +9,7 @@ implementation and must distinguish current behaviour from planned work.
 
 - `../project.yaml` defines the shared purpose, scope, principles, risks and
   milestones for the wider project.
-- `../../docs/principles.md` explains the north-star principles referenced by
+- `../../documentation/principles.md` explains the north-star principles referenced by
   stable ID from each requirement.
 - `features/` contains active feature requirements.
 - `../adr/` contains architecture decision records (ADRs) that affect multiple
