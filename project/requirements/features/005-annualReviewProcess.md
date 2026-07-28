@@ -1,6 +1,5 @@
 # 005: Annual review process
 
-Legacy ID: `HB-005`  
 Priority: high  
 Owner: project maintainers
 

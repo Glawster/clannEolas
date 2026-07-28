@@ -1,6 +1,5 @@
 # 003: Handbook content structure
 
-Legacy ID: `HB-003`  
 Priority: high  
 Owner: project maintainers
 

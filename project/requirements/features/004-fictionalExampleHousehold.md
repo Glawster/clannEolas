@@ -1,6 +1,5 @@
 # 004: Fictional example household
 
-Legacy ID: `HB-004`  
 Priority: high  
 Owner: project maintainers
 

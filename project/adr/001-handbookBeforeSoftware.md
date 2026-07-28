@@ -2,7 +2,9 @@
 
 - Status: accepted
 - Date: 2026-07-22
-- Related requirements: [001](../requirements/features/001-handbookFoundation.md), [003](../requirements/features/003-handbookContentStructure.md)
+- Related requirements:
+  - [001](../requirements/features/001-handbookFoundation.md),
+  - [003](../requirements/features/003-handbookContentStructure.md)
 
 ## Context
 

@@ -35,3 +35,5 @@ valid, but presentation must not become the source of truth.
 - [007: Knowledge before documents](007-knowledgeBeforeDocuments.md) — keystone ADR
 - [008: Handbook as a projection of household knowledge](008-handbookAsProjection.md)
 - [009: Markdown as the canonical handbook source](009-markdownHandbookSource.md)
+- [010: Private Clann data location](010-privateClannDataLocation.md) — superseded by ADR-0011
+- [011: Platform-resolved private data root](011-platformPrivateDataRoot.md)

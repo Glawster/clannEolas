@@ -1,6 +1,5 @@
 # 006: Getting Started guide
 
-Legacy ID: `HB-006`  
 Priority: high  
 Owner: project maintainers
 

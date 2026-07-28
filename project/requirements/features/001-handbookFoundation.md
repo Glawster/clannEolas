@@ -1,8 +1,7 @@
 # 001: Handbook foundation
 
-Legacy ID: `HB-001`  
 Priority: critical  
-Owner: project maintainers
+Owner: Andy Wilson
 
 ## Status
 

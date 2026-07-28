@@ -1,6 +1,5 @@
 # 007: Legal document custody and access
 
-Legacy ID: `APP-001`
 Priority: high
 Owner: project maintainers
 
@@ -31,7 +30,7 @@ authentication secrets.
 - Official-service identifiers and safe references to external access arrangements.
 - Multiple instruments for different grantors or authority types.
 
-## Out of scope
+## Out of Scope
 
 - Storing document contents by default or treating a copy as authoritative.
 - Passwords, PINs, recovery codes, tokens or authentication secrets.

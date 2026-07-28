@@ -4,10 +4,7 @@
 - Date: 2026-07-28
 - Accepted: 2026-07-28
 - Approved by: project maintainer
-- Related requirements: 
-[001](../requirements/features/001-handbookFoundation.md), 
-[003](../requirements/features/003-handbookContentStructure.md), 
-[006](../requirements/features/006-gettingStartedGuide.md)
+- Related requirements: [001](../requirements/features/001-handbookFoundation.md), [003](../requirements/features/003-handbookContentStructure.md), [006](../requirements/features/006-gettingStartedGuide.md)
 
 ## Context
 
