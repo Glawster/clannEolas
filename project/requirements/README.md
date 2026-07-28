@@ -1,6 +1,6 @@
 # Requirements
 
-Next available number: 007
+Next available number: 008
 
 This directory is the source of truth for specific outcomes clanneolas.com
 intends to deliver and why. Requirements can govern handbook content, project
@@ -15,6 +15,7 @@ implementation and must distinguish current behaviour from planned work.
 - [004 — Fictional example household](features/004-fictionalExampleHousehold.md) (legacy ID: HB-004)
 - [005 — Annual review process](features/005-annualReviewProcess.md) (legacy ID: HB-005)
 - [006 — Getting Started guide](features/006-gettingStartedGuide.md) (legacy ID: HB-006)
+- [007 — Legal document custody and access](features/007-legalDocumentCustodyAndAccess.md) (legacy ID: APP-001)
 
 ## InProgress
 

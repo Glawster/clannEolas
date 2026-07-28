@@ -1,1 +1,2 @@
-pywin32
+PyYAML>=6.0,<7
+pywin32; platform_system == "Windows"
