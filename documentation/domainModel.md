@@ -18,10 +18,10 @@ The project's keystone architectural test is:
 
 > **Am I modelling knowledge, or am I modelling a document?**
 
-See [ADR-0007: Knowledge before documents](../project/adr/ADR-0007-knowledgeBeforeDocuments.md).
+See [ADR 007: Knowledge before documents](../project/adr/007-knowledgeBeforeDocuments.md).
 
 The handbook is the first foundational projection, not the domain model or the
-source of truth. [ADR-0008](../project/adr/ADR-0008-handbookAsProjection.md)
+source of truth. [ADR 008](../project/adr/008-handbookAsProjection.md)
 defines the relationship used for future content and interface design:
 
 ```text
