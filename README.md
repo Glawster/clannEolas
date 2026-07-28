@@ -11,15 +11,21 @@ human-readable and printable documents without future software.
 
 ## Documentation
 
-- [Product vision](docs/productVision.md)
-- [Project principles](docs/principles.md)
-- [Personas](docs/personas/README.md)
-- [Glossary](docs/glossary.md)
-- [Information classification](docs/informationClassification.md)
-- [Domain model](docs/domainModel.md)
+- [Repository layout](.github/repositoryLayout.md)
+- [Requirements management](.github/requirementsManagement.md)
+- [Product vision](documentation/productVision.md)
+- [Project principles](documentation/principles.md)
+- [Design principles](documentation/designPrinciples.md)
+- [Personas](documentation/personas/README.md)
+- [Glossary](documentation/glossary.md)
+- [Information classification](documentation/informationClassification.md)
+- [Privacy and security](documentation/privacyAndSecurity.md)
+- [Domain model](documentation/domainModel.md)
 - [Project planning and governance](project/README.md)
 - [Requirements workflow](project/requirements/README.md)
 - [Repository assessment](project/reviews/repositoryAssessment.md)
+- [Change log](documentation/changeLog.md)
+- [Brand assets and guidance](brand/README.md)
 - [Handbook outline](handbook/01-GettingStarted.md)
 
 Do not put real household data, passwords, PINs, recovery codes or other

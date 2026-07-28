@@ -1,63 +1,64 @@
-# Requirements workflow
+# Requirements
+
+Next available number: 007
 
 This directory is the source of truth for specific outcomes clanneolas.com
 intends to deliver and why. Requirements can govern handbook content, project
 processes or future software. They describe outcomes and constraints before
 implementation and must distinguish current behaviour from planned work.
 
+## ToDo
+
+- [001 — Handbook foundation](features/001-handbookFoundation.md) (legacy ID: HB-001)
+- [002 — Privacy and security model](features/002-privacyAndSecurityModel.md) (legacy ID: HB-002)
+- [003 — Handbook content structure](features/003-handbookContentStructure.md) (legacy ID: HB-003)
+- [004 — Fictional example household](features/004-fictionalExampleHousehold.md) (legacy ID: HB-004)
+- [005 — Annual review process](features/005-annualReviewProcess.md) (legacy ID: HB-005)
+- [006 — Getting Started guide](features/006-gettingStartedGuide.md) (legacy ID: HB-006)
+
+## InProgress
+
+None.
+
+## Completed
+
+None.
+
+## Repository-specific guidance
+
+This index follows the managed
+[requirements process](../../.github/requirementsManagement.md). The six
+existing `HB` records were assigned permanent numeric paths during the 2026-07-28
+migration. Their former IDs remain in each record and in this index so older
+links and history can be interpreted.
+
+All requirements remain under `features/` when their status changes. Do not
+move completed or retired records. Allocate the next number here and update it
+in the same change that creates a requirement.
+
 ## Directory layout
 
 - `../project.yaml` defines the shared purpose, scope, principles, risks and
   milestones for the wider project.
-- `../../docs/principles.md` explains the north-star principles referenced by
+- `../../documentation/principles.md` explains the north-star principles referenced by
   stable ID from each requirement.
-- `features/` contains active feature requirements.
+- `features/` contains all requirements at every lifecycle stage.
+- [`prompt/`](prompt/README.md) contains durable prompts grouped by requirement;
+  reusable adapters live in `prompt/adapters/`.
 - `../adr/` contains architecture decision records (ADRs) that affect multiple
   requirements.
-- `completed/` contains completed or retired requirements without erasing their
-  history.
-- `templates/featureRequirement.yaml` is copied when proposing a feature.
+- `templates/requirement.md` is copied when proposing a requirement.
 - `../reviews/` contains point-in-time assessments and reviews.
-
-## Workflow
-
-1. **Propose:** copy the feature template into `features/`, assign the next
-   stable ID and set `status: proposed`. Describe the user need, scope,
-   acceptance criteria, privacy impact, dependencies and open questions. Link
-   at least one persona and explain the concrete benefit to them.
-2. **Review:** check the proposal against `../project.yaml`, existing requirements
-   and handbook content. Resolve material questions or record an ADR under
-   `../adr/`. Apply the ADR-0007 keystone test: “Am I modelling knowledge, or am
-   I modelling a document?” A reviewed requirement may become `approved`.
-3. **Implement:** change the status to `inProgress`, update `traceability` with
-   the documents or code being changed, and keep implementation notes factual.
-   Do not claim acceptance criteria are met until evidence exists.
-4. **Verify:** review every acceptance criterion and record concise evidence in
-   `verification`. A requirement with unmet criteria remains `inProgress` or
-   becomes `blocked`.
-5. **Complete:** set `status: completed`, add `completedDate` and final
-   verification, then move the file to `completed/` in the same change. Use a
-   version-control move so history is retained; do not reuse its ID.
-
-A requirement that is no longer wanted is set to `retired`, given a reason,
-and moved to `completed/`. Superseding requirements link to the retired ID.
 
 ## Naming conventions
 
-- YAML and Markdown filenames generally use camelCase, except `README.md` and
+- Markdown filenames generally use camelCase, except `README.md` and
   records whose stable identifier is deliberately exposed in the filename.
-- Requirement IDs use a short area prefix and a three-digit sequence. Current
-  and anticipated namespaces include `HB` (handbook), `APP` (application),
-  `DOC` (documentation) and `WEB` (website). Adding a namespace requires review
-  to avoid overlapping meanings.
-- Feature files use `<ID>-<Name>.yaml`, for example
-  `HB-001-HandbookFoundation.yaml`. This mirrors ADR filenames, makes the stable
-  ID visible and keeps related records together when sorted. IDs are permanent;
-  descriptive names may be clarified later.
-- ADR files use `ADR-<fourDigitNumber>-<shortName>.md`, for example
-  `ADR-0005-canonicalFormat.md`. The established ADR prefix and number take
-  precedence over the general camelCase filename convention.
-- YAML keys use camelCase. Dates use ISO 8601 `YYYY-MM-DD` format.
+- Requirement filenames use `ddd-conciseCamelCaseName.md`. Numbers are
+  repository-wide, permanent and never reused.
+- ADR files use `ddd-shortName.md`, for example `005-canonicalFormat.md`.
+  Their repository-wide numeric identifiers are permanent and never reused.
+- Dates use ISO 8601 `YYYY-MM-DD` format.
 - Requirements use normative words deliberately: **must** is mandatory,
   **should** is the expected default, and **may** is optional.
 
@@ -66,15 +67,8 @@ and moved to `completed/`. Superseding requirements link to the retired ID.
 Priorities are `critical`, `high`, `medium` or `low`. `critical` is reserved
 for safety, privacy or foundational work that blocks responsible progress.
 
-Valid statuses are:
-
-- `proposed`: written but not yet accepted for implementation;
-- `approved`: reviewed and ready to implement;
-- `inProgress`: implementation or verification is under way;
-- `blocked`: cannot proceed until a recorded dependency or question is
-  resolved;
-- `completed`: all acceptance criteria have evidence;
-- `retired`: deliberately closed without implementation or replaced.
+The index and each record use `ToDo`, `InProgress` or `Completed`. A completed
+entry may also state a disposition such as retired, rejected or superseded.
 
 ## Review expectations
 

@@ -5,7 +5,15 @@ set -euo pipefail
 scriptDir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 repoDir="$(cd -- "${scriptDir}/.." && pwd)"
 src="${repoDir}/brand/icons/appIcon.png"
-out="${repoDir}/brand/icons/favicon"
+out="${repoDir}/output/icons/favicon"
+
+confirm=false
+if [[ "${1:-}" == "--confirm" || "${1:-}" == "-y" ]]; then
+    confirm=true
+elif [[ $# -gt 0 ]]; then
+    echo "Usage: $0 [--confirm|-y]" >&2
+    exit 2
+fi
 
 if ! logUtilsPath="$(
     python3 -c 'import importlib.util; spec = importlib.util.find_spec("organiseMyProjects"); print(next(iter(spec.submodule_search_locations)) + "/logUtils.sh" if spec and spec.submodule_search_locations else "")'
@@ -41,6 +49,12 @@ log_doing "creating website icons"
 log_value "source" "$src"
 log_value "output directory" "$out"
 log_value "image processor" "${imageMagick[0]}"
+
+if [[ "$confirm" != true ]]; then
+    log_info "dry-run: pass --confirm to create the icon files"
+    log_box "Icon generation preview\n${out}"
+    exit 0
+fi
 
 mkdir -p "$out"
 

@@ -5,9 +5,9 @@ clanneolas.com. It is broader than software requirements: it covers the
 project's purpose, content, safety principles, priorities, architectural decisions and
 reviews, whether or not software is ever created.
 
-- [Product vision](../docs/productVision.md) explains why the project exists,
+- [Product vision](../documentation/productVision.md) explains why the project exists,
   the problem it addresses and what makes its approach different.
-- [Project principles](../docs/principles.md) are the north star used to assess
+- [Project principles](../documentation/principles.md) are the north star used to assess
   requirements, ADRs and implementation choices.
 - [Project definition](project.yaml) records the current purpose, audience,
   scope, principles, risks and milestones.
