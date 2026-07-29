@@ -39,7 +39,7 @@ copies. It must work without software or vendor services.
 ## Dependencies and decisions
 
 - Requires [001](001-handbookFoundation.md), [002](002-privacyAndSecurityModel.md) and [003](003-handbookContentStructure.md); related to 004 and 006.
-- ADRs: [ADR-0002](../../adr/002-offlineFirst.md), [ADR-0003](../../adr/003-neverStorePasswords.md), [ADR-0007](../../adr/007-knowledgeBeforeDocuments.md), [ADR-0008](../../adr/008-handbookAsProjection.md).
+- ADRs: [002](../../adr/002-offlineFirst.md), [003](../../adr/003-neverStorePasswords.md), [007](../../adr/007-knowledgeBeforeDocuments.md), [008](../../adr/008-handbookAsProjection.md).
 - Open question: which life events trigger an immediate review?
 
 ## Verification

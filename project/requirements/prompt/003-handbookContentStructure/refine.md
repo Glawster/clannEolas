@@ -8,7 +8,7 @@ anything. Refine acceptance criteria 1–6 only; do not author all chapters or
 design application navigation. Preserve the established handbook filenames.
 
 Resolve or frame decisions for the form of emergency information and the
-primary home of overlapping contacts. Apply ADR-0005, ADR-0007 and ADR-0008,
+primary home of overlapping contacts. Apply ADRs 005, 007 and 008,
 and treat requirements 001 and 002 as dependencies. Make the proposed inventory,
 exemplar, portability, glossary, classification and domain-mapping evidence
 specific enough that independent reviewers can repeat it.

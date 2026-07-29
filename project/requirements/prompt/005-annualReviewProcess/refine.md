@@ -10,7 +10,7 @@ exclusion against recording secrets during review.
 
 Propose a bounded set of significant life events that should trigger immediate
 review and distinguish them from the annual cycle. Apply requirements 001–003
-and ADR-0002, ADR-0003, ADR-0007 and ADR-0008. Make coverage, obsolete-copy
+and ADRs 002, 003, 007 and 008. Make coverage, obsolete-copy
 handling and fictional walkthrough evidence independently repeatable.
 
 Changes may be made to:

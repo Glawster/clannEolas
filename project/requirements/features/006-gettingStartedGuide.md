@@ -48,7 +48,7 @@ help and formal legal authority, and remain useful in Markdown and on paper.
 ## Dependencies and decisions
 
 - Requires [001](001-handbookFoundation.md), [002](002-privacyAndSecurityModel.md) and [003](003-handbookContentStructure.md); related to 005.
-- ADRs: [ADR-0001](../../adr/001-handbookBeforeSoftware.md), [ADR-0002](../../adr/002-offlineFirst.md), [ADR-0003](../../adr/003-neverStorePasswords.md), [ADR-0004](../../adr/004-publicTemplatesPrivateData.md), [ADR-0007](../../adr/007-knowledgeBeforeDocuments.md), [ADR-0008](../../adr/008-handbookAsProjection.md).
+- ADRs: [001](../../adr/001-handbookBeforeSoftware.md), [002](../../adr/002-offlineFirst.md), [003](../../adr/003-neverStorePasswords.md), [004](../../adr/004-publicTemplatesPrivateData.md), [007](../../adr/007-knowledgeBeforeDocuments.md), [008](../../adr/008-handbookAsProjection.md).
 - Open questions: shortest useful first session, named review triggers and the representative print check.
 
 ## Verification

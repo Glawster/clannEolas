@@ -1,14 +1,14 @@
-# ADR-0006: One shared domain model, many projections
+# 006: One shared domain model, many projections
 
 - Status: superseded
 - Date: 2026-07-22
 - Related requirements: [003](../requirements/features/003-handbookContentStructure.md), [004](../requirements/features/004-fictionalExampleHousehold.md), [005](../requirements/features/005-annualReviewProcess.md)
-- Superseded by: ADR-0007
+- Superseded by: 007
 
 ## Context
 
 This decision was expanded and superseded by
-[ADR-0007: Knowledge before documents](007-knowledgeBeforeDocuments.md).
+[007: Knowledge before documents](007-knowledgeBeforeDocuments.md).
 It remains here as a historical record.
 
 The handbook already contains topic-based chapters, and future work may add an

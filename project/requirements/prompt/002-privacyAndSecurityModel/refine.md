@@ -10,7 +10,7 @@ security guarantees and storage of credentials or equivalent secrets.
 
 Resolve or frame for stakeholder decision whether private copies should live
 outside the repository or in a warned, ignored location. Test the proposal
-against ADR-0003, ADR-0004 and ADR-0005. Define measurable verification for the
+against ADRs 003, 004 and 005. Define measurable verification for the
 classification ordering, missing-classification default, prohibited-data scan,
 and vendor-neutral paper and digital handling guidance.
 

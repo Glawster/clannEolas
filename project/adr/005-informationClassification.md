@@ -1,4 +1,4 @@
-# ADR-0005: Information classification
+# 005: Information classification
 
 - Status: accepted
 - Date: 2026-07-22

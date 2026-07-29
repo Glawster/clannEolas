@@ -1,10 +1,10 @@
-# ADR-0007: Knowledge before documents
+# 007: Knowledge before documents
 
 - Status: accepted
 - Date: 2026-07-22
 - Role: keystone ADR
 - Related requirements: [003](../requirements/features/003-handbookContentStructure.md), [004](../requirements/features/004-fictionalExampleHousehold.md), [005](../requirements/features/005-annualReviewProcess.md), [006](../requirements/features/006-gettingStartedGuide.md)
-- Supersedes: ADR-0006
+- Supersedes: 006
 
 ## Keystone test
 
@@ -176,16 +176,16 @@ presentation.
 - P-009: Open and adaptable.
 
 The decision also supports the single-source-of-truth approach and
-[ADR-0001: Handbook before software](001-handbookBeforeSoftware.md).
+[001: Handbook before software](001-handbookBeforeSoftware.md).
 
 ## Related ADRs
 
-- [ADR-0001: Handbook before software](001-handbookBeforeSoftware.md)
-- [ADR-0002: Offline first](002-offlineFirst.md)
-- [ADR-0003: Never store passwords](003-neverStorePasswords.md)
-- [ADR-0004: Public templates and private data](004-publicTemplatesPrivateData.md)
-- [ADR-0005: Information classification](005-informationClassification.md)
-- [ADR-0006: One shared domain model, many projections](006-sharedDomainModel.md)
+- [001: Handbook before software](001-handbookBeforeSoftware.md)
+- [002: Offline first](002-offlineFirst.md)
+- [003: Never store passwords](003-neverStorePasswords.md)
+- [004: Public templates and private data](004-publicTemplatesPrivateData.md)
+- [005: Information classification](005-informationClassification.md)
+- [006: One shared domain model, many projections](006-sharedDomainModel.md)
 
 ## Future considerations
 

@@ -1,4 +1,4 @@
-# ADR-0002: Offline first
+# 002: Offline first
 
 - Status: accepted
 - Date: 2026-07-22

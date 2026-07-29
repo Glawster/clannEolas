@@ -1,4 +1,4 @@
-# ADR-0003: Never store passwords
+# 003: Never store passwords
 
 - Status: accepted
 - Date: 2026-07-22

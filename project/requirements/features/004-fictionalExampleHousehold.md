@@ -38,7 +38,7 @@ family, care, accessibility and practical needs.
 ## Dependencies and decisions
 
 - Requires [002](002-privacyAndSecurityModel.md) and [003](003-handbookContentStructure.md); related to 005.
-- ADRs: [ADR-0003](../../adr/003-neverStorePasswords.md), [ADR-0004](../../adr/004-publicTemplatesPrivateData.md), [ADR-0007](../../adr/007-knowledgeBeforeDocuments.md).
+- ADRs: [003](../../adr/003-neverStorePasswords.md), [004](../../adr/004-publicTemplatesPrivateData.md), [007](../../adr/007-knowledgeBeforeDocuments.md).
 - Open question: which household scenarios provide useful breadth without making the example unwieldy?
 
 ## Verification

@@ -10,8 +10,8 @@ and detailed-data-collection exclusions.
 
 Propose three to five tasks for the shortest useful first session, decide which
 significant changes should be named rather than linked, and define a repeatable
-representative print check. Apply requirements 001–003 and 005 plus ADR-0001,
-ADR-0002, ADR-0003, ADR-0004, ADR-0007 and ADR-0008. Ensure Sarah, David and
+representative print check. Apply requirements 001–003 and 005 plus ADRs 001,
+002, 003, 004, 007 and 008. Ensure Sarah, David and
 Morgan have distinct, observable walkthrough outcomes and that authority is not
 inferred from a family or helper relationship.
 

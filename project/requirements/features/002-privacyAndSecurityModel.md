@@ -42,7 +42,7 @@ storage, sharing, backup and disposal without guaranteeing a storage method.
 ## Dependencies and decisions
 
 - Enables 001, 003, 004, 005 and 006.
-- ADRs: [ADR-0003](../../adr/003-neverStorePasswords.md), [ADR-0004](../../adr/004-publicTemplatesPrivateData.md), [ADR-0005](../../adr/005-informationClassification.md).
+- ADRs: [003](../../adr/003-neverStorePasswords.md), [004](../../adr/004-publicTemplatesPrivateData.md), [005](../../adr/005-informationClassification.md).
 - Open question: should private copies live outside the repository by default or in a prominently warned ignored directory?
 
 ## Verification

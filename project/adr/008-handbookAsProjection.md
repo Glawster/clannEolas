@@ -1,4 +1,4 @@
-# ADR-0008: Handbook as a projection of household knowledge
+# 008: Handbook as a projection of household knowledge
 
 - Status: accepted
 - Date: 2026-07-22
@@ -6,7 +6,7 @@
 
 ## Context
 
-ADR-0007 establishes that clanneolas.com models knowledge rather than
+007 establishes that clanneolas.com models knowledge rather than
 documents. A further distinction is needed because the project name and current
 repository structure can make the handbook appear to be the complete product
 or the source of truth.
@@ -44,7 +44,7 @@ purpose and audience. A user experience presents that projection through an
 appropriate medium, such as Markdown, paper, PDF or future software.
 
 The handbook remains the first and foundational projection. In accordance with
-ADR-0001, it must be useful before software and remain useful without software.
+001, it must be useful before software and remain useful without software.
 Being foundational does not make its chapter structure the domain model.
 
 ## Rationale
@@ -111,13 +111,13 @@ independently maintained emergency-contact records.
 
 ## Relationship to other ADRs
 
-- [ADR-0001](001-handbookBeforeSoftware.md) establishes that the handbook
+- [001](001-handbookBeforeSoftware.md) establishes that the handbook
   is delivered before software and remains independently useful.
-- [ADR-0002](002-offlineFirst.md) requires essential projections to work
+- [002](002-offlineFirst.md) requires essential projections to work
   offline where practical.
-- [ADR-0006](006-sharedDomainModel.md) is the superseded first record of a
+- [006](006-sharedDomainModel.md) is the superseded first record of a
   shared domain model and multiple projections.
-- [ADR-0007](007-knowledgeBeforeDocuments.md) is the keystone decision that
+- [007](007-knowledgeBeforeDocuments.md) is the keystone decision that
   knowledge, not documents, is modelled.
 
 ## Related principles

@@ -31,6 +31,6 @@ valid, but presentation must not become the source of truth.
 - [003: Never store passwords](003-neverStorePasswords.md)
 - [004: Public templates and private data](004-publicTemplatesPrivateData.md)
 - [005: Information classification](005-informationClassification.md)
-- [006: One shared domain model, many projections](006-sharedDomainModel.md) — superseded by ADR-0007
+- [006: One shared domain model, many projections](006-sharedDomainModel.md) — superseded by 007
 - [007: Knowledge before documents](007-knowledgeBeforeDocuments.md) — keystone ADR
 - [008: Handbook as a projection of household knowledge](008-handbookAsProjection.md)

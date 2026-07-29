@@ -1,4 +1,4 @@
-# ADR-0001: Handbook before software
+# 001: Handbook before software
 
 - Status: accepted
 - Date: 2026-07-22

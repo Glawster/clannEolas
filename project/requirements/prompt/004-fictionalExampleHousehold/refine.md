@@ -10,7 +10,7 @@ realistically identifying information.
 
 Propose the smallest representative scenario set that demonstrates varied
 family, care, accessibility and practical needs without implying one universal
-family form. Apply requirements 002 and 003 and ADR-0003, ADR-0004 and ADR-0007.
+family form. Apply requirements 002 and 003 and ADRs 003, 004 and 007.
 Define repeatable privacy, chapter-coverage and separation reviews, including
 how conspicuous non-values will be assessed.
 

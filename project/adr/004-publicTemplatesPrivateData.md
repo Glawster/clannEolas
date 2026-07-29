@@ -1,4 +1,4 @@
-# ADR-0004: Public templates and private data
+# 004: Public templates and private data
 
 - Status: accepted
 - Date: 2026-07-22

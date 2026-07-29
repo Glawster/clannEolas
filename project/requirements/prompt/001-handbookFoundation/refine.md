@@ -9,7 +9,7 @@ content. Preserve the web/desktop application and detailed-topic exclusions.
 
 Resolve or turn into an explicit decision the open question about the canonical
 open source format for printable handbook content. Assess the answer against
-ADR-0001, ADR-0002, ADR-0004 and ADR-0008 and requirement 002. Ensure every
+ADRs 001, 002, 004 and 008 and requirement 002. Ensure every
 criterion names observable evidence for purpose, offline readability, print use
 and freedom from application or vendor dependencies.
 

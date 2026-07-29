@@ -41,7 +41,7 @@ clear that it is not legal, medical or financial advice.
 
 - Requires [002](002-privacyAndSecurityModel.md).
 - Enables 003, 004, 005 and 006.
-- ADRs: [ADR-0001](../../adr/001-handbookBeforeSoftware.md), [ADR-0002](../../adr/002-offlineFirst.md), [ADR-0004](../../adr/004-publicTemplatesPrivateData.md), [ADR-0008](../../adr/008-handbookAsProjection.md).
+- ADRs: [001](../../adr/001-handbookBeforeSoftware.md), [002](../../adr/002-offlineFirst.md), [004](../../adr/004-publicTemplatesPrivateData.md), [008](../../adr/008-handbookAsProjection.md).
 - Open question: which open source format should be the canonical printable source?
 
 ## Verification
