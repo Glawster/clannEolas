@@ -2,7 +2,7 @@
 
 # Publish selected assets from this repository to the public website repository.
 # The deliberately small YAML reader supports the list of source/target mappings
-# documented in publish-assets.yml. Replace manifestRead() if richer YAML is needed.
+# documented in publishAssets.yml. Replace manifestRead() if richer YAML is needed.
 
 set -Eeuo pipefail
 
@@ -105,9 +105,9 @@ argumentsParse() {
 
 usageDisplay() {
     cat <<'EOF'
-Usage: scripts/publish-assets.sh [OPTIONS]
+Usage: scripts/publishAssets.sh [OPTIONS]
 
-Publish the mappings in publish-assets.yml to the website repository.
+Publish the mappings in publishAssets.yml to the website repository.
 
 Options:
   -y, --confirm         publish changes (default: safe preview)
@@ -116,7 +116,7 @@ Options:
   --commit              commit published paths in the destination repository
   --push                commit, then push the destination branch
   --destination PATH    website repository (default: ~/Source/clanneolasWebsite)
-  --manifest PATH       manifest file (default: publish-assets.yml)
+  --manifest PATH       manifest file (default: publishAssets.yml)
   -h, --help            show this help
 
 The CLANN_EOLAS_WEBSITE_REPO environment variable can also set the destination.
@@ -132,11 +132,11 @@ usageError() {
 ## dependencies
 
 dependenciesValidate() {
-    local command_name
+    local commandName
 
-    for command_name in git rsync; do
-        command -v "${command_name}" >/dev/null 2>&1 || {
-            outputError "required command not found: ${command_name}"
+    for commandName in git rsync; do
+        command -v "${commandName}" >/dev/null 2>&1 || {
+            outputError "required command not found: ${commandName}"
             exit "${EXIT_DEPENDENCY}"
         }
     done
@@ -145,59 +145,59 @@ dependenciesValidate() {
 ## logging
 
 loggingInitialize() {
-    local log_utils_path
+    local logUtilsPath
 
     command -v python3 >/dev/null 2>&1 || {
         printf 'Error: required command not found: python3\n' >&2
         exit "${EXIT_DEPENDENCY}"
     }
-    if ! log_utils_path="$(
+    if ! logUtilsPath="$(
         python3 -c 'import importlib.util; spec = importlib.util.find_spec("organiseMyProjects"); print(next(iter(spec.submodule_search_locations)) + "/logUtils.sh" if spec and spec.submodule_search_locations else "")'
     )"; then
         printf 'Error: unable to locate organiseMyProjects/logUtils.sh.\n' >&2
         exit "${EXIT_DEPENDENCY}"
     fi
-    [[ -f "${log_utils_path}" ]] || {
+    [[ -f "${logUtilsPath}" ]] || {
         printf 'Error: organiseMyProjects/logUtils.sh was not found.\n' >&2
         exit "${EXIT_DEPENDENCY}"
     }
 
     # shellcheck source=/dev/null
-    source "${log_utils_path}"
+    source "${logUtilsPath}"
     setApplication 'publishAssets' "${PUBLISH_ASSETS_LOG_DIR:-}"
 }
 
 ## manifest
 
 manifestRead() {
-    local manifest_path=$1
+    local manifestPath=$1
     local line
-    local source_path=''
-    local target_path=''
+    local sourcePath=''
+    local targetPath=''
 
-    [[ -f "${manifest_path}" ]] || {
-        outputError "manifest does not exist: ${manifest_path}"
+    [[ -f "${manifestPath}" ]] || {
+        outputError "manifest does not exist: ${manifestPath}"
         exit "${EXIT_MANIFEST}"
     }
 
     while IFS= read -r line || [[ -n "${line}" ]]; do
         line=${line%%#*}
         if [[ "${line}" =~ ^[[:space:]]*-[[:space:]]source:[[:space:]]*(.+)[[:space:]]*$ ]]; then
-            [[ -z "${source_path}" ]] || manifestFail 'source is missing its target'
-            source_path=$(_yamlValueClean "${BASH_REMATCH[1]}")
+            [[ -z "${sourcePath}" ]] || manifestFail 'source is missing its target'
+            sourcePath=$(_yamlValueClean "${BASH_REMATCH[1]}")
         elif [[ "${line}" =~ ^[[:space:]]*target:[[:space:]]*(.+)[[:space:]]*$ ]]; then
-            [[ -n "${source_path}" ]] || manifestFail 'target appears before source'
-            target_path=$(_yamlValueClean "${BASH_REMATCH[1]}")
-            PUBLISH_SOURCES+=("${source_path}")
-            PUBLISH_TARGETS+=("${target_path}")
-            source_path=''
-            target_path=''
+            [[ -n "${sourcePath}" ]] || manifestFail 'target appears before source'
+            targetPath=$(_yamlValueClean "${BASH_REMATCH[1]}")
+            PUBLISH_SOURCES+=("${sourcePath}")
+            PUBLISH_TARGETS+=("${targetPath}")
+            sourcePath=''
+            targetPath=''
         elif [[ -n "${line//[[:space:]]/}" && ! "${line}" =~ ^[[:space:]]*publish:[[:space:]]*$ ]]; then
             manifestFail "unsupported YAML: ${line}"
         fi
-    done < "${manifest_path}"
+    done < "${manifestPath}"
 
-    [[ -z "${source_path}" ]] || manifestFail 'final source is missing its target'
+    [[ -z "${sourcePath}" ]] || manifestFail 'final source is missing its target'
     ((${#PUBLISH_SOURCES[@]} > 0)) || manifestFail 'no publish mappings found'
 }
 
@@ -218,12 +218,12 @@ _yamlValueClean() {
 ## repositories
 
 repositoriesRequireClean() {
-    local source_status
-    local destination_status
+    local sourceStatus
+    local destinationStatus
 
-    source_status=$(git -C "${SOURCE_REPO}" status --porcelain)
-    destination_status=$(git -C "${DESTINATION_REPO}" status --porcelain)
-    if [[ -n "${source_status}" || -n "${destination_status}" ]]; then
+    sourceStatus=$(git -C "${SOURCE_REPO}" status --porcelain)
+    destinationStatus=$(git -C "${DESTINATION_REPO}" status --porcelain)
+    if [[ -n "${sourceStatus}" || -n "${destinationStatus}" ]]; then
         if [[ "${FORCE}" != true ]]; then
             outputError 'a repository has uncommitted changes; use --force to override'
             exit "${EXIT_DIRTY}"
@@ -274,19 +274,19 @@ repositoryValidate() {
 
 pathsValidate() {
     local index
-    local source_path
-    local target_path
+    local sourcePath
+    local targetPath
 
     for index in "${!PUBLISH_SOURCES[@]}"; do
-        source_path=${PUBLISH_SOURCES[index]}
-        target_path=${PUBLISH_TARGETS[index]}
-        _relativePathValidate "${source_path}" 'source'
-        _relativePathValidate "${target_path}" 'target'
-        [[ -d "${SOURCE_REPO}/${source_path}" ]] || {
-            outputError "configured source folder does not exist: ${source_path}"
+        sourcePath=${PUBLISH_SOURCES[index]}
+        targetPath=${PUBLISH_TARGETS[index]}
+        _relativePathValidate "${sourcePath}" 'source'
+        _relativePathValidate "${targetPath}" 'target'
+        [[ -d "${SOURCE_REPO}/${sourcePath}" ]] || {
+            outputError "configured source folder does not exist: ${sourcePath}"
             exit "${EXIT_MANIFEST}"
         }
-        _targetUniqueValidate "${index}" "${target_path}"
+        _targetUniqueValidate "${index}" "${targetPath}"
     done
 }
 
@@ -302,16 +302,16 @@ _relativePathValidate() {
 }
 
 _targetUniqueValidate() {
-    local current_index=$1
-    local current_target=$2
-    local prior_index
-    local prior_target
+    local currentIndex=$1
+    local currentTarget=$2
+    local priorIndex
+    local priorTarget
 
-    for ((prior_index = 0; prior_index < current_index; prior_index++)); do
-        prior_target=${PUBLISH_TARGETS[prior_index]}
-        if [[ "${current_target}" == "${prior_target}" || "${current_target}" == "${prior_target}/"* \
-            || "${prior_target}" == "${current_target}/"* ]]; then
-            outputError "target folders overlap: ${prior_target} and ${current_target}"
+    for ((priorIndex = 0; priorIndex < currentIndex; priorIndex++)); do
+        priorTarget=${PUBLISH_TARGETS[priorIndex]}
+        if [[ "${currentTarget}" == "${priorTarget}" || "${currentTarget}" == "${priorTarget}/"* \
+            || "${priorTarget}" == "${currentTarget}/"* ]]; then
+            outputError "target folders overlap: ${priorTarget} and ${currentTarget}"
             exit "${EXIT_MANIFEST}"
         fi
     done
@@ -329,22 +329,22 @@ publishMappings() {
 }
 
 publishMapping() {
-    local source_path=$1
-    local target_path=$2
-    local target_directory="${DESTINATION_REPO}/${target_path}"
+    local sourcePath=$1
+    local targetPath=$2
+    local targetDirectory="${DESTINATION_REPO}/${targetPath}"
     local -a arguments=(-a --delete --itemize-changes --out-format='%i|%n%L')
     local output
 
     [[ -n "${dryRun}" ]] && arguments+=(--dry-run)
     [[ "${VERBOSE}" == true ]] && arguments+=(-v)
-    _rsyncExclusionsAdd "${source_path}" arguments
+    _rsyncExclusionsAdd "${sourcePath}" arguments
 
-    log_action "publishing ${source_path} to ${target_path}"
+    log_doing "publishing ${sourcePath} to ${targetPath}"
     if [[ -z "${dryRun}" ]]; then
-        mkdir -p -- "${target_directory}"
+        mkdir -p -- "${targetDirectory}"
     fi
-    if ! output=$(rsync "${arguments[@]}" -- "${SOURCE_REPO}/${source_path}/" "${target_directory}/"); then
-        outputError "failed to publish ${source_path}"
+    if ! output=$(rsync "${arguments[@]}" -- "${SOURCE_REPO}/${sourcePath}/" "${targetDirectory}/"); then
+        outputError "failed to publish ${sourcePath}"
         exit "${EXIT_PUBLISH}"
     fi
     mapfile -t RSYNC_OUTPUT <<< "${output}"
@@ -352,29 +352,29 @@ publishMapping() {
     if [[ "${VERBOSE}" == true && -n "${output}" ]]; then
         printf '%s\n' "${output}"
     fi
-    log_done "$(basename -- "${target_path}") published"
+    log_done "$(basename -- "${targetPath}") published"
 }
 
 _rsyncExclusionsAdd() {
-    local source_path=$1
-    local -n arguments_reference=$2
+    local sourcePath=$1
+    local -n argumentsReference=$2
     local excluded
-    local -a excluded_paths=(.git .github .vscode documentation deploy scripts README.md LICENSE)
+    local -a excludedPaths=(.git .github .vscode documentation deploy scripts README.md LICENSE)
 
-    for excluded in "${excluded_paths[@]}"; do
-        if [[ "${source_path}" != "${excluded}" && "${source_path}" != "${excluded}/"* ]]; then
-            arguments_reference+=(--exclude="${excluded}")
+    for excluded in "${excludedPaths[@]}"; do
+        if [[ "${sourcePath}" != "${excluded}" && "${sourcePath}" != "${excluded}/"* ]]; then
+            argumentsReference+=(--exclude="${excluded}")
         fi
     done
 }
 
 statisticsAdd() {
-    local -n lines_reference=$1
+    local -n linesReference=$1
     local line
     local item
     local name
 
-    for line in "${lines_reference[@]}"; do
+    for line in "${linesReference[@]}"; do
         [[ "${line}" == *'|'* ]] || continue
         item=${line%%|*}
         name=${line#*|}
@@ -393,29 +393,29 @@ statisticsAdd() {
 ## git
 
 gitIntegrate() {
-    local source_commit
-    local -a target_paths=()
-    local target_path
+    local sourceCommit
+    local -a targetPaths=()
+    local targetPath
 
     [[ "${COMMIT}" == true ]] || return 0
-    source_commit=$(git -C "${SOURCE_REPO}" rev-parse --short HEAD)
-    for target_path in "${PUBLISH_TARGETS[@]}"; do
-        target_paths+=("${target_path}")
+    sourceCommit=$(git -C "${SOURCE_REPO}" rev-parse --short HEAD)
+    for targetPath in "${PUBLISH_TARGETS[@]}"; do
+        targetPaths+=("${targetPath}")
     done
 
     [[ "${VERBOSE}" == true ]] && printf '\nStaging configured target folders.\n'
-    log_action 'staging configured target folders'
-    git -C "${DESTINATION_REPO}" add -A -- "${target_paths[@]}" || exit "${EXIT_GIT}"
-    if git -C "${DESTINATION_REPO}" diff --cached --quiet -- "${target_paths[@]}"; then
+    log_doing 'staging configured target folders'
+    git -C "${DESTINATION_REPO}" add -A -- "${targetPaths[@]}" || exit "${EXIT_GIT}"
+    if git -C "${DESTINATION_REPO}" diff --cached --quiet -- "${targetPaths[@]}"; then
         outputWarning 'no published changes to commit'
         return 0
     fi
-    log_action 'committing published asset folders'
+    log_doing 'committing published asset folders'
     git -C "${DESTINATION_REPO}" commit \
-        -m "Publish assets from clanneolas @ ${source_commit}" -- "${target_paths[@]}" \
+        -m "Publish assets from clanneolas @ ${sourceCommit}" -- "${targetPaths[@]}" \
         || exit "${EXIT_GIT}"
     if [[ "${PUSH}" == true ]]; then
-        log_action 'pushing destination repository'
+        log_doing 'pushing destination repository'
         git -C "${DESTINATION_REPO}" push || exit "${EXIT_GIT}"
     fi
 }

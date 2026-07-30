@@ -31,7 +31,7 @@ human-readable and printable documents without future software.
 ## Publishing website assets
 
 The development repository is the source of truth for website assets. The
-[`publish-assets.yml`](publish-assets.yml) manifest maps selected source folders
+[`publishAssets.yml`](publishAssets.yml) manifest maps selected source folders
 to folders in the separate public website repository. Each target folder is
 managed as a complete mirror: files removed from its source are removed from
 that target, but the publisher never changes content outside configured target
@@ -40,20 +40,20 @@ folders.
 Preview a publication before applying it:
 
 ```bash
-scripts/publish-assets.sh --verbose
+scripts/publishAssets.sh --verbose
 ```
 
 Publish to the default website checkout at `~/Source/clanneolasWebsite`:
 
 ```bash
-scripts/publish-assets.sh --confirm
+scripts/publishAssets.sh --confirm
 ```
 
 Commit the published paths, or commit and push them:
 
 ```bash
-scripts/publish-assets.sh --confirm --commit
-scripts/publish-assets.sh --confirm --push
+scripts/publishAssets.sh --confirm --commit
+scripts/publishAssets.sh --confirm --push
 ```
 
 Both repositories must normally have clean working trees. `--force` overrides
