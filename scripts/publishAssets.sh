@@ -33,6 +33,7 @@ declare -a RSYNC_OUTPUT=()
 FILES_COPIED=0
 FILES_UPDATED=0
 FILES_REMOVED=0
+pullRequestUrl=''
 
 if [[ -t 1 && -z "${NO_COLOR:-}" ]]; then
     readonly GREEN=$'\033[32m'
@@ -61,8 +62,8 @@ main() {
     repositoryDisplay "Destination Repository" "${DESTINATION_REPO}"
     repositoriesRequireClean
     publishMappings
-    summaryDisplay
     gitIntegrate
+    summaryDisplay
     log_done 'asset publication complete'
 }
 
@@ -113,11 +114,15 @@ Options:
   -y, --confirm         publish changes (default: safe preview)
   --verbose             show individual rsync changes and Git commands
   --force               allow dirty source and destination worktrees
-  --commit              commit published paths in the destination repository
-  --push                commit, then push the destination branch
+  --commit              commit published paths on the current local branch
+  --push                create a branch, commit, push, and open a pull request
   --destination PATH    website repository (default: ~/Source/clanneolasWebsite)
   --manifest PATH       manifest file (default: publishAssets.yml)
   -h, --help            show this help
+
+--push implies --commit and only creates a branch and pull request when files
+change. Without --commit or --push, --confirm leaves changes local and
+uncommitted in the destination repository.
 
 The CLANN_EOLAS_WEBSITE_REPO environment variable can also set the destination.
 EOF
@@ -140,6 +145,11 @@ dependenciesValidate() {
             exit "${EXIT_DEPENDENCY}"
         }
     done
+
+    if [[ "${PUSH}" == true ]] && ! command -v gh >/dev/null 2>&1; then
+        outputError 'required command not found: gh'
+        exit "${EXIT_DEPENDENCY}"
+    fi
 }
 
 ## logging
@@ -393,7 +403,10 @@ statisticsAdd() {
 ## git
 
 gitIntegrate() {
+    local baseBranch
+    local branchName
     local sourceCommit
+    local status
     local -a targetPaths=()
     local targetPath
 
@@ -403,20 +416,44 @@ gitIntegrate() {
         targetPaths+=("${targetPath}")
     done
 
-    [[ "${VERBOSE}" == true ]] && printf '\nStaging configured target folders.\n'
-    log_doing 'staging configured target folders'
-    git -C "${DESTINATION_REPO}" add -A -- "${targetPaths[@]}" || exit "${EXIT_GIT}"
-    if git -C "${DESTINATION_REPO}" diff --cached --quiet -- "${targetPaths[@]}"; then
+    status=$(git -C "${DESTINATION_REPO}" status --porcelain -- "${targetPaths[@]}")
+    if [[ -z "${status}" ]]; then
         outputWarning 'no published changes to commit'
         return 0
     fi
+
+    if [[ "${PUSH}" == true ]]; then
+        baseBranch=$(git -C "${DESTINATION_REPO}" branch --show-current)
+        [[ -n "${baseBranch}" ]] || {
+            outputError 'destination repository must be on a branch before using --push'
+            exit "${EXIT_GIT}"
+        }
+        branchName="publishAssets/${sourceCommit}-$(date -u +%Y%m%dT%H%M%SZ)"
+        log_doing "creating destination branch ${branchName}"
+        git -C "${DESTINATION_REPO}" switch -c "${branchName}" || exit "${EXIT_GIT}"
+    fi
+
+    [[ "${VERBOSE}" == true ]] && printf '\nStaging configured target folders.\n'
+    log_doing 'staging configured target folders'
+    git -C "${DESTINATION_REPO}" add -A -- "${targetPaths[@]}" || exit "${EXIT_GIT}"
     log_doing 'committing published asset folders'
     git -C "${DESTINATION_REPO}" commit \
         -m "Publish assets from clanneolas @ ${sourceCommit}" -- "${targetPaths[@]}" \
         || exit "${EXIT_GIT}"
     if [[ "${PUSH}" == true ]]; then
-        log_doing 'pushing destination repository'
-        git -C "${DESTINATION_REPO}" push || exit "${EXIT_GIT}"
+        log_doing "pushing destination branch ${branchName}"
+        git -C "${DESTINATION_REPO}" push --set-upstream origin "${branchName}" \
+            || exit "${EXIT_GIT}"
+        log_doing 'opening pull request'
+        pullRequestUrl=$(
+            cd -- "${DESTINATION_REPO}"
+            gh pr create \
+                --base "${baseBranch}" \
+                --head "${branchName}" \
+                --title "Publish assets from clanneolas @ ${sourceCommit}" \
+                --body "Automated asset publication from clanneolas source commit ${sourceCommit}."
+        ) || exit "${EXIT_GIT}"
+        log_done "pull request opened: ${pullRequestUrl}"
     fi
 }
 
@@ -445,6 +482,12 @@ summaryDisplay() {
     printf 'Files updated: %d\n' "${FILES_UPDATED}"
     printf 'Files removed: %d\n' "${FILES_REMOVED}"
     [[ -n "${dryRun}" ]] && printf '(projected changes; preview)\n'
+    if [[ -z "${dryRun}" && "${COMMIT}" != true ]]; then
+        printf '\nAssets published locally. Changes were not committed or pushed.\n'
+        printf 'Review them in the destination repository, or rerun with --commit or --push.\n'
+    elif [[ -n "${pullRequestUrl}" ]]; then
+        printf 'Pull request: %s\n' "${pullRequestUrl}"
+    fi
     return 0
 }
 

@@ -49,7 +49,8 @@ Publish to the default website checkout at `~/Source/clanneolasWebsite`:
 scripts/publishAssets.sh --confirm
 ```
 
-Commit the published paths, or commit and push them:
+Commit the published paths on the current local branch, or create a publication
+branch, push it, and open a pull request:
 
 ```bash
 scripts/publishAssets.sh --confirm --commit
@@ -75,8 +76,10 @@ Source and target paths must be relative, source folders must exist, and target
 folders may not overlap. `.git`, `.github`, `.vscode`, `documentation`,
 `deploy`, `scripts`, `README.md`, and `LICENSE` are excluded from mapped trees
 unless one is itself explicitly selected as a source mapping. Publishing is a
-safe preview unless `--confirm` is supplied. `--push` implies `--commit`, and
-both options require `--confirm`.
+safe preview unless `--confirm` is supplied. `--confirm` without `--commit` or
+`--push` leaves changes local and uncommitted. `--push` implies `--commit`, and
+both options require `--confirm`. A publication branch and pull request are
+created only when `--push` is supplied and published files changed.
 
 Do not put real household data, passwords, PINs, recovery codes or other
 secrets in this public repository. Examples must be fictional.
