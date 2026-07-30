@@ -1,0 +1,12 @@
+publish:
+  - source: brand/logo
+    target: assets/logos
+
+  - source: brand/icons
+    target: assets/icons
+
+  - source: brand/images
+    target: assets/images
+
+  - source: brand/website
+    target: assets/website
