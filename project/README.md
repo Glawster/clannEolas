@@ -15,6 +15,9 @@ reviews, whether or not software is ever created.
   handbook content, processes and any future implementation.
 - [Roadmap](roadmap.md) will communicate sequencing once priorities have been
   reviewed.
+- [Financial domain implementation plan](financialDomainImplementationPlan.md)
+  proposes shared entities, module boundaries and phased delivery for
+  requirements 008-018.
 - [Architecture decision records](adr/README.md) preserve cross-cutting choices
   and their consequences. ADR-0007, “Knowledge before documents”, is the
   keystone decision used to challenge future designs.
