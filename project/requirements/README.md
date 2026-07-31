@@ -1,6 +1,6 @@
 # Requirements
 
-Next available number: 010
+Next available number: 019
 
 This directory is the source of truth for specific outcomes clanneolas.com
 intends to deliver and why. Requirements can govern handbook content, project
@@ -18,6 +18,15 @@ implementation and must distinguish current behaviour from planned work.
 - [007 — Legal document custody and access](features/007-legalDocumentCustodyAndAccess.md) (legacy ID: APP-001)
 - [008 — Document Import Framework](features/008-documentImportFramework.md)
 - [009 — Banking module](features/009-bankingModule.md)
+- [010 — Credit cards](features/010-creditCards.md)
+- [011 — Mortgages](features/011-mortgages.md)
+- [012 — Loans and other borrowing](features/012-loans.md)
+- [013 — Investments](features/013-investments.md)
+- [014 — Pensions](features/014-pensions.md)
+- [015 — Insurance](features/015-insurance.md)
+- [016 — Taxation](features/016-taxation.md)
+- [017 — Subscriptions and recurring services](features/017-subscriptions.md)
+- [018 — Utilities and essential household services](features/018-utilities.md)
 
 ## InProgress
 

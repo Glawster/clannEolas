@@ -134,10 +134,15 @@ The domain must represent at least:
 | Offset, linked or packaged account | Balance or fee may affect a mortgage, insurance, benefit or another product |
 | Dormant, restricted or closed account | Funds or evidence may remain relevant even without current activity |
 
-Credit cards share institutions, statements, payments and continuity workflows
-with bank accounts but must retain their nature as revolving credit. Mortgages,
-loans, investments, insurance and pensions are linked products owned by their
-respective future modules rather than subtypes of bank account.
+The Banking module owns financial institutions, payment and deposit accounts,
+payment instruments, funding relationships and account continuity. The linked
+[Credit cards requirement](010-creditCards.md) owns revolving-credit balances,
+interest, repayment obligations, settlement and debt continuity. A debit card
+is a Banking payment instrument. A credit card links a Banking payment
+instrument to a credit facility owned by requirement 010; neither module may
+duplicate the other's canonical record. Mortgages, loans, investments,
+insurance and pensions are likewise linked products owned by their respective
+modules rather than subtypes of a bank account.
 
 ## Functional requirements
 
@@ -182,6 +187,7 @@ Each account record must support:
 | Account category and product name | Mandatory | Explains function, access rules and linked workflows |
 | User-chosen nickname | Recommended | Gives trusted readers a recognisable, non-sensitive label |
 | Purpose | Mandatory | Identifies household bills, emergency reserve, tax, child savings or another role |
+| Continuity roles | Recommended | Typed roles support dependency analysis and event-specific reporting independently of free-text purpose |
 | Institution link | Mandatory | Connects the account to reusable contacts and licence information |
 | Status | Mandatory | At least active, dormant, restricted, closure pending, closed or unknown |
 | Opened and closed dates | Optional | Supports history, dormancy and audit |
@@ -190,6 +196,26 @@ Each account record must support:
 | Statement frequency and delivery method | Recommended | Helps find evidence and detect missing statements |
 | Last confirmed date and source | Mandatory | Shows whether the relationship is current |
 | Notes limited to continuity purpose | Optional | Must be classified and must reject prohibited secrets |
+
+An account may carry one or more typed continuity roles from a versioned
+registry. The initial registry must include:
+
+- `primaryHouseholdOperatingAccount`;
+- `primaryHouseholdBills`;
+- `emergencyReserve`;
+- `personalSpending`;
+- `salaryReceipt`;
+- `pensionReceipt`;
+- `rentalPropertyOperations`;
+- `taxReserve`;
+- `childSavings`;
+- `businessOperations`; and
+- `estateAdministration`.
+
+Roles must have effective dates, source and review status. They are descriptive,
+not authority or ownership. An account may have several roles, but at most one
+active `primaryHouseholdOperatingAccount` may exist per Household unless an
+explicit exception records why multiple operating accounts are required.
 
 ### BR-3: Account identifiers
 
@@ -238,14 +264,11 @@ registered`, `registration in progress`, `authority restricted`, `authority
 ended` and `unknown`. Eolas must not infer a right to transact from relationship,
 co-residence, next-of-kin status, possession of a device or prior informal help.
 
-Joint account continuity varies with product terms, mandate, beneficial
-ownership, incapacity and jurisdiction. UK consumer guidance says a joint
-account will normally continue in the remaining names after a death, while an
-institution may restrict a joint account after a holder loses capacity until
-valid authority is established. Eolas must present these as review prompts,
-not universal outcomes. See [MoneyHelper joint-account guidance](https://www.moneyhelper.org.uk/en/everyday-money/banking/joint-accounts)
-and [Office of the Public Guardian guidance for managing another person's bank
-account](https://www.gov.uk/government/publications/deputy-and-attorney-guidance-dealing-with-banks).
+Joint-account continuity must be resolved from product terms, mandate,
+beneficial ownership, event, authority and jurisdiction. The core must not
+encode a universal survivorship or incapacity outcome. Jurisdiction guidance
+must be dated, versioned and separately maintained; the initial UK material is
+the [joint-accounts guidance](../../../documentation/banking/uk/jointAccounts.md).
 
 ### BR-5: Balance, terms and protection context
 
@@ -267,13 +290,11 @@ The account must support recommended continuity facts:
 - a temporary-high-balance event, its source, qualifying-date estimate and
   review action where relevant.
 
-Protection values must come from dated, updateable jurisdiction guidance rather
-than a permanent field default. As of 2026-07-31, the UK FSCS states that
-eligible deposits are protected up to GBP 120,000 per eligible person per
-authorised firm, aggregated across brands sharing a banking licence; qualifying
-temporary high balances may receive additional time-limited protection. Eolas
-must link to and encourage checking the [current FSCS rules](https://protected.fscs.org.uk/what-we-cover/banks-building-societies-credit-unions/deposit-limit-increase/)
-rather than treating these figures as timeless or guaranteeing eligibility.
+Deposit-protection rules must be jurisdiction-specific, dated, versioned and
+resolved from a maintained guidance package. Numeric limits, eligibility rules,
+aggregation rules and temporary-balance periods must not be hard-coded in this
+requirement or canonical account records. The initial UK package is
+[deposit-protection guidance](../../../documentation/banking/uk/depositProtection.md).
 
 ### BR-6: Outgoing commitments
 
@@ -310,16 +331,14 @@ provider-confirmed instruction.
 
 Eolas must explain that Direct Debits, standing orders and recurring card
 payments are different instructions and that stopping any of them does not
-necessarily end the debt or service. This distinction is supported by
-[MoneyHelper's current payment guidance](https://www.moneyhelper.org.uk/en/everyday-money/banking/direct-debits-and-standing-orders.html).
+necessarily end the debt or service.
 
 For Variable Recurring Payments, the model must support the authorised payment
 provider, source and destination accounts, purpose, permission start/end,
 per-payment and period limits, frequency constraints, consent status and review
 route. It must not imply universal bank or merchant availability. Open Banking
-describes these as long-lived permissions within agreed limits; current scope
-continues to evolve, so Eolas must reference [current Open Banking
-guidance](https://www.openbanking.org.uk/variable-recurring-payments-vrps/).
+standards and market availability must be supplied as dated external guidance,
+not embedded as permanent product behaviour.
 
 ### BR-7: Incoming payments
 
@@ -347,11 +366,10 @@ Each incoming payment must support:
 Continuity reporting must highlight income paid into an account likely to be
 restricted and outgoing essentials that rely on it. It must not assume an
 income continues after death or incapacity; the responsible payer must confirm
-entitlement, overpayment and redirection rules. Government notification
-services do not notify every private bank, pension or payer, as reflected in
-[GOV.UK Tell Us Once guidance](https://www.gov.uk/after-a-death/organisations-you-need-to-contact-and-tell-us-once).
+entitlement, overpayment and redirection rules. The scope of government and
+private notification services must come from dated jurisdiction guidance.
 
-### BR-8: Linked products and dependencies
+### BR-8: Linked products and continuity dependencies
 
 An account must link to, rather than duplicate:
 
@@ -366,11 +384,29 @@ An account must link to, rather than duplicate:
 - safe-deposit, currency, merchant, payment and cash-management services; and
 - documents, statements, tax records and professional contacts.
 
-Each link must state relationship type, direction, effective dates, source and
-review status. Closing or changing an account must trigger a dependency review,
-not cascade-delete the linked records. A relationship that affects pricing,
-cover, eligibility, offset interest or access must be prominently classed as a
-continuity dependency.
+Continuity dependencies must form a typed directed graph across accounts,
+income, payment arrangements, obligations, services, cards, products, people
+and properties. Every edge must state relationship type, source node, target
+node, effective dates, source evidence, essentiality and review status. At
+minimum the graph must represent `paidInto`, `funds`, `paidBy`, `dependsOn`,
+`linkedTo`, `secures`, `covers` and `usedBy` without reducing those distinct
+relationships to a generic link.
+
+The graph must be traversable in both directions and answer at least:
+
+- what depends on this account;
+- what funds this payment;
+- what happens if this card or payment arrangement becomes unavailable;
+- which income sources enter this account;
+- which services or liabilities rely on this payment arrangement; and
+- which people, properties and essential needs are affected by a change.
+
+An event analysis must traverse active edges, explain its path and identify
+concentrations such as multiple essential commitments funded by an account
+likely to be restricted. It must not assert that a restriction will occur when
+that outcome remains institution- or jurisdiction-dependent. Closing or
+changing a node must trigger dependency review and must not cascade-delete
+linked records or graph history.
 
 ### BR-9: Cards and payment instruments
 
@@ -499,96 +535,31 @@ must not manufacture completeness scores from unanswered sensitive fields.
 
 ### Death
 
-Timing is a prioritisation aid, not a legal deadline. The institution, personal
-representative and applicable jurisdiction determine the actual process.
+The framework must generate a jurisdiction-specific bereavement workflow from a
+dated guidance package rather than embed operational steps or timelines in the
+domain requirement. The workflow contract must support immediate safeguarding,
+authority and evidence, institution notification, essential dependency review,
+date-of-death information, estate administration, tax evidence, account tracing,
+reconciliation and closure/transfer readiness.
 
-#### First 48 hours
-
-- Preserve records, devices, cards, statements and post without using the
-  deceased person's credentials or payment instruments.
-- Identify immediate cash, funeral, dependant, housing and care needs and which
-  sole or joint accounts fund them.
-- Record the death and responsible contacts; do not rush to close accounts or
-  cancel every payment before dependencies are understood.
-- If fraud or continuing unauthorised use is suspected, contact the
-  institution's independently verified urgent channel.
-
-#### First week
-
-- Identify the executor/administrator route and obtain official death
-  certificates or jurisdiction-equivalent evidence.
-- Notify known institutions through their bereavement process when the
-  responsible person is ready and record reference, date, requested documents
-  and resulting restrictions.
-- Confirm treatment of joint accounts, essential Direct Debits, standing orders,
-  cards, credit balances, debts and safe-deposit arrangements with each
-  institution.
-- Redirect or protect essential bills and notify private income providers that
-  are not covered by government notification services.
-- Ask the institution whether it can pay a funeral invoice directly from the
-  deceased's funds before probate; do not assume availability or withdraw funds
-  using known credentials. MoneyHelper notes this may be possible subject to
-  evidence and provider policy: [funeral payment guidance](https://www.moneyhelper.org.uk/en/family-and-care/death-and-bereavement/help-paying-for-a-funeral).
-
-#### First month
-
-- Obtain date-of-death balances, interest, debt and transaction information
-  needed for estate and tax work.
-- Review every incoming payment for entitlement, overpayment or redirection and
-  every outgoing commitment for continuation, transfer, settlement or
-  authorised cancellation.
-- Identify unknown accounts from statements, tax records, post and approved
-  tracing services; the UK Dormant Assets Scheme points users to My Lost
-  Account for bank and building-society tracing: [GOV.UK dormant-assets
-  guidance](https://www.gov.uk/government/publications/the-dormant-accounts-scheme).
-- Record provider thresholds and whether probate, confirmation or another grant
-  is required; these differ by provider, value and jurisdiction.
-- Review joint-account beneficial ownership and contribution evidence for
-  estate/tax work rather than assuming the operational survivor treatment
-  settles beneficial ownership.
-
-#### Estate administration
-
-- Maintain an inventory of accounts, date-of-death values, post-death interest,
-  liabilities, notifications, closures, transfers and retained amounts.
-- Keep estate money separate from personal money and preserve a transaction and
-  decision record. Official guidance for attorneys similarly stresses
-  separation and records; estate-account needs remain jurisdiction- and
-  provider-specific.
-- Reconcile institution proceeds to estate records and investigate variances.
-- Preserve statements and closure evidence for the required tax, estate and
-  challenge period.
-- Review eligible temporary high balances and banking-licence aggregation using
-  current official protection guidance.
-- Close or transfer accounts only with verified authority and after linked
-  payments, income, debts, tax and product consequences are addressed.
-
-The executor checklist must acknowledge that `Tell Us Once` notifies specified
-government bodies but private financial institutions generally need separate
-contact. It must not imply that a grant is always or never required.
+Guidance actions must carry jurisdiction, source, effective/review date,
+priority, applicability conditions and verification status. A time band is a
+prioritisation aid, not a legal deadline. The initial UK content is maintained
+in [banking bereavement guidance](../../../documentation/banking/uk/bereavement.md).
 
 ### Loss of capacity
 
-- Record the decision-specific capacity concern without Eolas making a medical
-  or legal determination.
-- Identify the applicable registered property/financial power, enduring power,
-  continuing power, deputyship, guardianship or other jurisdictional authority,
-  including instructions, restrictions and how multiple representatives act.
-- Preserve the person's participation and preferences to the extent possible;
-  do not treat diagnosis or age alone as loss of capacity.
-- Register authority separately with each institution and record requested
-  identity, address and authority evidence, provider reference and access method.
-- Confirm treatment of joint accounts and essential payments with the provider.
-- Keep the person's money separate, keep decisions and receipts, avoid conflicts
-  and record the best-interests basis where applicable.
-- Use a separately issued attorney/deputy access route where offered; never use
-  the donor's login, card or PIN.
+The framework must generate capacity and representative workflows from the
+applicable dated jurisdiction package. The durable workflow must represent the
+decision-specific concern, authority type and evidence, activation,
+restrictions, multiple-representative rule, person's participation, institution
+registration, separately issued access, essential dependencies, decision
+records and review/termination.
 
-For England and Wales, Eolas guidance must link to current [Office of the Public
-Guardian attorney/deputy banking guidance](https://www.gov.uk/government/publications/deputy-and-attorney-guidance-dealing-with-banks)
-and [property and financial affairs attorney duties](https://www.gov.uk/manage-lasting-power-attorney/property-financial-affairs).
-Scotland and Northern Ireland require separate jurisdiction content and must
-not be relabelled as an LPA workflow.
+It must not determine capacity, infer authority from diagnosis or age, relabel
+different jurisdictional instruments as an LPA, or permit use of the account
+holder's credentials. The initial UK content is maintained in [power-of-attorney
+and representative guidance](../../../documentation/banking/uk/powerOfAttorney.md).
 
 ### Prolonged hospital stay or temporary assistance
 
@@ -806,6 +777,8 @@ relationships equivalent to:
   protection-group references and versioned contact routes;
 - `BankingRelationship`: account category, purpose, status, servicing context,
   terms, currency and review information;
+- `AccountContinuityRole`: namespaced role, account, Household, effective dates,
+  source and review status;
 - `AccountIdentifier`: identifier type, masked display, protected value where
   permitted, issuer/country, classification and verification source;
 - `AccountParty`: account, party, role, legal/beneficial interest, proportion,
@@ -821,6 +794,8 @@ relationships equivalent to:
   status, location reference and replacement history;
 - `AccountProductLink`: typed, dated relationship to a mortgage, liability,
   investment, pension, insurance, service, document or other account;
+- `ContinuityDependency`: typed directed edge, source/target entity, effective
+  dates, essentiality, evidence and review status;
 - `BalanceObservation`: amount, currency, effective time, source and purpose;
 - `InstitutionInteraction`: actor, authority, channel, time, reference, request,
   outcome, documents shared and next action; and
@@ -861,6 +836,12 @@ provenance, and remain independent of PySide6 and any one report.
     date; expired guidance remains historical but cannot drive a current action.
 14. Event recommendations must preserve user/institution overrides and their
     provenance rather than silently recomputing completed decisions.
+15. Continuity-role identifiers must come from the versioned registry; unknown
+    identifiers are preserved for compatibility but cannot drive an unexplained
+    current workflow.
+16. Dependency edges require valid typed endpoints and must be traversable in
+    both directions; cycles are permitted but traversal must terminate and show
+    each path once per analysis.
 
 ## Non-functional requirements
 
@@ -979,6 +960,14 @@ provenance, and remain independent of PySide6 and any one report.
 4. Given an account closure request with essential payments or incoming funds
    unresolved, when readiness is evaluated, then closure remains blocked and
    every dependency is listed.
+5. Given pension and salary income paid into one operating account that funds a
+   mortgage, electricity, home insurance and care costs, when that account is
+   marked potentially restricted, then event analysis lists both incoming
+   sources and all four downstream commitments with an explainable path.
+6. Given a selected payment, card, service or income source, when dependency
+   traversal runs in either direction, then it answers what funds or depends on
+   the selection, terminates safely across cycles and does not cross Clann
+   boundaries.
 
 ### AC-5: Linked products and statements
 
@@ -1050,6 +1039,10 @@ provenance, and remain independent of PySide6 and any one report.
 3. Given a non-UK account, when recorded, then currency, routing, ownership,
    authority and protection fields accept the relevant jurisdiction without a
    UK sort code, LPA, probate or FSCS assumption.
+4. Given a change to a UK threshold or operational step, when the applicable
+   guidance package is versioned, then requirement 009 and canonical account
+   records remain unchanged while new workflows use the approved guidance
+   version and historic actions retain their original version.
 
 ### AC-10: Audit, accessibility and performance
 
@@ -1149,39 +1142,25 @@ The initial Banking module does not include:
 - Approved banking entity and relationship extensions to the shared domain
   model.
 - Default classification and masking for each identifier and report.
-- Jurisdiction-content packaging, ownership and update/review process.
+- Governance, review triggers and release process for jurisdiction guidance,
+  including packages beyond the initial UK content.
 - Retention rules for balance observations, statements, institution contacts and
   representative action logs.
 - Role-based access and report-sharing policy for executors, attorneys, advisers
   and other trusted people.
 
-## Authoritative research references
+## Maintained guidance packages
 
-These sources inform the requirement but are not copied into canonical records.
-They must be checked for currency before guidance is released:
+Mutable jurisdiction rules and operational steps are maintained separately from
+this requirement:
 
-- [GOV.UK: Manage a bank account for someone else](https://www.gov.uk/government/publications/deputy-and-attorney-guidance-dealing-with-banks)
-  (England and Wales; authority evidence and joint-account considerations).
-- [GOV.UK: Property and financial affairs attorney duties](https://www.gov.uk/manage-lasting-power-attorney/property-financial-affairs)
-  (separation, proof and attorney responsibilities).
-- [GOV.UK: Tell Us Once](https://www.gov.uk/after-a-death/organisations-you-need-to-contact-and-tell-us-once)
-  (scope of government notifications and separately contacted organisations).
-- [FCA: Bereavement and power-of-attorney review](https://www.fca.org.uk/news/press-releases/fca-probes-banks-bereavement-power-attorney-policies)
-  (consumer vulnerability and the need for adaptable institution support).
-- [MoneyHelper: Joint accounts](https://www.moneyhelper.org.uk/en/everyday-money/banking/joint-accounts)
-  (operation, incapacity and death considerations).
-- [MoneyHelper: Direct Debits, standing orders and recurring card
-  payments](https://www.moneyhelper.org.uk/en/everyday-money/banking/direct-debits-and-standing-orders.html)
-  (mechanism and contract-cancellation distinctions).
-- [MoneyHelper: Paying funeral costs from an account](https://www.moneyhelper.org.uk/en/family-and-care/death-and-bereavement/help-paying-for-a-funeral)
-  (provider-dependent direct payment and prohibition on credential use).
-- [FSCS: Deposit protection limit](https://protected.fscs.org.uk/what-we-cover/banks-building-societies-credit-unions/deposit-limit-increase/)
-  and [temporary high balances](https://protected.fscs.org.uk/making-a-claim/claims-process/temporary-high-balances/)
-  (current UK limits, aggregation and time-limited additional protection).
-- [Open Banking: Variable Recurring Payments](https://www.openbanking.org.uk/variable-recurring-payments-vrps/)
-  (permission parameters and evolving availability).
-- [GOV.UK: Dormant Assets Scheme](https://www.gov.uk/government/publications/the-dormant-accounts-scheme)
-  (account tracing and continuing reclaim rights).
+- [UK deposit protection](../../../documentation/banking/uk/depositProtection.md);
+- [UK banking bereavement](../../../documentation/banking/uk/bereavement.md);
+- [UK power of attorney and representatives](../../../documentation/banking/uk/powerOfAttorney.md); and
+- [UK joint accounts](../../../documentation/banking/uk/jointAccounts.md).
+
+Each package owns its official sources, verified date and next review date. A
+workflow event must record the guidance ID and version/effective date it used.
 
 ## Verification
 
@@ -1210,6 +1189,7 @@ They must be checked for currency before guidance is released:
   [glossary](../../../documentation/glossary.md),
   [information classification](../../../documentation/informationClassification.md),
   [privacy and security](../../../documentation/privacyAndSecurity.md),
+  [banking guidance](../../../documentation/banking/README.md),
   [Money and Pensions handbook chapter](../../../handbook/05-MoneyAndPensions.md)
 - Principles: [P-001, P-002, P-003, P-004, P-005, P-007, P-008, P-009 and
   P-010](../../../documentation/principles.md)
@@ -1220,3 +1200,5 @@ They must be checked for currency before guidance is released:
 ## Change history
 
 - 2026-07-31: created as the Banking module domain and continuity requirement.
+- 2026-07-31: separated mutable UK guidance, clarified credit-card ownership,
+  and added typed continuity roles and bidirectional dependency graphs.
