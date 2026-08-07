@@ -1,3 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "clann-eolas"
+version = "0.1.0"
+description = "Privacy-conscious tools for maintaining a practical family record"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+dependencies = [
+    "PyYAML>=6.0,<7",
+    "windows-curses>=2.4; platform_system == 'Windows'",
+]
+
+[project.scripts]
+eolas = "eolas.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["eolas*"]
+
 [tool.black]
 line-length = 88
 target-version = ["py310"]

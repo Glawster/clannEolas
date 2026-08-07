@@ -4,10 +4,11 @@ An open-source, privacy-conscious project for creating a practical record of the
 information a family may need during an emergency, serious illness, loss of
 capacity or death.
 
-The repository is at an early, content-first stage. It currently contains a
-draft handbook outline and project requirements; it does not contain a working
-web or desktop application. The handbook is intended to remain useful as
-human-readable and printable documents without future software.
+The repository is at an early, content-first stage. It contains a draft
+handbook outline, project requirements and a working command-line prototype for
+creating private Clann records and capturing structured continuity information.
+It does not yet contain a web or desktop application. The handbook is intended
+to remain useful as human-readable and printable documents without software.
 
 ## Documentation
 
@@ -33,7 +34,7 @@ human-readable and printable documents without future software.
 ## Publishing website assets
 
 The development repository is the source of truth for website assets. The
-[`publishAssets.yml`](publishAssets.yml) manifest maps selected source folders
+[`scripts/publishAssets.yml`](scripts/publishAssets.yml) manifest maps selected source folders
 to folders in the separate public website repository. Each target folder is
 managed as a complete mirror: files removed from its source are removed from
 that target, but the publisher never changes content outside configured target
@@ -85,3 +86,25 @@ created only when `--push` is supplied and published files changed.
 
 Do not put real household data, passwords, PINs, recovery codes or other
 secrets in this public repository. Examples must be fictional.
+
+## Command-line tools
+
+Create and activate the project environment, then install Eolas as an editable
+package for development:
+
+```bash
+conda activate handbook
+python -m pip install -e .
+```
+
+The installed `eolas` command can create a Clann and capture structured records
+for requirements 009 through 018. Capture commands preview changes unless
+`--confirm` is supplied:
+
+```bash
+eolas clann --create
+eolas capture
+```
+
+See the [Clann bootstrap and capture guide](documentation/clannBootstrap.md)
+for the private-data layout and capture workflow.

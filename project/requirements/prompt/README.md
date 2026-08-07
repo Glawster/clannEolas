@@ -8,6 +8,7 @@ remain at stable paths after use. Before issuing a prompt, combine it with the
 smallest applicable adapter from `adapters/`. Record material runs in the
 requirement's Traceability section.
 
-The current requirements are all `ToDo`, so their first prompt is a refinement
-brief. Implementation and verification prompts should be added only after the
-requirement is agreed and moved to `InProgress`.
+Requirements 001 through 008 remain `ToDo`; their first prompt is a refinement
+brief. Requirements 009 through 018 are `InProgress` following implementation
+of their shared CLI capture foundation. Add focused implementation and
+verification prompts as the remaining domain workflows are delivered.

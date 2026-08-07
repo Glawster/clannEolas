@@ -2,7 +2,7 @@
 
 # Publish selected assets from this repository to the public website repository.
 # The deliberately small YAML reader supports the list of source/target mappings
-# documented in publishAssets.yml. Replace manifestRead() if richer YAML is needed.
+# documented in scripts/publishAssets.yml. Replace manifestRead() if richer YAML is needed.
 
 set -Eeuo pipefail
 
@@ -17,7 +17,7 @@ readonly EXIT_GIT=8
 readonly SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 readonly SOURCE_REPO="$(cd -- "${SCRIPT_DIR}/.." && pwd -P)"
 readonly DEFAULT_DESTINATION="${HOME}/Source/clanneolasWebsite"
-readonly DEFAULT_MANIFEST="${SOURCE_REPO}/publishAssets.yml"
+readonly DEFAULT_MANIFEST="${SCRIPT_DIR}/publishAssets.yml"
 
 dryRun=1
 VERBOSE=false
@@ -108,7 +108,7 @@ usageDisplay() {
     cat <<'EOF'
 Usage: scripts/publishAssets.sh [OPTIONS]
 
-Publish the mappings in publishAssets.yml to the website repository.
+Publish the mappings in scripts/publishAssets.yml to the website repository.
 
 Options:
   -y, --confirm         publish changes (default: safe preview)
@@ -117,7 +117,7 @@ Options:
   --commit              commit published paths on the current local branch
   --push                create a branch, commit, push, and open a pull request
   --destination PATH    website repository (default: ~/Source/clanneolasWebsite)
-  --manifest PATH       manifest file (default: publishAssets.yml)
+  --manifest PATH       manifest file (default: scripts/publishAssets.yml)
   -h, --help            show this help
 
 --push implies --commit and only creates a branch and pull request when files

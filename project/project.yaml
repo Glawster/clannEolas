@@ -5,8 +5,10 @@ project:
     Help individuals organise the practical information their family may need
     during an emergency, serious illness, loss of capacity or death.
   currentState: >-
-    Early content and requirements design. A draft handbook outline exists; no
-    working web or desktop application exists.
+    Early content and requirements delivery. A draft handbook outline and a
+    working packaged CLI prototype exist. The CLI can create private Clann YAML
+    records and preview or persist validated capture records for financial and
+    household continuity domains. No web or desktop application exists.
   audiences:
     primary:
       - People preparing practical information for their household

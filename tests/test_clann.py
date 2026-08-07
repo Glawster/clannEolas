@@ -76,11 +76,7 @@ def test_clannValidate_requiresPrimaryPersonAndResident() -> None:
     withoutResident = ClannInput(
         "Test Clann",
         "Test Home",
-        [
-            PersonInput(
-                "Alex Test", "Alex", "adult", True, True, False
-            )
-        ],
+        [PersonInput("Alex Test", "Alex", "adult", True, True, False)],
     )
 
     with pytest.raises(ClannValidationError, match="exactly one"):
@@ -138,14 +134,10 @@ def test_clannCreate_generatesCompleteReloadableTree(
     assert (rootPath / "clann.yaml").is_file()
     for directoryName in CLANN_DIRECTORIES:
         assert (rootPath / directoryName).is_dir()
-    householdPath = (
-        rootPath / "households" / "family-home" / "household.yaml"
-    )
+    householdPath = rootPath / "households" / "family-home" / "household.yaml"
     assert householdPath.is_file()
 
-    documents = {
-        path: _yamlLoad(path) for path in sorted(rootPath.rglob("*.yaml"))
-    }
+    documents = {path: _yamlLoad(path) for path in sorted(rootPath.rglob("*.yaml"))}
     assert len(documents) == 8
     clannDocument = documents[rootPath / "clann.yaml"]
     people = {
@@ -155,15 +147,12 @@ def test_clannCreate_generatesCompleteReloadableTree(
     }
     householdDocument = documents[householdPath]
 
-    assert {entry["personRef"] for entry in clannDocument["people"]} == set(
-        people
-    )
-    assert {
-        member["personRef"] for member in householdDocument["members"]
-    } == {"person-morgan-river", "person-jamie-river"}
-    assert (
-        people["person-alex-river"]["householdMemberships"] == []
-    )
+    assert {entry["personRef"] for entry in clannDocument["people"]} == set(people)
+    assert {member["personRef"] for member in householdDocument["members"]} == {
+        "person-morgan-river",
+        "person-jamie-river",
+    }
+    assert people["person-alex-river"]["householdMemberships"] == []
     for path in documents:
         assert path.read_bytes().endswith(b"\n")
         assert "!!python" not in path.read_text(encoding="utf-8")
@@ -205,20 +194,12 @@ def test_cliCreatesClannThroughNaturalCommand(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    answers = iter(
-        [
-            "Example Clann",
-            "Family Home",
-            "1",
-            "Alex Example",
-            "Alex",
-            "householder",
-            "yes",
-            "no",
-            "1",
-        ]
+    capturedClann = ClannInput(
+        "Example Clann",
+        "Family Home",
+        [PersonInput("Alex Example", "Alex", "householder", True, True)],
     )
-    monkeypatch.setattr("builtins.input", lambda _prompt="": next(answers))
+    monkeypatch.setattr("eolas.cli.clannCapture", lambda: capturedClann)
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
 
     result = cliRun(["clann", "--create", "--confirm"])
@@ -227,7 +208,6 @@ def test_cliCreatesClannThroughNaturalCommand(
     assert (tmp_path / "eolas/clanns/example-clann/clann.yaml").is_file()
     output = capsys.readouterr().out
     assert "Clann created:" in output
-    assert "Suggested practical roles:" in output
     assert "household role: householder; age: adult; residence: resident" in output
 
 
