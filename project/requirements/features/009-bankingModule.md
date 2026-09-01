@@ -1181,8 +1181,8 @@ workflow event must record the guidance ID and version/effective date it used.
 
 ## Traceability
 
-- Implementation: pending
-- Tests: pending
+- Implementation: shared Phase 1 kernel, dependency graph and typed capture input adapter; domain aggregate and workflows pending
+- Tests: shared-kernel, storage, security, graph and capture-adapter conformance tests implemented; domain acceptance tests pending
 - Documentation: [product vision](../../../documentation/productVision.md),
   [principles](../../../documentation/principles.md),
   [domain model](../../../documentation/domainModel.md),

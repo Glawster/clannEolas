@@ -5,8 +5,9 @@ information a family may need during an emergency, serious illness, loss of
 capacity or death.
 
 The repository is at an early, content-first stage. It contains a draft
-handbook outline, project requirements and a working command-line prototype for
-creating private Clann records and capturing structured continuity information.
+handbook outline, project requirements, an implemented UI-independent shared
+knowledge kernel and a working command-line prototype for creating private
+Clann records and capturing structured continuity information.
 It does not yet contain a web or desktop application. The handbook is intended
 to remain useful as human-readable and printable documents without software.
 
@@ -22,6 +23,8 @@ to remain useful as human-readable and printable documents without software.
 - [Information classification](documentation/informationClassification.md)
 - [Privacy and security](documentation/privacyAndSecurity.md)
 - [Domain model](documentation/domainModel.md)
+- [Financial domain implementation plan](project/financialDomainImplementationPlan.md)
+- [Architecture decisions](project/adr/README.md)
 - [Banking guidance](documentation/banking/README.md)
 - [Clann bootstrap wizard](documentation/clannBootstrap.md)
 - [Project planning and governance](project/README.md)
@@ -97,8 +100,10 @@ conda activate handbook
 python -m pip install -e .
 ```
 
-The installed `eolas` command can create a Clann and capture structured records
-for requirements 009 through 018. Capture commands preview changes unless
+The installed `eolas` command can create a Clann and capture prototype input
+records for requirements 009 through 018. Capture now uses shared typed identity
+and validation, but it is not a complete implementation of those domains.
+Capture commands preview changes unless
 `--confirm` is supplied:
 
 ```bash

@@ -20,16 +20,16 @@ implementation and must distinguish current behaviour from planned work.
 
 ## InProgress
 
-- [009 — Banking module](features/009-bankingModule.md) — shared CLI capture foundation implemented; full domain workflows and projections remain
-- [010 — Credit cards](features/010-creditCards.md) — shared CLI capture foundation implemented; full domain workflows and projections remain
-- [011 — Mortgages](features/011-mortgages.md) — shared CLI capture foundation implemented; full domain workflows and projections remain
-- [012 — Loans and other borrowing](features/012-loans.md) — shared CLI capture foundation implemented; full domain workflows and projections remain
-- [013 — Investments](features/013-investments.md) — shared CLI capture foundation implemented; full domain workflows and projections remain
-- [014 — Pensions](features/014-pensions.md) — shared CLI capture foundation implemented; full domain workflows and projections remain
-- [015 — Insurance](features/015-insurance.md) — shared CLI capture foundation implemented; full domain workflows and projections remain
-- [016 — Taxation](features/016-taxation.md) — shared CLI capture foundation implemented; full domain workflows and projections remain
-- [017 — Subscriptions and recurring services](features/017-subscriptions.md) — shared CLI capture foundation implemented; full domain workflows and projections remain
-- [018 — Utilities and essential household services](features/018-utilities.md) — shared CLI capture foundation implemented; full domain workflows and projections remain
+- [009 — Banking module](features/009-bankingModule.md) — shared Phase 1 kernel and CLI input adapter implemented; Banking aggregates, workflows and projections remain
+- [010 — Credit cards](features/010-creditCards.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
+- [011 — Mortgages](features/011-mortgages.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
+- [012 — Loans and other borrowing](features/012-loans.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
+- [013 — Investments](features/013-investments.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
+- [014 — Pensions](features/014-pensions.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
+- [015 — Insurance](features/015-insurance.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
+- [016 — Taxation](features/016-taxation.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
+- [017 — Subscriptions and recurring services](features/017-subscriptions.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
+- [018 — Utilities and essential household services](features/018-utilities.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
 
 ## Completed
 
