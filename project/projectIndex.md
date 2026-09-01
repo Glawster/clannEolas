@@ -11,14 +11,14 @@ reviews, whether or not software is ever created.
   requirements, ADRs and implementation choices.
 - [Project definition](project.yaml) records the current purpose, audience,
   scope, principles, risks and milestones.
-- [Requirements](requirements/README.md) define reviewable outcomes for
+- [Requirements](requirements/requirementsIndex.md) define reviewable outcomes for
   handbook content, processes and any future implementation.
 - [Roadmap](roadmap.md) will communicate sequencing once priorities have been
   reviewed.
 - [Financial domain implementation plan](financialDomainImplementationPlan.md)
   proposes shared entities, module boundaries and phased delivery for
   requirements 008-018.
-- [Architecture decision records](adr/README.md) preserve cross-cutting choices
+- [Architecture decision records](adr/adrIndex.md) preserve cross-cutting choices
   and their consequences. ADR-0007, “Knowledge before documents”, is the
   keystone decision used to challenge future designs.
 - [Reviews](reviews/repositoryAssessment.md) preserve assessments and other

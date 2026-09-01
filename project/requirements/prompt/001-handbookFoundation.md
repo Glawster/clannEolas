@@ -16,7 +16,7 @@ and freedom from application or vendor dependencies.
 Changes may be made to:
 
 - `project/requirements/features/001-handbookFoundation.md`
-- `project/requirements/README.md`
+- `project/requirements/requirementsIndex.md`
 - `project/adr/` only if a consequential new or superseding decision is required
 
 Verify with:

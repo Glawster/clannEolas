@@ -38,7 +38,7 @@ None.
 ## Repository-specific guidance
 
 This index follows the managed
-[requirements process](../../.github/requirementsManagement.md). The six
+[requirements process](../../documentation/requirementsManagement.md). The six
 existing `HB` records were assigned permanent numeric paths during the 2026-07-28
 migration. Their former IDs remain in each record and in this index so older
 links and history can be interpreted.
@@ -54,7 +54,7 @@ in the same change that creates a requirement.
 - `../../documentation/principles.md` explains the north-star principles referenced by
   stable ID from each requirement.
 - `features/` contains all requirements at every lifecycle stage.
-- [`prompt/`](prompt/README.md) contains durable prompts grouped by requirement;
+- `prompt/` contains flat durable prompts matched to requirements by filename;
   reusable adapters live in `prompt/adapters/`.
 - `../adr/` contains architecture decision records (ADRs) that affect multiple
   requirements.
@@ -101,3 +101,15 @@ truth.
 No requirement file contains private household data. Fictional examples must
 be clearly labelled, safe to publish and free of usable credentials or
 realistic identifiers.
+
+## Prompt index
+
+<!-- OMP-PROMPT-INDEX-BEGIN -->
+- [001-handbookFoundation](prompt/001-handbookFoundation.md)
+- [002-privacyAndSecurityModel](prompt/002-privacyAndSecurityModel.md)
+- [003-handbookContentStructure](prompt/003-handbookContentStructure.md)
+- [004-fictionalExampleHousehold](prompt/004-fictionalExampleHousehold.md)
+- [005-annualReviewProcess](prompt/005-annualReviewProcess.md)
+- [006-gettingStartedGuide](prompt/006-gettingStartedGuide.md)
+- [007-legalDocumentCustodyAndAccess](prompt/007-legalDocumentCustodyAndAccess.md)
+<!-- OMP-PROMPT-INDEX-END -->

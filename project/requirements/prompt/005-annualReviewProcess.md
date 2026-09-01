@@ -16,7 +16,7 @@ handling and fictional walkthrough evidence independently repeatable.
 Changes may be made to:
 
 - `project/requirements/features/005-annualReviewProcess.md`
-- `project/requirements/README.md`
+- `project/requirements/requirementsIndex.md`
 - `project/adr/` only if a consequential new or superseding decision is required
 
 Verify with `pytest`, handbook-topic coverage review, privacy review, a complete

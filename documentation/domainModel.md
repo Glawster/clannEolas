@@ -4,7 +4,7 @@ The domain model describes the real-world concepts clanneolas.com organises and
 how they relate. It is not a database schema, file format, API design or
 application architecture.
 
-# Mission
+## Mission
 
 **clanneolas.com provides a shared language for organising the practical
 knowledge families need before, during and after life's unexpected events.**

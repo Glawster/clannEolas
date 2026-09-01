@@ -17,7 +17,7 @@ how conspicuous non-values will be assessed.
 Changes may be made to:
 
 - `project/requirements/features/004-fictionalExampleHousehold.md`
-- `project/requirements/README.md`
+- `project/requirements/requirementsIndex.md`
 - `project/adr/` only if a consequential new or superseding decision is required
 
 Verify with `pytest`, a prohibited-data and re-identification risk review, a

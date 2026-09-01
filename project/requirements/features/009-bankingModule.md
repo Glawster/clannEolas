@@ -1189,7 +1189,7 @@ workflow event must record the guidance ID and version/effective date it used.
   [glossary](../../../documentation/glossary.md),
   [information classification](../../../documentation/informationClassification.md),
   [privacy and security](../../../documentation/privacyAndSecurity.md),
-  [banking guidance](../../../documentation/banking/README.md),
+  [banking guidance](../../../documentation/banking/bankingIndex.md),
   [Money and Pensions handbook chapter](../../../handbook/05-MoneyAndPensions.md)
 - Principles: [P-001, P-002, P-003, P-004, P-005, P-007, P-008, P-009 and
   P-010](../../../documentation/principles.md)

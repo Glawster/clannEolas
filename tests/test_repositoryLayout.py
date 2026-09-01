@@ -18,6 +18,8 @@ def testDocumentationLinksResolve() -> None:
             continue
 
         content = markdownPath.read_text(encoding="utf-8")
+        if content.startswith("<!-- deployed from Glawster/organiseMyProjects"):
+            continue
         for target in re.findall(r"\[[^]]*\]\(([^)]+)\)", content):
             if "://" in target or target.startswith(("#", "mailto:")):
                 continue

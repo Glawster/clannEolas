@@ -659,13 +659,13 @@ A module is ready for UI or importer implementation only when:
 
 ## Traceability
 
-- Requirements: [008-018](requirements/README.md)
+- Requirements: [008-018](requirements/requirementsIndex.md)
 - Domain model: [shared conceptual model](../documentation/domainModel.md)
 - Principles: [project principles](../documentation/principles.md)
 - Keystone decision: [ADR-0007](adr/007-knowledgeBeforeDocuments.md)
 - Projection decision: [ADR-0008](adr/008-handbookAsProjection.md)
-- Phase 0 decisions: [ADRs 0012–0017](adr/README.md)
-- Banking guidance: [guidance index](../documentation/banking/README.md)
+- Phase 0 decisions: [ADRs 0012–0017](adr/adrIndex.md)
+- Banking guidance: [guidance index](../documentation/banking/bankingIndex.md)
 - Implementation: Phase 0/1 shared kernel in `eolas/domain/`; typed capture
   adapter in `eolas/capture/`; Phase 2 and Document Import remain pending
 - Tests: shared kernel, security, dependency graph, persistence and capture

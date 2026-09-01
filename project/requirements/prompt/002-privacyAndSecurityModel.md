@@ -17,7 +17,7 @@ and vendor-neutral paper and digital handling guidance.
 Changes may be made to:
 
 - `project/requirements/features/002-privacyAndSecurityModel.md`
-- `project/requirements/README.md`
+- `project/requirements/requirementsIndex.md`
 - `project/adr/` only if a consequential new or superseding decision is required
 
 Verify with `pytest`, a privacy threat review, a criterion-to-verification

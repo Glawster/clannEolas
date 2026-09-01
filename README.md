@@ -13,25 +13,27 @@ to remain useful as human-readable and printable documents without software.
 
 ## Documentation
 
-- [Repository layout](.github/repositoryLayout.md)
-- [Requirements management](.github/requirementsManagement.md)
+- [Repository layout](documentation/repositoryLayout.md)
+- [Requirements management](documentation/requirementsManagement.md)
+- [Testing process](documentation/testingProcess.md)
+- [Release process](documentation/howToRelease.md)
 - [Product vision](documentation/productVision.md)
 - [Project principles](documentation/principles.md)
 - [Design principles](documentation/designPrinciples.md)
-- [Personas](documentation/personas/README.md)
+- [Personas](documentation/personas/personasIndex.md)
 - [Glossary](documentation/glossary.md)
 - [Information classification](documentation/informationClassification.md)
 - [Privacy and security](documentation/privacyAndSecurity.md)
 - [Domain model](documentation/domainModel.md)
 - [Financial domain implementation plan](project/financialDomainImplementationPlan.md)
-- [Architecture decisions](project/adr/README.md)
-- [Banking guidance](documentation/banking/README.md)
+- [Architecture decisions](project/adr/adrIndex.md)
+- [Banking guidance](documentation/banking/bankingIndex.md)
 - [Clann bootstrap wizard](documentation/clannBootstrap.md)
-- [Project planning and governance](project/README.md)
-- [Requirements workflow](project/requirements/README.md)
+- [Project planning and governance](project/projectIndex.md)
+- [Requirements workflow](project/requirements/requirementsIndex.md)
 - [Repository assessment](project/reviews/repositoryAssessment.md)
 - [Change log](documentation/changeLog.md)
-- [Brand assets and guidance](brand/README.md)
+- [Brand assets and guidance](brand/brandIndex.md)
 - [Handbook outline](handbook/01-GettingStarted.md)
 
 ## Publishing website assets
@@ -113,3 +115,14 @@ eolas capture
 
 See the [Clann bootstrap and capture guide](documentation/clannBootstrap.md)
 for the private-data layout and capture workflow.
+
+## Testing
+
+Run the complete test suite from the repository root:
+
+```bash
+pytest
+```
+
+See the [testing process](documentation/testingProcess.md) for the required
+unit, integration and production-path evidence.

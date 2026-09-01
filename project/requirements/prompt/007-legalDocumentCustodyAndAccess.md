@@ -18,7 +18,7 @@ official references are classified at least Confidential.
 Changes may be made to:
 
 - `project/requirements/features/007-legalDocumentCustodyAndAccess.md`
-- `project/requirements/README.md`
+- `project/requirements/requirementsIndex.md`
 - `project/adr/` only if a consequential new or superseding decision is required
 
 Verify with `pytest`, domain and jurisdiction consistency reviews, automated

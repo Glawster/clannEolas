@@ -10,7 +10,7 @@ Tagline: Helping families continue when the unexpected happens.
 
 The name Eolas (pronounced xxx) comes from the Irish word meaning knowledge, information or understanding, reflecting the project's purpose of preserving the knowledge that matters most across generations.
 
-# Eolas Brand Assets
+## Eolas Brand Assets
 
 This directory contains the official brand assets for the Eolas project.
 
@@ -83,7 +83,7 @@ Avoid:
 
 All assets in this repository should follow the Style Guide.
 
-# Brand Asset Checklist
+## Brand Asset Checklist
 
 The following assets make up the complete Eolas brand identity.
 

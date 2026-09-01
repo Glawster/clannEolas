@@ -18,7 +18,7 @@ inferred from a family or helper relationship.
 Changes may be made to:
 
 - `project/requirements/features/006-gettingStartedGuide.md`
-- `project/requirements/README.md`
+- `project/requirements/requirementsIndex.md`
 - `project/adr/` only if a consequential new or superseding decision is required
 
 Verify with `pytest`, dependency and ADR consistency review, privacy and role

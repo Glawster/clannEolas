@@ -16,7 +16,7 @@ specific enough that independent reviewers can repeat it.
 Changes may be made to:
 
 - `project/requirements/features/003-handbookContentStructure.md`
-- `project/requirements/README.md`
+- `project/requirements/requirementsIndex.md`
 - `project/adr/` only if a consequential new or superseding decision is required
 
 Verify with `pytest`, a dependency and ADR consistency review, a complete
