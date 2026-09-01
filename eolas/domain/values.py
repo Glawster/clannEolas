@@ -4,7 +4,9 @@ from dataclasses import dataclass, field
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from enum import Enum
-from typing import Generic, Optional, Tuple, TypeVar
+import re
+from typing import Generic, Iterable, Optional, Tuple, TypeVar
+from urllib.parse import unquote, urlsplit
 from uuid import uuid4
 
 
@@ -112,6 +114,26 @@ class RecordReference:
             raise DomainValidationError("Cross-Clann references are prohibited.")
 
 
+def clannBoundaryValidate(
+    clann_id: str,
+    *,
+    references: Iterable[RecordReference] = (),
+    evidence: Iterable["EvidenceReference"] = (),
+    provenances: Iterable["Provenance"] = (),
+) -> None:
+    """Validate every nested identity-bearing value against one Clann boundary."""
+    for reference in references:
+        reference.referenceValidate(clann_id)
+    for item in evidence:
+        if item.clann_id != clann_id:
+            raise DomainValidationError("Evidence must belong to the same Clann.")
+        if item.provenance.actor_reference is not None:
+            item.provenance.actor_reference.referenceValidate(clann_id)
+    for provenance in provenances:
+        if provenance.actor_reference is not None:
+            provenance.actor_reference.referenceValidate(clann_id)
+
+
 class LifecycleState(str, Enum):
     ACTIVE = "active"
     HISTORIC = "historic"
@@ -184,6 +206,28 @@ class EvidenceReference:
             raise DomainValidationError(
                 "Evidence identity, purpose and secure locator are required."
             )
+        _evidenceLocatorValidate(self.locator)
+
+
+def _evidenceLocatorValidate(locator: str) -> None:
+    """Require an opaque internal locator, never a path, URL, or credential."""
+    parsed = urlsplit(locator)
+    segments = unquote(parsed.path).split("/")[1:]
+    tokenPattern = re.compile(r"[A-Za-z0-9][A-Za-z0-9._~-]*")
+    if (
+        parsed.scheme != "evidence"
+        or not tokenPattern.fullmatch(parsed.netloc)
+        or parsed.query
+        or parsed.fragment
+        or not segments
+        or any(
+            segment in {"", ".", ".."} or not tokenPattern.fullmatch(segment)
+            for segment in segments
+        )
+    ):
+        raise DomainValidationError(
+            "Evidence locator must be an opaque evidence:// namespace/reference."
+        )
 
 
 class VerificationState(str, Enum):

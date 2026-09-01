@@ -330,7 +330,8 @@ Deliverables:
   institutions, accounts, income, essential commitments, authority and death;
 - glossary additions for observation, obligation, payment arrangement,
   continuity role and dependency; and
-- domain conformance checklist derived from requirements 008-018.
+- [domain conformance checklist](domainConformanceChecklist.md) derived from
+  requirements 008-018.
 
 Exit gate:
 
@@ -665,6 +666,7 @@ A module is ready for UI or importer implementation only when:
 - Keystone decision: [ADR-0007](adr/007-knowledgeBeforeDocuments.md)
 - Projection decision: [ADR-0008](adr/008-handbookAsProjection.md)
 - Phase 0 decisions: [ADRs 0012–0017](adr/adrIndex.md)
+- Phase 0/1 review: [domain conformance checklist](domainConformanceChecklist.md)
 - Banking guidance: [guidance index](../documentation/banking/bankingIndex.md)
 - Implementation: Phase 0/1 shared kernel in `eolas/domain/`; typed capture
   adapter in `eolas/capture/`; Phase 2 and Document Import remain pending

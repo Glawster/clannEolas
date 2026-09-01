@@ -2,8 +2,10 @@
 
 from datetime import date, datetime, timezone
 from decimal import Decimal
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import socket
+from threading import Barrier
 
 import pytest
 import yaml
@@ -12,6 +14,16 @@ from eolas.domain.entities import (
     Authority,
     AuthorityRegistration,
     AuthorityState,
+    Contact,
+    ContactRoute,
+    ContinuityAction,
+    GuidanceReference,
+    Interaction,
+    Organisation,
+    OrganisationBrand,
+    OrganisationRole,
+    PartyRole,
+    Person,
     RegistrationState,
 )
 from eolas.domain.graph import ContinuityDependency, DependencyGraph
@@ -36,6 +48,7 @@ from eolas.domain.values import (
     ObservationStatus,
     Provenance,
     RecordIdentity,
+    ReviewState,
 )
 
 NOW = datetime(2026, 9, 1, 10, 0, tzinfo=timezone.utc)
@@ -57,6 +70,24 @@ def _evidence() -> EvidenceReference:
         "authority confirmation",
         "a" * 64,
         "evidence://immutable/fictional-notice",
+        Classification.CONFIDENTIAL,
+        _provenance(),
+    )
+
+
+def _foreignReference(kind: str = "person"):
+    return RecordIdentity.identityCreate(
+        "another-clann", kind, "shared"
+    ).referenceCreate()
+
+
+def _foreignEvidence() -> EvidenceReference:
+    return EvidenceReference(
+        "ev_foreign_notice",
+        "another-clann",
+        "foreign fixture",
+        "b" * 64,
+        "evidence://immutable/foreign-notice",
         Classification.CONFIDENTIAL,
         _provenance(),
     )
@@ -98,12 +129,172 @@ def testFactStateDoesNotCoerceInvalidValue() -> None:
 
 def testClassificationFailsClosedAndMasksWithoutUI() -> None:
     with pytest.raises(DomainValidationError, match="classification"):
-        classificationResolve(None, sensitive=True)
+        classificationResolve(None)
+    with pytest.raises(DomainValidationError, match="classification"):
+        classificationResolve("private")  # type: ignore[arg-type]
     assert (
         classificationResolve(Classification.PRIVATE, Classification.CONFIDENTIAL)
         is Classification.CONFIDENTIAL
     )
     assert fieldExport("FICTIONAL-REF-42", Classification.CONFIDENTIAL) == "••••F-42"
+
+
+def testSharedAggregatesRejectNestedCrossClannValues() -> None:
+    route = ContactRoute(
+        "email",
+        "fictional@example.invalid",
+        "correspondence",
+        Classification.PRIVATE,
+        Fact(FactState.UNKNOWN),
+        Provenance("fixture", "route", NOW, _foreignReference()),
+    )
+    with pytest.raises(DomainValidationError, match="Cross-Clann"):
+        Person(
+            _identity("person"),
+            "Morgan Example",
+            Classification.PRIVATE,
+            contact_routes=(route,),
+        )
+    with pytest.raises(DomainValidationError, match="Cross-Clann"):
+        Contact(
+            _identity("contact"),
+            "Riley Example",
+            Classification.PRIVATE,
+            represented_party=_foreignReference(),
+        )
+    with pytest.raises(DomainValidationError, match="same Clann"):
+        Organisation(
+            _identity("organisation"),
+            "Example Provider",
+            Classification.PRIVATE,
+            brands=(OrganisationBrand("Example", evidence=(_foreignEvidence(),)),),
+        )
+
+
+def testContinuityAndInteractionRejectCrossClannValues() -> None:
+    subject = _identity("obligation").referenceCreate()
+    role = PartyRole(_identity("person").referenceCreate(), subject, "responsible")
+    review = ReviewState(
+        Fact(FactState.UNKNOWN),
+        Fact(FactState.UNKNOWN),
+        Fact(FactState.UNKNOWN),
+    )
+    with pytest.raises(DomainValidationError, match="Cross-Clann"):
+        ContinuityAction(
+            _identity("continuityAction"),
+            "review",
+            _foreignReference("obligation"),
+            role,
+            "open",
+            Fact(FactState.UNKNOWN),
+            (),
+            (),
+            Fact(FactState.UNKNOWN),
+            review,
+        )
+    with pytest.raises(DomainValidationError, match="Cross-Clann"):
+        Interaction(
+            _identity("interaction"),
+            NOW,
+            (_foreignReference("organisation"),),
+            "review",
+            "Fictional summary",
+            Fact(FactState.UNKNOWN),
+            Fact(FactState.UNKNOWN),
+            (),
+            Classification.PRIVATE,
+            _provenance(),
+        )
+
+
+def testSharedEntityCompositionsAcceptSameClannValues() -> None:
+    route = ContactRoute(
+        "email",
+        "fictional@example.invalid",
+        "correspondence",
+        Classification.PRIVATE,
+        Fact.factKnown(date(2026, 8, 1)),
+        _provenance(),
+        "Written contact preferred",
+    )
+    person = Person(
+        _identity("person"),
+        "Morgan Example",
+        Classification.PRIVATE,
+        contact_routes=(route,),
+    )
+    contact = Contact(
+        _identity("contact"),
+        "Riley Example",
+        Classification.PRIVATE,
+        represented_party=person.identity.referenceCreate(),
+        contact_routes=(route,),
+    )
+    brand = OrganisationBrand(
+        "Example Provider",
+        effective_from=date(2026, 1, 1),
+        evidence=(_evidence(),),
+    )
+    organisation = Organisation(
+        _identity("organisation"),
+        "Example Provider Cooperative",
+        Classification.PRIVATE,
+        brands=(brand,),
+        contact_routes=(route,),
+    )
+    organisationRole = OrganisationRole(
+        organisation.identity.referenceCreate(),
+        "fixtureProvider",
+        "fixture",
+    )
+    subject = _identity("obligation", "fixture").referenceCreate()
+    responsibleRole = PartyRole(
+        contact.identity.referenceCreate(),
+        subject,
+        "responsibleContact",
+        provenance=_provenance(),
+    )
+    guidance = GuidanceReference(
+        "fixture-guidance",
+        Jurisdiction("GB", "ISO-3166-1", "2026"),
+        "1",
+        date(2026, 1, 1),
+        date(2026, 8, 1),
+        "fixture://guidance",
+    )
+    review = ReviewState(
+        Fact.factKnown(date(2026, 8, 1)),
+        Fact.factKnown(date(2027, 8, 1)),
+        Fact.factKnown(contact.identity.referenceCreate()),
+    )
+    action = ContinuityAction(
+        _identity("continuityAction"),
+        "reviewEssentialService",
+        subject,
+        responsibleRole,
+        "open",
+        Fact(FactState.UNKNOWN),
+        (guidance,),
+        (_evidence(),),
+        Fact(FactState.UNKNOWN),
+        review,
+    )
+    interaction = Interaction(
+        _identity("interaction"),
+        NOW,
+        (contact.identity.referenceCreate(), organisation.identity.referenceCreate()),
+        "review",
+        "Fictional provider review",
+        Fact(FactState.UNKNOWN),
+        Fact.factKnown(date(2026, 9, 15)),
+        (_evidence(),),
+        Classification.CONFIDENTIAL,
+        _provenance(),
+    )
+
+    assert organisationRole.organisation == organisation.identity.referenceCreate()
+    assert action.guidance == (guidance,)
+    assert interaction.parties[0] == contact.identity.referenceCreate()
 
 
 def testIdentifierHasTypedMaskedDisplayAndNeverBecomesIdentity() -> None:
@@ -172,6 +363,30 @@ def testProvenanceEvidenceAndObservationAreDatedAndTraceable() -> None:
     assert observation.as_of == NOW
     assert observation.provenance.source_reference == "scenario-v1"
     assert _evidence().checksum_sha256 == "a" * 64
+
+
+@pytest.mark.parametrize(
+    "locator",
+    [
+        "/home/person/private.pdf",
+        "file:///private/evidence.pdf",
+        "https://user:password@example.invalid/evidence",
+        "evidence://immutable/item?token=secret",
+        "evidence://immutable/../outside",
+        "evidence://immutable/%2e%2e/outside",
+    ],
+)
+def testEvidenceReferenceRejectsUnsafeLocator(locator: str) -> None:
+    with pytest.raises(DomainValidationError, match="opaque evidence"):
+        EvidenceReference(
+            "ev_unsafe",
+            CLANN,
+            "unsafe locator test",
+            "c" * 64,
+            locator,
+            Classification.CONFIDENTIAL,
+            _provenance(),
+        )
 
 
 def testMoneyRejectsBinaryFloatingPoint() -> None:
@@ -321,6 +536,34 @@ def testYamlStoreAtomicWritesHistoryConflictsAndClannIsolation(
             RecordIdentity.identityCreate("other", "organisation", "shared")
         )
 
+    forgedIdentity = RecordIdentity(
+        identity.record_id, CLANN, "organisation", "banking"
+    )
+    with pytest.raises(DomainValidationError, match="history identity"):
+        store.recordHistory(forgedIdentity)
+
+
+def testYamlStoreSerialisesConcurrentExpectedVersionChecks(tmp_path: Path) -> None:
+    path = tmp_path / "kernel.yaml"
+    identity = _identity("organisation")
+    barrier = Barrier(2)
+
+    def create(label: str) -> str:
+        store = YamlRecordStore(path, CLANN)
+        candidate = StoredRecord(identity, "organisation", 1, 0, {"name": label})
+        barrier.wait()
+        try:
+            store.recordsCommit((WriteOperation(candidate, None),))
+            return "committed"
+        except VersionConflictError:
+            return "conflict"
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        results = tuple(executor.map(create, ("Provider A", "Provider B")))
+
+    assert sorted(results) == ["committed", "conflict"]
+    assert YamlRecordStore(path, CLANN).recordGet(identity).record_version == 1
+
 
 def testYamlStoreChangeSetIsAtomicOnValidationFailure(tmp_path: Path) -> None:
     path = tmp_path / "kernel.yaml"
@@ -392,5 +635,10 @@ def testFictionalConformanceFixtureHasTwoHouseholdsAndDependencyChain() -> None:
     assert fixture["fictional"] is True
     assert len(fixture["households"]) >= 2
     assert len(fixture["dependencies"]) == 4
+    assert any(event["type"] == "death" for event in fixture["events"])
+    assert any(
+        role["role"] == "fictionalAccountProvider"
+        for role in fixture["organisationRoles"]
+    )
     assert fixture["accountLikeRelationship"]["fullReference"] == "absent"
     secretsValidate(fixture)

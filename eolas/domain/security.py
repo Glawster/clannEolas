@@ -52,14 +52,12 @@ _ALIASES = {
 def classificationResolve(
     record_default: Classification | None,
     field_override: Classification | None = None,
-    *,
-    sensitive: bool = False,
 ) -> Classification:
-    """Resolve handling classification and fail closed for sensitive values."""
-    if record_default is None:
-        if sensitive:
-            raise DomainValidationError("Sensitive values require a classification.")
-        return Classification.PRIVATE
+    """Resolve explicit handling classifications without a permissive default."""
+    if not isinstance(record_default, Classification):
+        raise DomainValidationError("A valid classification is required.")
+    if field_override is not None and not isinstance(field_override, Classification):
+        raise DomainValidationError("A field classification must be valid.")
     return record_default.classificationCombine(field_override)
 
 

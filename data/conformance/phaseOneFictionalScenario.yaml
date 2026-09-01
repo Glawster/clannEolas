@@ -17,10 +17,16 @@ people:
     name: Riley Example
     householdRef: fixture-household-south
 organisations:
+  - id: fixture-org-financial
+    legalName: Example Mutual Finance (Fictional)
   - id: fixture-org-pension
     legalName: Example Pensions Cooperative (Fictional)
   - id: fixture-org-energy
     legalName: Example Community Energy (Fictional)
+organisationRoles:
+  - organisationRef: fixture-org-financial
+    role: fictionalAccountProvider
+    ownerModule: fixtureOnly
 authority:
   id: fixture-authority-riley-for-morgan
   actorRef: fixture-person-riley
@@ -43,6 +49,19 @@ obligation:
 paymentRelationship:
   id: fixture-payment-electricity
   accountRef: fixture-account-household
+events:
+  - id: fixture-event-morgan-death
+    type: death
+    subjectRef: fixture-person-morgan
+    occurredOn: 2026-08-15
+    affectedRecords:
+      - fixture-income-pension
+      - fixture-account-household
+      - fixture-obligation-electricity
+    requiredReviews:
+      - verifyRepresentativeAuthority
+      - preserveEssentialElectricity
+      - reviewIncomeAndPaymentDependencies
 evidence:
   - id: fixture-evidence-pension-letter
     locator: evidence://immutable/fictional-pension-letter

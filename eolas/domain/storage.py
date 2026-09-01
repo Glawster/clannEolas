@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, Mapping, Optional, Protocol, Tuple
 
 import yaml
+from filelock import FileLock
 
 from eolas.domain.security import secretsValidate
 from eolas.domain.values import DomainValidationError, RecordIdentity
@@ -73,6 +74,7 @@ class YamlRecordStore:
         supports_highly_confidential: bool = False,
     ) -> None:
         self.path = path.expanduser().resolve()
+        self.lock = FileLock(f"{self.path}.lock")
         self.clann_id = clann_id
         self.migrations = dict(migrations or {})
         self.supports_highly_confidential = supports_highly_confidential
@@ -95,11 +97,16 @@ class YamlRecordStore:
         """Return append-only prior versions, excluding current state."""
         self._identityValidate(identity)
         state = self._stateLoad()
-        return tuple(
+        history = tuple(
             self._recordDecode(raw)
             for raw in state["history"]
             if raw["identity"]["recordId"] == identity.record_id
         )
+        if any(record.identity != identity for record in history):
+            raise DomainValidationError(
+                "Record history identity type or ownership does not match."
+            )
+        return history
 
     def recordsCommit(
         self, operations: Iterable[WriteOperation]
@@ -114,44 +121,54 @@ class YamlRecordStore:
             raise DomainValidationError(
                 "A change set cannot write one aggregate twice."
             )
-        state = self._stateLoad()
-        committed = []
-        for operation in operationList:
-            record = operation.record
-            self._identityValidate(record.identity)
-            secretsValidate(record.payload)
-            if not self.supports_highly_confidential and _highClassificationContains(
-                record.payload
-            ):
-                raise DomainValidationError(
-                    "This storage adapter cannot protect Highly Confidential values."
+        # Hold one cross-process lock across the complete optimistic transaction.
+        # Atomic replacement protects the file itself; this lock prevents two
+        # writers from both validating against the same stale snapshot.
+        with self.lock:
+            state = self._stateLoad()
+            committed = []
+            for operation in operationList:
+                record = operation.record
+                self._identityValidate(record.identity)
+                secretsValidate(record.payload)
+                if (
+                    not self.supports_highly_confidential
+                    and _highClassificationContains(record.payload)
+                ):
+                    raise DomainValidationError(
+                        "This storage adapter cannot protect Highly Confidential values."
+                    )
+                current = state["records"].get(record.identity.record_id)
+                if (
+                    current is not None
+                    and self._recordDecode(current).identity != record.identity
+                ):
+                    raise DomainValidationError(
+                        "Only the owning module may update an aggregate."
+                    )
+                currentVersion = (
+                    None if current is None else int(current["recordVersion"])
                 )
-            current = state["records"].get(record.identity.record_id)
-            if (
-                current is not None
-                and self._recordDecode(current).identity != record.identity
-            ):
-                raise DomainValidationError(
-                    "Only the owning module may update an aggregate."
+                if currentVersion != operation.expected_version:
+                    raise VersionConflictError(
+                        f"Expected version {operation.expected_version}; "
+                        f"found {currentVersion}."
+                    )
+                nextRecord = StoredRecord(
+                    record.identity,
+                    record.schema_name,
+                    record.schema_version,
+                    1 if currentVersion is None else currentVersion + 1,
+                    copy.deepcopy(dict(record.payload)),
                 )
-            currentVersion = None if current is None else int(current["recordVersion"])
-            if currentVersion != operation.expected_version:
-                raise VersionConflictError(
-                    f"Expected version {operation.expected_version}; found {currentVersion}."
+                if current is not None:
+                    state["history"].append(copy.deepcopy(current))
+                state["records"][record.identity.record_id] = self._recordEncode(
+                    nextRecord
                 )
-            nextRecord = StoredRecord(
-                record.identity,
-                record.schema_name,
-                record.schema_version,
-                1 if currentVersion is None else currentVersion + 1,
-                copy.deepcopy(dict(record.payload)),
-            )
-            if current is not None:
-                state["history"].append(copy.deepcopy(current))
-            state["records"][record.identity.record_id] = self._recordEncode(nextRecord)
-            committed.append(nextRecord)
-        self._stateWrite(state)
-        return tuple(committed)
+                committed.append(nextRecord)
+            self._stateWrite(state)
+            return tuple(committed)
 
     def recordMigrate(
         self, identity: RecordIdentity, target_version: int

@@ -10,13 +10,24 @@ from eolas.domain.values import (
     DomainValidationError,
     EvidenceReference,
     Fact,
+    FactState,
     Jurisdiction,
     Provenance,
     RecordIdentity,
     RecordLifecycle,
     RecordReference,
     ReviewState,
+    clannBoundaryValidate,
 )
+
+
+def _contactRoutesValidate(
+    clann_id: str, contact_routes: Tuple["ContactRoute", ...]
+) -> None:
+    """Keep contact-route provenance inside its containing aggregate's Clann."""
+    clannBoundaryValidate(
+        clann_id, provenances=(route.provenance for route in contact_routes)
+    )
 
 
 @dataclass(frozen=True)
@@ -42,6 +53,9 @@ class Person:
     lifecycle: RecordLifecycle = RecordLifecycle()
     contact_routes: Tuple[ContactRoute, ...] = ()
 
+    def __post_init__(self) -> None:
+        _contactRoutesValidate(self.identity.clann_id, self.contact_routes)
+
 
 @dataclass(frozen=True)
 class Contact:
@@ -52,6 +66,11 @@ class Contact:
     classification: Classification
     represented_party: Optional[RecordReference] = None
     contact_routes: Tuple[ContactRoute, ...] = ()
+
+    def __post_init__(self) -> None:
+        references = () if self.represented_party is None else (self.represented_party,)
+        clannBoundaryValidate(self.identity.clann_id, references=references)
+        _contactRoutesValidate(self.identity.clann_id, self.contact_routes)
 
 
 @dataclass(frozen=True)
@@ -74,6 +93,13 @@ class Organisation:
     brands: Tuple[OrganisationBrand, ...] = ()
     contact_routes: Tuple[ContactRoute, ...] = ()
     lifecycle: RecordLifecycle = RecordLifecycle()
+
+    def __post_init__(self) -> None:
+        clannBoundaryValidate(
+            self.identity.clann_id,
+            evidence=(item for brand in self.brands for item in brand.evidence),
+        )
+        _contactRoutesValidate(self.identity.clann_id, self.contact_routes)
 
 
 @dataclass(frozen=True)
@@ -99,7 +125,12 @@ class PartyRole:
     provenance: Optional[Provenance] = None
 
     def __post_init__(self) -> None:
-        self.party.referenceValidate(self.subject.clann_id)
+        provenances = () if self.provenance is None else (self.provenance,)
+        clannBoundaryValidate(
+            self.subject.clann_id,
+            references=(self.party, self.subject),
+            provenances=provenances,
+        )
 
 
 class AuthorityState(str, Enum):
@@ -129,12 +160,11 @@ class Authority:
     classification: Classification
 
     def __post_init__(self) -> None:
-        self.grantor.referenceValidate(self.identity.clann_id)
-        self.actor.referenceValidate(self.identity.clann_id)
-        if any(item.clann_id != self.identity.clann_id for item in self.evidence):
-            raise DomainValidationError(
-                "Authority evidence must belong to the same Clann."
-            )
+        clannBoundaryValidate(
+            self.identity.clann_id,
+            references=(self.grantor, self.actor),
+            evidence=self.evidence,
+        )
         if not self.scope or not self.evidence:
             raise DomainValidationError("Authority requires scope and evidence.")
 
@@ -172,12 +202,11 @@ class AuthorityRegistration:
     evidence: Tuple[EvidenceReference, ...]
 
     def __post_init__(self) -> None:
-        self.authority.referenceValidate(self.identity.clann_id)
-        self.provider.referenceValidate(self.identity.clann_id)
-        if any(item.clann_id != self.identity.clann_id for item in self.evidence):
-            raise DomainValidationError(
-                "Registration evidence must belong to the same Clann."
-            )
+        clannBoundaryValidate(
+            self.identity.clann_id,
+            references=(self.authority, self.provider),
+            evidence=self.evidence,
+        )
 
 
 @dataclass(frozen=True)
@@ -207,6 +236,26 @@ class ContinuityAction:
     outcome: Fact[str]
     review: ReviewState
 
+    def __post_init__(self) -> None:
+        references = [
+            self.subject,
+            self.responsible_role.party,
+            self.responsible_role.subject,
+        ]
+        if self.authority.state is FactState.KNOWN:
+            references.append(self.authority.value)
+        if self.review.responsible_role.state is FactState.KNOWN:
+            references.append(self.review.responsible_role.value)
+        clannBoundaryValidate(
+            self.identity.clann_id,
+            references=references,
+            evidence=self.evidence,
+        )
+        if self.responsible_role.subject != self.subject:
+            raise DomainValidationError(
+                "A continuity action's responsible role must concern its subject."
+            )
+
 
 @dataclass(frozen=True)
 class Interaction:
@@ -222,3 +271,11 @@ class Interaction:
     evidence: Tuple[EvidenceReference, ...]
     classification: Classification
     provenance: Provenance
+
+    def __post_init__(self) -> None:
+        clannBoundaryValidate(
+            self.identity.clann_id,
+            references=self.parties,
+            evidence=self.evidence,
+            provenances=(self.provenance,),
+        )

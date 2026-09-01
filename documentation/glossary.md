@@ -227,6 +227,11 @@ an Authority; it is not proof that the underlying Authority exists or is active.
 **Continuity Dependency** — An explained directed relationship showing that
 one canonical record relies on, funds, supports or otherwise affects another.
 
+**Continuity role** — A dated, module-owned description of how a record matters
+to household continuity, such as a primary operating relationship or essential
+service. It does not imply ownership or authority and its vocabulary belongs to
+the module publishing it.
+
 **Evidence Reference** — A classified, checksum-backed secure pointer to an
 immutable original. Evidence supports knowledge but is not automatically fact.
 
