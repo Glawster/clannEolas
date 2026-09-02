@@ -25,11 +25,13 @@ if ! command -v pkgbuild >/dev/null 2>&1; then
     exit 1
 fi
 
-version="$(${python_bin} - <<'PY'
+version="$(PROJECT_ROOT="${project_root}" "${python_bin}" - <<'PY'
+import os
 from pathlib import Path
 import tomllib
 
-with Path("pyproject.toml").open("rb") as handle:
+project_root = Path(os.environ["PROJECT_ROOT"])
+with (project_root / "pyproject.toml").open("rb") as handle:
     print(tomllib.load(handle)["project"]["version"])
 PY
 )"
