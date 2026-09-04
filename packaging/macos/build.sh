@@ -25,6 +25,40 @@ if ! command -v pkgbuild >/dev/null 2>&1; then
     exit 1
 fi
 
+architecture="$(uname -m)"
+macos_version="$(sw_vers -productVersion)"
+macos_build="$(sw_vers -buildVersion)"
+kernel_version="$(uname -r)"
+python_path="$(command -v "${python_bin}")"
+python_version="$("${python_bin}" --version 2>&1)"
+
+if command -v xcode-select >/dev/null 2>&1 && xcode-select -p >/dev/null 2>&1; then
+    developer_dir="$(xcode-select -p)"
+else
+    developer_dir="not available"
+fi
+
+if command -v pkgutil >/dev/null 2>&1; then
+    clt_version="$(pkgutil --pkg-info=com.apple.pkg.CLTools_Executables 2>/dev/null | awk '/version:/ {print $2}' || true)"
+else
+    clt_version=""
+fi
+[[ -n "${clt_version}" ]] || clt_version="not reported"
+
+cat <<EOF
+Clann Eolas macOS build environment
+----------------------------------
+macOS version:        ${macos_version}
+macOS build:          ${macos_build}
+Architecture:         ${architecture}
+Kernel:               ${kernel_version}
+Python executable:    ${python_path}
+Python version:       ${python_version}
+Developer directory:  ${developer_dir}
+Command Line Tools:   ${clt_version}
+Project root:         ${project_root}
+EOF
+
 version="$(PROJECT_ROOT="${project_root}" "${python_bin}" - <<'PY'
 import os
 from pathlib import Path
@@ -36,7 +70,6 @@ with (project_root / "pyproject.toml").open("rb") as handle:
 PY
 )"
 
-architecture="$(uname -m)"
 package_name="ClannEolas-${version}-macos-${architecture}.pkg"
 
 rm -rf "${build_root}"
