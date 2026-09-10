@@ -2,48 +2,60 @@
 
 ## Increment
 
-REQ-020 — Interactive cross-platform terminal interface.
+Banking Core.
 
 ## Branch
 
-`feature/020-interactive-terminal-interface`
+`feature/banking-core`
 
 ## Objective
 
-Turn the reviewed Textual shell into the main Eolas terminal interface while
-preserving the scriptable CLI and keeping domain behaviour outside the UI.
+Implement the first Banking domain slice on the shared knowledge kernel so a
+real banking relationship can be represented without loose capture dictionaries
+or document-shaped data.
 
 ## Scope
 
-- Maintain the approved left-navigation and central-workspace interaction model.
-- Use the Eolas/FMSAT visual language through externalised Textual styling.
-- Keep Textual code beneath `eolas/tui/`.
-- Connect representative views and forms to shared application/domain services.
-- Preserve masked/omitted sensitive values in summary contexts.
-- Add interaction tests for navigation, validation, confirmations and resizing.
-- Preserve existing CLI behaviour.
+- `FinancialInstitution` linked to shared `Organisation`.
+- `BankingRelationship` as the real-world relationship aggregate.
+- `AccountParty` ownership and interest, distinct from authority and access.
+- Versioned `AccountContinuityRole` registry.
+- Typed banking identifiers with masking, provenance and prohibited-secret
+  rejection.
+- `BalanceObservation` as a dated `Observation` of `Money`.
+- Lifecycle/status, provenance, classification and review state using shared
+  types.
+- Persistence through the shared `RecordStore` port.
+- CLI/curses `eolas capture banking` creating typed Banking records.
 
 ## Explicit exclusion
 
-- Desktop, browser and mobile interfaces.
-- Business rules implemented in Textual views.
-- Completing unfinished Banking or other domain functionality solely to fill
-  TUI screens.
+Do not implement in this increment:
+
+- money movements and payment arrangements;
+- transaction history, Direct Debits, standing orders or cancellation;
+- bank-statement parsing, OCR or Open Banking;
+- automatic institution lookup;
+- executor or attorney banking workflows;
+- banking reports;
+- the full continuity dependency graph for Banking;
+- cloud synchronisation or production encryption/key-management changes.
 
 ## Expected exit criteria
 
-- `eolas-tui` launches the production TUI shell.
-- Representative TUI workflows use shared services rather than CLI subprocesses.
-- Existing CLI workflows continue to pass regression tests.
-- Responsive layout, keyboard navigation, validation and confirmation have
-  automated interaction evidence.
-- Sensitive-data presentation has been reviewed.
-- Linux, macOS and Windows smoke tests are recorded.
-- `pytest`, repository linting and `manageProject --check` pass.
+- Domain tests cover institution and relationship creation, opaque IDs, Clann
+  isolation, joint ownership, non-owner authority references, continuity roles,
+  identifiers, balances, provenance, classification, review, persistence and
+  version conflicts.
+- Capture/CLI adapter creates typed Banking records and existing non-banking
+  capture continues to work.
+- Tests use conspicuously fictional institutions and identifiers and require
+  no network.
+- Requirement 009 is updated but not marked completed.
+- `pytest` passes.
+- `manageProject --check` reports zero failures and zero warnings.
 
 ## Immediate next action
 
-Run and correct the expanded TUI interaction tests. Then replace the People
-sample page with the active Clann's real people projection and migrate any
-remaining curses-only interactive capture paths before retiring the old curses
-presentation layer.
+Money Movements and Payment Arrangements, keeping payment instructions separate
+from the underlying obligation.
