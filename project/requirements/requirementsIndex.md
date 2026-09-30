@@ -1,6 +1,6 @@
 # Requirements
 
-Next available number: 020
+Next available number: 021
 
 This directory is the source of truth for specific outcomes clanneolas.com
 intends to deliver and why. Requirements can govern handbook content, project
@@ -18,6 +18,7 @@ implementation and must distinguish current behaviour from planned work.
 - [007 — Legal document custody and access](features/007-legalDocumentCustodyAndAccess.md) (legacy ID: APP-001)
 - [008 — Document Import Framework](features/008-documentImportFramework.md)
 - [019 — Secure Clann access and synchronisation](features/019-secureClannAccessAndSync.md)
+- [020 — Interactive cross-platform terminal interface](features/020-interactiveTerminalInterface.md)
 
 ## InProgress
 
@@ -113,4 +114,5 @@ realistic identifiers.
 - [005-annualReviewProcess](prompt/005-annualReviewProcess.md)
 - [006-gettingStartedGuide](prompt/006-gettingStartedGuide.md)
 - [007-legalDocumentCustodyAndAccess](prompt/007-legalDocumentCustodyAndAccess.md)
+- [020-interactiveTerminalInterface](prompt/020-interactiveTerminalInterface.md)
 <!-- OMP-PROMPT-INDEX-END -->
