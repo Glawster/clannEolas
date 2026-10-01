@@ -40,6 +40,10 @@ def cliRun(arguments: Optional[Sequence[str]] = None) -> int:
         return _captureRun(args)
     if args.area == "log" and args.action == "show":
         return _logShow()
+    if args.area == "tui":
+        from eolas.tui.app import tuiRun
+
+        return tuiRun()
     parser.print_help()
     return 0
 
@@ -256,6 +260,8 @@ def _parserBuild() -> argparse.ArgumentParser:
         action="store_true",
         help="save the record (default is a safe preview)",
     )
+
+    areas.add_parser("tui", help="launch the interactive terminal interface")
 
     logParser = areas.add_parser("log", help="inspect Eolas logs")
     logActions = logParser.add_mutually_exclusive_group(required=True)
