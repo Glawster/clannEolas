@@ -111,7 +111,19 @@ PAGES = {
         "Production views should show custody and access instructions before "
         "revealing protected document content.",
     ),
-
+    "help": TuiPage(
+        "Help / User guide",
+        "Guidance for understanding Eolas and using the terminal interface.",
+        ("Section", "Purpose"),
+        (
+            ("Getting started", "What Eolas is and where to begin"),
+            ("Using the interface", "Navigation, forms, tables and shortcuts"),
+            ("Key concepts", "Clann, households, readiness, review and capture"),
+            ("Privacy & safety", "Sensitive data, masking and safe storage"),
+        ),
+        "Detailed user-guide content is maintained separately from the UI shell "
+        "and will be presented here.",
+    ),
 }
 
 
@@ -158,6 +170,7 @@ class EolasApp(App[None]):
         ("5", "page('subscriptions')", "Services"),
         ("6", "page('documents')", "Documents"),
         ("7", "page('capture')", "Capture"),
+        ("8", "page('help')", "Help"),
     ]
 
     def compose(self) -> ComposeResult:
@@ -175,6 +188,7 @@ class EolasApp(App[None]):
                 )
                 yield Button("6  Documents", id="nav-documents", classes="navButton")
                 yield Button("7  Quick capture", id="nav-capture", classes="navButton")
+                yield Button("8  Help / User guide", id="nav-help", classes="navButton")
                 yield Static(
                     "Keyboard first\nMouse optional",
                     id="navHint",
