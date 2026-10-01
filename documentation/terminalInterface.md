@@ -46,6 +46,17 @@ Sensitive values must be masked or omitted in summary views. A future detail
 view may reveal information only when appropriate to the user's explicit
 action.
 
+### Warp Terminal
+
+Warp may interpret `eolas tui` as an agent prompt.
+Prefix it with `!` to force shell execution:
+
+    ! eolas tui
+
+Alternatively use:
+
+    eolas-tui
+
 ## Architecture
 
 Textual is confined to `eolas/tui/`. The TUI must use the same
