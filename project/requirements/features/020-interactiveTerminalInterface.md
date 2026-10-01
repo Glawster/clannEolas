@@ -2,7 +2,7 @@
 
 ## Status
 
-ToDo
+InProgress
 
 ## Outcome
 
@@ -120,11 +120,10 @@ terminal environments.
   guidelines.
 - Existing domain requirements remain authoritative for the behaviour the TUI
   exposes.
-- A terminal UI framework must be selected that supports the required
-  cross-platform behaviour, keyboard interaction, responsive layout, reusable
-  widgets, asynchronous/live updates and externalised styling. Textual is the
-  current candidate, but framework selection should be recorded as an ADR
-  before implementation if it becomes a consequential project dependency.
+- Textual is the selected terminal UI framework, recorded in
+  [ADR-019](../../adr/019-textualTerminalInterface.md). It provides the required
+  cross-platform full-screen layout, keyboard interaction, responsive behaviour,
+  reusable widgets, asynchronous/live updates and externalised styling.
 - The established FMSAT colour scheme and visual language are the default
   branding source for the interface.
 
@@ -147,9 +146,9 @@ terminal environments.
 
 ## Traceability
 
-- Implementation: pending
+- Implementation: `eolas/tui/` production shell established; service/data integration remains
 - Tests: pending
-- Documentation: pending
+- Documentation: terminal-interface usage documentation pending
 - Pull request: pending
 - Agent runs: pending or `None`
 
@@ -158,3 +157,5 @@ terminal environments.
 - 2026-09-30: created — capture the proposed Grok-style interactive terminal
   experience for Clann Eolas while preserving the CLI and shared domain
   architecture.
+- 2026-10-01: implementation started — the reviewed Textual shell was promoted
+  from prototype status into `eolas/tui/`; Textual was accepted in ADR-019.
