@@ -112,6 +112,48 @@ PAGES = {
         "Production views should show custody and access instructions before "
         "revealing protected document content.",
     ),
+    "help": PrototypePage(
+        "Help & user guide",
+        "What Eolas is for, how to begin, and what the main terms mean.",
+        ("Topic", "Meaning", "What to do"),
+        (
+            (
+                "Eolas",
+                "A family continuity handbook",
+                "Record practical knowledge others may need",
+            ),
+            (
+                "Clann",
+                "The wider group you are preparing for",
+                "Include household and relevant family/support people",
+            ),
+            (
+                "Readiness",
+                "How complete and reviewable an area is",
+                "Use it as a prompt, not a score",
+            ),
+            (
+                "Review",
+                "Information that may need checking",
+                "Open the area and confirm it is still current",
+            ),
+            (
+                "Capture",
+                "Add structured continuity information",
+                "Record the source and only necessary details",
+            ),
+        ),
+        "Eolas is about continuity: helping trusted people understand what exists, "
+        "where to find it and what practical action may be needed. It does not "
+        "replace professional legal, medical or financial advice.\n\n"
+        "Start small: complete one useful area, record where important originals "
+        "are held, make sure an appropriate trusted person knows Eolas exists, "
+        "and review information after significant changes and periodically.\n\n"
+        "Do not store passwords, PINs, recovery codes, full payment-card security "
+        "details or private cryptographic keys in Eolas. Summary screens should "
+        "mask or omit sensitive values until an explicit detail view is appropriate.\n\n"
+        "Navigation: use the numbered keys or arrow/tab navigation. Press q to quit.",
+    ),
 }
 
 
@@ -158,6 +200,7 @@ class EolasPrototype(App[None]):
         ("5", "page('subscriptions')", "Services"),
         ("6", "page('documents')", "Documents"),
         ("7", "page('capture')", "Capture"),
+        ("8", "page('help')", "Help"),
     ]
 
     def compose(self) -> ComposeResult:
@@ -176,6 +219,7 @@ class EolasPrototype(App[None]):
                 )
                 yield Button("6  Documents", id="nav-documents", classes="navButton")
                 yield Button("7  Quick capture", id="nav-capture", classes="navButton")
+                yield Button("8  Help / user guide", id="nav-help", classes="navButton")
                 yield Static(
                     "Keyboard first\nMouse optional\nNo data is written",
                     id="navHint",
