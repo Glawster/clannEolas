@@ -17,10 +17,16 @@ python -m pip install -e .
 Launch the terminal interface with:
 
 ```bash
+eolas tui
+```
+
+The direct entry point is also available:
+
+```bash
 eolas-tui
 ```
 
-or:
+or, during development:
 
 ```bash
 python -m eolas.tui
