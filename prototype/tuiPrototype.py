@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from textual import on
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical, VerticalScroll
+from textual.events import Resize
 from textual.screen import ModalScreen
 from textual.widgets import (
     Button,
@@ -221,7 +222,20 @@ class EolasPrototype(App[None]):
         """Initialise the default dashboard state."""
 
         self.query_one("#readiness", ProgressBar).progress = 72
+        self.layoutResponsive(self.size.width)
         self.pageShow("overview")
+
+    def on_resize(self, event: Resize) -> None:
+        """Apply responsive classes without relying on CSS media queries."""
+
+        self.layoutResponsive(event.size.width)
+
+    def layoutResponsive(self, width: int) -> None:
+        """Set layout classes for compact and narrow terminal widths."""
+
+        screen = self.screen
+        screen.set_class(width < 80, "compact")
+        screen.set_class(width < 60, "narrow")
 
     @on(Button.Pressed, ".navButton")
     def navigationPressed(self, event: Button.Pressed) -> None:
