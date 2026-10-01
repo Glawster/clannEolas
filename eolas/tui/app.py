@@ -111,48 +111,7 @@ PAGES = {
         "Production views should show custody and access instructions before "
         "revealing protected document content.",
     ),
-    "help": TuiPage(
-        "Help & user guide",
-        "What Eolas is for, how to begin, and what the main terms mean.",
-        ("Topic", "Meaning", "What to do"),
-        (
-            (
-                "Eolas",
-                "A family continuity handbook",
-                "Record practical knowledge others may need",
-            ),
-            (
-                "Clann",
-                "The wider group you are preparing for",
-                "Include household and relevant family/support people",
-            ),
-            (
-                "Readiness",
-                "How complete and reviewable an area is",
-                "Use it as a prompt, not a score",
-            ),
-            (
-                "Review",
-                "Information that may need checking",
-                "Open the area and confirm it is still current",
-            ),
-            (
-                "Capture",
-                "Add structured continuity information",
-                "Record the source and only necessary details",
-            ),
-        ),
-        "Eolas is about continuity: helping trusted people understand what exists, "
-        "where to find it and what practical action may be needed. It does not "
-        "replace professional legal, medical or financial advice.\n\n"
-        "Start small: complete one useful area, record where important originals "
-        "are held, make sure an appropriate trusted person knows Eolas exists, "
-        "and review information after significant changes and periodically.\n\n"
-        "Do not store passwords, PINs, recovery codes, full payment-card security "
-        "details or private cryptographic keys in Eolas. Summary screens should "
-        "mask or omit sensitive values until an explicit detail view is appropriate.\n\n"
-        "Navigation: use the numbered keys or arrow/tab navigation. Press q to quit.",
-    ),
+
 }
 
 
@@ -178,7 +137,7 @@ class ConfirmationModal(ModalScreen[None]):
 
     @on(Button.Pressed)
     def buttonPressed(self, event: Button.Pressed) -> None:
-        """Close the prototype confirmation dialog."""
+        """Close the confirmation dialog."""
 
         self.dismiss()
 
@@ -238,8 +197,8 @@ class EolasApp(App[None]):
                 with Vertical(id="captureForm"):
                     yield Label("Quick capture", id="captureTitle")
                     yield Static(
-                        "This demonstrates form entry and validation only. "
-                        "A production TUI would call the same capture service as the CLI."
+                        "Enter the record label and information source. "
+                        "This screen will use the shared Eolas capture service."
                     )
                     yield Label("Record label")
                     yield Input(
@@ -317,6 +276,7 @@ class EolasApp(App[None]):
         capture = self.query_one("#captureForm", Vertical)
         cards = self.query_one("#summaryCards", Horizontal)
         progress = self.query_one("#readiness", ProgressBar)
+        progressLabel = self.query_one("#readinessLabel", Label)
         table = self.query_one("#records", DataTable)
         detail = self.query_one("#detail", Static)
 
@@ -328,6 +288,7 @@ class EolasApp(App[None]):
             table.display = False
             cards.display = False
             progress.display = False
+            progressLabel.display = False
             detail.display = False
             capture.display = True
             self.query_one("#captureLabel", Input).focus()
@@ -341,6 +302,7 @@ class EolasApp(App[None]):
         detail.display = True
         cards.display = pageName == "overview"
         progress.display = pageName == "overview"
+        progressLabel.display = pageName == "overview"
 
         table.clear(columns=True)
         table.add_columns(*page.columns)
