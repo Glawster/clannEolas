@@ -1,0 +1,261 @@
+/* Exploratory Eolas/FMSAT terminal theme for REQ-020 prototype. */
+
+$forest: #1f4d3a;
+$forest-dark: #15372a;
+$forest-soft: #2f6651;
+$gold: #d1aa5b;
+$cream: #f1ead9;
+$stone: #b8b2a4;
+$ink: #19211d;
+$muted: #839087;
+$danger: #b85c52;
+
+Screen {
+    background: $forest-dark;
+    color: $cream;
+}
+
+Header {
+    background: $forest;
+    color: $cream;
+    height: 3;
+}
+
+Footer {
+    background: $ink;
+    color: $stone;
+}
+
+#body {
+    height: 1fr;
+}
+
+#navigation {
+    width: 28;
+    min-width: 24;
+    background: $forest;
+    border-right: solid $gold;
+    padding: 1 1;
+}
+
+#brand {
+    color: $gold;
+    text-style: bold;
+    text-align: center;
+    height: 2;
+}
+
+#tagline {
+    color: $cream;
+    text-align: center;
+    margin-bottom: 1;
+}
+
+#prototypeBadge {
+    background: $gold;
+    color: $ink;
+    text-style: bold;
+    text-align: center;
+    margin: 0 0 1 0;
+    padding: 0 1;
+}
+
+.navButton {
+    width: 100%;
+    min-width: 0;
+    height: 3;
+    margin: 0;
+    background: $forest;
+    color: $cream;
+    border: none;
+    text-align: left;
+}
+
+.navButton:hover,
+.navButton:focus {
+    background: $forest-soft;
+    color: $gold;
+    text-style: bold;
+}
+
+#navHint {
+    color: $muted;
+    margin-top: 1;
+    padding: 1;
+    border-top: solid $forest-soft;
+}
+
+#workspace {
+    width: 1fr;
+    padding: 1 2 2 2;
+    background: $forest-dark;
+}
+
+#pageTitle {
+    color: $gold;
+    text-style: bold;
+    height: 2;
+}
+
+#pageSubtitle {
+    color: $stone;
+    margin-bottom: 1;
+}
+
+#summaryCards {
+    height: 7;
+    margin-bottom: 1;
+}
+
+.summaryCard {
+    width: 1fr;
+    margin-right: 1;
+    padding: 1;
+    background: $forest;
+    border: round $forest-soft;
+    color: $cream;
+    text-align: center;
+}
+
+#readiness {
+    margin-bottom: 1;
+}
+
+#records {
+    height: auto;
+    min-height: 10;
+    max-height: 18;
+    background: $ink;
+    border: round $forest-soft;
+}
+
+#records > .datatable--header {
+    background: $forest;
+    color: $gold;
+    text-style: bold;
+}
+
+#records > .datatable--cursor {
+    background: $forest-soft;
+    color: $cream;
+}
+
+#detail {
+    margin-top: 1;
+    padding: 1 2;
+    background: $forest;
+    border-left: thick $gold;
+    color: $cream;
+}
+
+#captureForm {
+    display: none;
+    max-width: 76;
+    padding: 1 2;
+    background: $forest;
+    border: round $forest-soft;
+}
+
+#captureTitle {
+    color: $gold;
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+Input {
+    margin-bottom: 1;
+    border: tall $forest-soft;
+}
+
+Input:focus {
+    border: tall $gold;
+}
+
+#validation {
+    height: 2;
+    color: $gold;
+}
+
+#validation.error {
+    color: $danger;
+    text-style: bold;
+}
+
+#savePreview {
+    width: 24;
+    background: $gold;
+    color: $ink;
+    border: none;
+}
+
+PreviewModal {
+    align: center middle;
+    background: rgba(10, 18, 14, 0.75);
+}
+
+#dialog {
+    width: 58;
+    height: auto;
+    background: $forest;
+    border: round $gold;
+    padding: 1 2;
+}
+
+#dialogTitle {
+    color: $gold;
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+#dialogBody {
+    color: $cream;
+    margin-bottom: 1;
+}
+
+#dialogButtons {
+    height: 3;
+    align-horizontal: right;
+}
+
+#dialogButtons Button {
+    margin-left: 1;
+}
+
+@media (width < 80) {
+    #navigation {
+        width: 21;
+        min-width: 20;
+    }
+
+    #tagline,
+    #navHint {
+        display: none;
+    }
+
+    #workspace {
+        padding: 1;
+    }
+
+    #summaryCards {
+        height: 9;
+    }
+}
+
+@media (width < 60) {
+    #navigation {
+        width: 18;
+        min-width: 18;
+    }
+
+    #prototypeBadge {
+        display: none;
+    }
+
+    .navButton {
+        padding: 0;
+    }
+
+    #summaryCards {
+        display: none;
+    }
+}
