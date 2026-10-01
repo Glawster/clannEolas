@@ -57,6 +57,10 @@ terminal environments.
   concerns in accordance with the repository UI organisation rules.
 - Ensure sensitive values are not exposed unnecessarily in lists, logs,
   notifications or status output.
+- Provide a permanent Help / User Guide area reachable from the main
+  navigation so first-time users can understand Eolas, its terminology,
+  privacy boundaries and the mechanics of using the TUI without consulting
+  source documentation.
 
 ## Out of scope
 
@@ -112,6 +116,10 @@ terminal environments.
     tested independently of the TUI framework and interaction-level TUI tests
     can exercise navigation, validation and service integration without
     requiring manual input.
+13. Given a first-time or infrequent user, when they open Help / User Guide
+    from the main navigation, then they can find guidance covering Eolas'
+    purpose, core terminology, navigation, privacy/safety boundaries and where
+    to begin.
 
 ## Dependencies and decisions
 
@@ -159,3 +167,6 @@ terminal environments.
   architecture.
 - 2026-10-01: implementation started — the reviewed Textual shell was promoted
   from prototype status into `eolas/tui/`; Textual was accepted in ADR-019.
+- 2026-10-01: Help / User Guide confirmed as a permanent first-class TUI
+  navigation area; detailed manual content remains a separate maintained
+  documentation concern.
