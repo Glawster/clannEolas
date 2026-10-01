@@ -221,41 +221,38 @@ PreviewModal {
     margin-left: 1;
 }
 
-@media (width < 80) {
-    #navigation {
-        width: 21;
-        min-width: 20;
-    }
 
-    #tagline,
-    #navHint {
-        display: none;
-    }
-
-    #workspace {
-        padding: 1;
-    }
-
-    #summaryCards {
-        height: 9;
-    }
+Screen.compact #navigation {
+    width: 21;
+    min-width: 20;
 }
 
-@media (width < 60) {
-    #navigation {
-        width: 18;
-        min-width: 18;
-    }
+Screen.compact #tagline,
+Screen.compact #navHint {
+    display: none;
+}
 
-    #prototypeBadge {
-        display: none;
-    }
+Screen.compact #workspace {
+    padding: 1;
+}
 
-    .navButton {
-        padding: 0;
-    }
+Screen.compact #summaryCards {
+    height: 9;
+}
 
-    #summaryCards {
-        display: none;
-    }
+Screen.narrow #navigation {
+    width: 18;
+    min-width: 18;
+}
+
+Screen.narrow #prototypeBadge {
+    display: none;
+}
+
+Screen.narrow .navButton {
+    padding: 0;
+}
+
+Screen.narrow #summaryCards {
+    display: none;
 }
