@@ -2,52 +2,46 @@
 
 ## Increment
 
-Shared Domain Foundation, Phases 0 and 1.
+REQ-020 — Interactive cross-platform terminal interface.
 
 ## Branch
 
-`feature/shared-domain-foundation`
+`feature/020-interactive-terminal-interface`
 
 ## Objective
 
-Complete the Phase 0 architecture decisions and Phase 1 shared knowledge kernel
-described by the
-[financial domain implementation plan](financialDomainImplementationPlan.md).
+Turn the reviewed Textual shell into the main Eolas terminal interface while
+preserving the scriptable CLI and keeping domain behaviour outside the UI.
 
 ## Scope
 
-- Establish the architecture boundaries and decisions needed by requirements
-  [008 through 018](requirements/requirementsIndex.md).
-- Implement the shared identity, ownership, classification, provenance,
-  evidence, authority, temporal-value and persistence foundations.
-- Provide the shared continuity-dependency graph contract required by later
-  domain modules, without adding Banking-owned semantics.
-- Keep the kernel independent of user-interface, network and Banking concerns.
+- Maintain the approved left-navigation and central-workspace interaction model.
+- Use the Eolas/FMSAT visual language through externalised Textual styling.
+- Keep Textual code beneath `eolas/tui/`.
+- Connect representative views and forms to shared application/domain services.
+- Preserve masked/omitted sensitive values in summary contexts.
+- Add interaction tests for navigation, validation, confirmations and resizing.
+- Preserve existing CLI behaviour.
 
 ## Explicit exclusion
 
-Phase 2 Banking implementation is outside this increment. No Banking
-aggregates, Banking edge semantics or Banking workflows are included.
+- Desktop, browser and mobile interfaces.
+- Business rules implemented in Textual views.
+- Completing unfinished Banking or other domain functionality solely to fill
+  TUI screens.
 
 ## Expected exit criteria
 
-- Phase 0 decisions are recorded in accepted ADRs and linked from the source
-  plan.
-- Phase 1 shared-kernel contracts are implemented in the project package with
-  no dependency on UI frameworks or network services.
-- Automated tests cover identity and Clann isolation, fact states,
-  classification, prohibited secrets, provenance and evidence, temporal money,
-  authority, graph traversal, persistence history, optimistic concurrency,
-  atomic changes and migration.
-- The fictional conformance fixture demonstrates multiple households and a
-  cross-domain dependency chain without introducing Banking implementation.
-- The [domain conformance checklist](domainConformanceChecklist.md) traces the
-  shared foundation to requirements 008–018 and keeps later domain work
-  explicitly deferred.
-- `pytest` passes.
-- `manageProject --check` reports zero failures and zero warnings.
+- `eolas-tui` launches the production TUI shell.
+- Representative TUI workflows use shared services rather than CLI subprocesses.
+- Existing CLI workflows continue to pass regression tests.
+- Responsive layout, keyboard navigation, validation and confirmation have
+  automated interaction evidence.
+- Sensitive-data presentation has been reviewed.
+- Linux, macOS and Windows smoke tests are recorded.
+- `pytest`, repository linting and `manageProject --check` pass.
 
 ## Immediate next action
 
-Complete the Phase 2 entry review in the domain conformance checklist, close
-this increment, and record any Banking work as a separate increment.
+Replace remaining temporary display data with shared-service-backed Clann and
+domain projections, then add Textual interaction tests.
