@@ -14,6 +14,7 @@ The prototype uses a full-screen terminal application to demonstrate:
 - list/table views and drill-down-style explanatory detail;
 - masked sensitive values in summary views;
 - a structured quick-capture form;
+- an in-application Help / User Guide explaining purpose, terminology, privacy boundaries and first steps;
 - required-field validation;
 - a safe confirmation modal before a hypothetical write;
 - visible keyboard shortcuts;
@@ -47,6 +48,7 @@ Useful keys:
 5  Subscriptions
 6  Documents
 7  Quick capture
+8  Help / user guide
 q  Quit
 ```
 
