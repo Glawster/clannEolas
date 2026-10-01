@@ -18,10 +18,10 @@ implementation and must distinguish current behaviour from planned work.
 - [007 — Legal document custody and access](features/007-legalDocumentCustodyAndAccess.md) (legacy ID: APP-001)
 - [008 — Document Import Framework](features/008-documentImportFramework.md)
 - [019 — Secure Clann access and synchronisation](features/019-secureClannAccessAndSync.md)
-- [020 — Interactive cross-platform terminal interface](features/020-interactiveTerminalInterface.md)
 
 ## InProgress
 
+- [020 — Interactive cross-platform terminal interface](features/020-interactiveTerminalInterface.md) — Textual production shell established; shared-service integration and verification remain
 - [009 — Banking module](features/009-bankingModule.md) — shared Phase 1 kernel and CLI input adapter implemented; Banking aggregates, workflows and projections remain
 - [010 — Credit cards](features/010-creditCards.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
 - [011 — Mortgages](features/011-mortgages.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
