@@ -42,11 +42,10 @@ common codebase on Linux, macOS and Windows.
 
 ## Architecture work
 
-Before implementation, confirm whether the framework choice is consequential
-enough to require an ADR. Textual is the current candidate because the
-requirement needs cross-platform full-screen terminal layout, keyboard
-interaction, forms/tables, live progress, responsive resizing and externalised
-styling, but the requirement is framework-neutral.
+Textual is the selected framework for the production TUI, recorded in
+`project/adr/019-textualTerminalInterface.md`. Keep Textual isolated beneath
+the presentation layer and continue to preserve the shared-service dependency
+flow below.
 
 The resulting dependency flow should remain conceptually:
 
