@@ -155,7 +155,7 @@ terminal environments.
 ## Traceability
 
 - Implementation: `eolas/tui/` production shell established; Create Clann now uses shared `ClannInput`/`PersonInput` validation and `clannCreate()`; remaining domain/service integration continues
-- Tests: pending
+- Tests: `tests/test_terminalInterface.py` covers Create Clann navigation, domain validation and persistence integration; execution evidence pending
 - Documentation: terminal-interface usage documentation pending
 - Pull request: pending
 - Agent runs: pending or `None`
