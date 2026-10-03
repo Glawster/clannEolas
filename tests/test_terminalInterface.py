@@ -82,3 +82,45 @@ def test_tuiCreateClannRejectsIncompletePerson() -> None:
             assert app.query_one("#clannPeople", DataTable).row_count == 0
 
     asyncio.run(exercise())
+
+
+
+def test_eolasWithoutArgumentsLaunchesTui(monkeypatch) -> None:
+    """The installed Eolas command opens the TUI when no CLI arguments are supplied."""
+
+    import sys
+
+    import eolas.cli as cliModule
+    import eolas.tui.app as tuiModule
+
+    launched = {"value": False}
+
+    def tuiRunFake() -> int:
+        launched["value"] = True
+        return 0
+
+    monkeypatch.setattr(tuiModule, "tuiRun", tuiRunFake)
+    monkeypatch.setattr(sys, "argv", ["eolas"])
+
+    assert cliModule.main() == 0
+    assert launched["value"]
+
+
+def test_eolasWithArgumentsUsesCli(monkeypatch) -> None:
+    """Any supplied argument is dispatched through the CLI parser."""
+
+    import sys
+
+    import eolas.cli as cliModule
+
+    received = []
+
+    def cliRunFake(arguments=None) -> int:
+        received.append(arguments)
+        return 0
+
+    monkeypatch.setattr(cliModule, "cliRun", cliRunFake)
+    monkeypatch.setattr(sys, "argv", ["eolas", "log", "--show"])
+
+    assert cliModule.main() == 0
+    assert received == [["log", "--show"]]
