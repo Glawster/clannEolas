@@ -166,14 +166,14 @@ class EolasApp(App[None]):
     BINDINGS = [
         ("q", "quit", "Quit"),
         ("1", "page('overview')", "Overview"),
-        ("2", "page('people')", "People"),
-        ("3", "page('banking')", "Banking"),
-        ("4", "page('insurance')", "Insurance"),
-        ("5", "page('subscriptions')", "Services"),
-        ("6", "page('documents')", "Documents"),
-        ("7", "page('capture')", "Capture"),
-        ("8", "page('help')", "Help"),
-        ("9", "page('clann-create')", "Create Clann"),
+        ("2", "page('clann-create')", "Create Clann"),
+        ("3", "page('people')", "People"),
+        ("4", "page('banking')", "Banking"),
+        ("5", "page('insurance')", "Insurance"),
+        ("6", "page('subscriptions')", "Services"),
+        ("7", "page('documents')", "Documents"),
+        ("8", "page('capture')", "Capture"),
+        ("9", "page('help')", "Help"),
     ]
 
     def compose(self) -> ComposeResult:
@@ -183,16 +183,16 @@ class EolasApp(App[None]):
                 yield Label("EOLAS", id="brand")
                 yield Static("Knowledge for continuity", id="tagline")
                 yield Button("1  Overview", id="nav-overview", classes="navButton")
-                yield Button("2  People", id="nav-people", classes="navButton")
-                yield Button("3  Banking", id="nav-banking", classes="navButton")
-                yield Button("4  Insurance", id="nav-insurance", classes="navButton")
+                yield Button("2  Create Clann", id="nav-clann-create", classes="navButton")
+                yield Button("3  People", id="nav-people", classes="navButton")
+                yield Button("4  Banking", id="nav-banking", classes="navButton")
+                yield Button("5  Insurance", id="nav-insurance", classes="navButton")
                 yield Button(
-                    "5  Subscriptions", id="nav-subscriptions", classes="navButton"
+                    "6  Subscriptions", id="nav-subscriptions", classes="navButton"
                 )
-                yield Button("6  Documents", id="nav-documents", classes="navButton")
-                yield Button("7  Quick capture", id="nav-capture", classes="navButton")
-                yield Button("8  Help / User guide", id="nav-help", classes="navButton")
-                yield Button("9  Create Clann", id="nav-clann-create", classes="navButton")
+                yield Button("7  Documents", id="nav-documents", classes="navButton")
+                yield Button("8  Quick capture", id="nav-capture", classes="navButton")
+                yield Button("9  Help / User guide", id="nav-help", classes="navButton")
                 yield Static(
                     "Keyboard first\nMouse optional",
                     id="navHint",
