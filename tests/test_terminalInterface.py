@@ -3,10 +3,20 @@
 import asyncio
 from pathlib import Path
 
-from textual.widgets import DataTable, Input, Select, Static
+from textual.widgets import Button, DataTable, Input, Select, Static
 
 from eolas.tui.app import EolasApp
 from eolas.tui.views.clannCreate import ClannCreateView
+
+
+async def _buttonActivate(app: EolasApp, pilot, selector: str) -> None:
+    """Focus and activate a button, scrolling it into view first."""
+
+    button = app.query_one(selector, Button)
+    button.focus()
+    await pilot.pause()
+    await pilot.press("enter")
+    await pilot.pause()
 
 
 def test_tuiNavigatesToCreateClann() -> None:
@@ -17,12 +27,11 @@ def test_tuiNavigatesToCreateClann() -> None:
         async with app.run_test(size=(120, 40)) as pilot:
             await pilot.press("2")
             await pilot.pause()
-            await pilot.click("#clannCreate")
-            await pilot.pause()
+            await _buttonActivate(app, pilot, "#clannCreate")
 
             view = app.query_one("#clannCreateView", ClannCreateView)
             assert view.display
-            assert app.query_one("#pageTitle", Static).renderable == "Create a Clann"
+            assert app.query_one("#pageTitle", Static).content == "Create a Clann"
 
     asyncio.run(exercise())
 
@@ -40,8 +49,7 @@ def test_tuiCreateClannUsesSharedService(
         async with app.run_test(size=(120, 50)) as pilot:
             await pilot.press("2")
             await pilot.pause()
-            await pilot.click("#clannCreate")
-            await pilot.pause()
+            await _buttonActivate(app, pilot, "#clannCreate")
 
             app.query_one("#clannName", Input).value = "Example Clann"
             app.query_one("#householdName", Input).value = "Family Home"
@@ -49,22 +57,19 @@ def test_tuiCreateClannUsesSharedService(
             app.query_one("#personPreferredName", Input).value = "Alex"
             app.query_one("#personRole", Input).value = "householder"
 
-            await pilot.click("#personAdd")
-            await pilot.pause()
+            await _buttonActivate(app, pilot, "#personAdd")
 
             table = app.query_one("#clannPeople", DataTable)
             assert table.row_count == 1
 
-            await pilot.click("#clannReview")
-            await pilot.pause()
-            await pilot.click("#clannCreateConfirm")
-            await pilot.pause()
+            await _buttonActivate(app, pilot, "#clannReview")
+            await _buttonActivate(app, pilot, "#clannCreateConfirm")
 
             assert (
                 tmp_path / "eolas" / "clanns" / "example-clann" / "clann.yaml"
             ).is_file()
             status = app.query_one("#clannValidation", Static)
-            assert "Clann created: Example Clann" in str(status.renderable)
+            assert "Clann created: Example Clann" in str(status.content)
 
     asyncio.run(exercise())
 
@@ -77,14 +82,12 @@ def test_tuiCreateClannRejectsIncompletePerson() -> None:
         async with app.run_test(size=(120, 40)) as pilot:
             await pilot.press("2")
             await pilot.pause()
-            await pilot.click("#clannCreate")
-            await pilot.pause()
+            await _buttonActivate(app, pilot, "#clannCreate")
 
-            await pilot.click("#personAdd")
-            await pilot.pause()
+            await _buttonActivate(app, pilot, "#personAdd")
 
             status = app.query_one("#personValidation", Static)
-            assert "Person full name cannot be empty." in str(status.renderable)
+            assert "Person full name cannot be empty." in str(status.content)
             assert app.query_one("#clannPeople", DataTable).row_count == 0
 
     asyncio.run(exercise())
@@ -161,13 +164,12 @@ def test_tuiSelectsActiveClann(
             available = app.query_one("#availableClanns", DataTable)
             assert available.row_count == 1
 
-            await pilot.click("#clannSwitch")
-            await pilot.pause()
+            await _buttonActivate(app, pilot, "#clannSwitch")
 
             status = app.query_one("#clannStatus", Static)
-            assert "Active Clann: Example Clann" in str(status.renderable)
+            assert "Active Clann: Example Clann" in str(status.content)
             navHint = app.query_one("#navHint", Static)
-            assert "Example Clann" in str(navHint.renderable)
+            assert "Example Clann" in str(navHint.content)
 
     asyncio.run(exercise())
 
@@ -196,15 +198,13 @@ def test_tuiQuickCapturePersistsToActiveClann(
         async with app.run_test(size=(140, 60)) as pilot:
             await pilot.press("2")
             await pilot.pause()
-            await pilot.click("#clannSwitch")
-            await pilot.pause()
+            await _buttonActivate(app, pilot, "#clannSwitch")
 
             await pilot.press("8")
             await pilot.pause()
 
             app.query_one("#captureDomain", Select).value = "banking"
-            await pilot.click("#captureFieldsLoad")
-            await pilot.pause()
+            await _buttonActivate(app, pilot, "#captureFieldsLoad")
 
             app.query_one("#captureLabel", Input).value = "Household current account"
             app.query_one("#captureSource", Input).value = "Bank statement"
@@ -222,10 +222,8 @@ def test_tuiQuickCapturePersistsToActiveClann(
             for field, value in values.items():
                 app.query_one(f"#captureField-{field}", Input).value = value
 
-            await pilot.click("#captureReview")
-            await pilot.pause()
-            await pilot.click("#captureConfirm")
-            await pilot.pause()
+            await _buttonActivate(app, pilot, "#captureReview")
+            await _buttonActivate(app, pilot, "#captureConfirm")
 
             target = (
                 tmp_path
@@ -238,6 +236,6 @@ def test_tuiQuickCapturePersistsToActiveClann(
             )
             assert target.is_file()
             status = app.query_one("#captureValidation", Static)
-            assert "Saved:" in str(status.renderable)
+            assert "Saved:" in str(status.content)
 
     asyncio.run(exercise())
