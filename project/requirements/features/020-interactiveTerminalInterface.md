@@ -154,7 +154,7 @@ terminal environments.
 
 ## Traceability
 
-- Implementation: `eolas/tui/` production shell established; service/data integration remains
+- Implementation: `eolas/tui/` production shell established; Create Clann now uses shared `ClannInput`/`PersonInput` validation and `clannCreate()`; remaining domain/service integration continues
 - Tests: pending
 - Documentation: terminal-interface usage documentation pending
 - Pull request: pending
@@ -170,3 +170,6 @@ terminal environments.
 - 2026-10-01: Help / User Guide confirmed as a permanent first-class TUI
   navigation area; detailed manual content remains a separate maintained
   documentation concern.
+- 2026-10-03: Create Clann migrated into the Textual TUI using the existing
+  Clann domain models and atomic creation service; the curses implementation
+  remains temporarily for CLI compatibility while migration continues.
