@@ -188,7 +188,7 @@ Input:focus {
     border: none;
 }
 
-PreviewModal {
+ConfirmationModal {
     align: center middle;
     background: rgba(10, 18, 14, 0.75);
 }
