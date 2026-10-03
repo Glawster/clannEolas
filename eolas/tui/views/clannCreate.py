@@ -25,7 +25,7 @@ class ClannCreateConfirmScreen(ModalScreen[bool]):
 
     def compose(self) -> ComposeResult:
         with Vertical(id="clannConfirmDialog"):
-            yield Label("Create this Clann?", id="dialogTitle")
+            yield Label("Save this Clann?", id="dialogTitle")
             yield Static(self.summary, id="clannConfirmSummary")
             yield Static(
                 "This creates private Eolas files on this computer.",
@@ -34,7 +34,7 @@ class ClannCreateConfirmScreen(ModalScreen[bool]):
             with Horizontal(id="dialogButtons"):
                 yield Button("Back", id="clannCreateBack")
                 yield Button(
-                    "Create Clann",
+                    "Save Clann",
                     id="clannCreateConfirm",
                     variant="primary",
                 )
@@ -120,7 +120,7 @@ class ClannCreateView(Vertical):
 
         with Horizontal(classes="formButtons"):
             yield Button("Set selected as primary", id="personSetPrimary")
-            yield Button("Review & create", id="clannReview", variant="primary")
+            yield Button("Review & save", id="clannReview", variant="primary")
 
         yield Static("", id="clannValidation")
 
