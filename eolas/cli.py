@@ -26,8 +26,14 @@ ROLE_SUGGESTIONS = "householder, partner, family, carer, lodger, other"
 
 
 def main() -> int:
-    """Run the installed ``eolas`` console command."""
-    return cliRun()
+    """Run the Eolas application or dispatch an explicit CLI command."""
+
+    arguments = sys.argv[1:]
+    if not arguments:
+        from eolas.tui.app import tuiRun
+
+        return tuiRun()
+    return cliRun(arguments)
 
 
 def cliRun(arguments: Optional[Sequence[str]] = None) -> int:
@@ -109,11 +115,6 @@ def _peopleAsk(personCount: int, *, resident: bool) -> List[PersonInput]:
             )
         )
     return people
-
-
-def dataRootGet() -> Path:
-    """Return the private Eolas data root beneath the current user's home."""
-    return Path.home() / "eolas"
 
 
 def _captureInputLoad(path: Path) -> Mapping[str, Any]:
