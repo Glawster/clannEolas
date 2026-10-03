@@ -252,3 +252,100 @@ Screen.narrow .navButton {
 Screen.narrow #summaryCards {
     display: none;
 }
+
+
+#clannCreateView {
+    display: none;
+    width: 100%;
+    max-width: 100;
+    padding: 1 2;
+    background: $forest;
+    border: round $forest-soft;
+}
+
+#clannCreateTitle,
+.formSectionTitle {
+    color: $gold;
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+.formIntro {
+    color: $stone;
+    margin-bottom: 1;
+}
+
+.twoColumnFields {
+    height: auto;
+}
+
+.twoColumnFields > Vertical {
+    width: 1fr;
+    margin-right: 1;
+}
+
+#personOptions {
+    height: 3;
+    margin-bottom: 1;
+}
+
+#personOptions Checkbox {
+    width: 1fr;
+}
+
+.formButtons {
+    height: 3;
+    margin-bottom: 1;
+}
+
+.formButtons Button {
+    margin-right: 1;
+}
+
+#clannPeople {
+    height: 10;
+    margin-bottom: 1;
+    background: $ink;
+    border: round $forest-soft;
+}
+
+#personValidation,
+#clannValidation {
+    min-height: 2;
+    color: $gold;
+}
+
+#personValidation.error,
+#clannValidation.error {
+    color: $danger;
+    text-style: bold;
+}
+
+ClannCreateConfirmScreen {
+    align: center middle;
+    background: rgba(10, 18, 14, 0.75);
+}
+
+#clannConfirmDialog {
+    width: 72;
+    height: auto;
+    max-height: 80%;
+    background: $forest;
+    border: round $gold;
+    padding: 1 2;
+}
+
+#clannConfirmSummary {
+    margin: 1 0;
+    padding: 1;
+    background: $ink;
+    color: $cream;
+}
+
+Screen.compact .twoColumnFields {
+    layout: vertical;
+}
+
+Screen.compact .twoColumnFields > Vertical {
+    width: 100%;
+}
