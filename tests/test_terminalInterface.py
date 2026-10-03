@@ -3,7 +3,7 @@
 import asyncio
 from pathlib import Path
 
-from textual.widgets import DataTable, Input, Static
+from textual.widgets import DataTable, Input, Select, Static
 
 from eolas.tui.app import EolasApp
 from eolas.tui.views.clannCreate import ClannCreateView
@@ -130,3 +130,114 @@ def test_eolasWithArgumentsUsesCli(monkeypatch) -> None:
 
     assert cliModule.main() == 0
     assert received == [["log", "--show"]]
+
+
+
+def test_tuiSelectsActiveClann(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    """The Clann area establishes the active session Clann."""
+
+    from eolas.clann.models import ClannInput, PersonInput
+    from eolas.clann.service import clannCreate
+
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+    clannCreate(
+        ClannInput(
+            "Example Clann",
+            "Family Home",
+            [PersonInput("Alex Example", "Alex", "householder", True, True)],
+        ),
+        tmp_path / "eolas",
+    )
+
+    async def exercise() -> None:
+        app = EolasApp()
+        async with app.run_test(size=(120, 45)) as pilot:
+            await pilot.press("2")
+            await pilot.pause()
+
+            available = app.query_one("#availableClanns", DataTable)
+            assert available.row_count == 1
+
+            await pilot.click("#clannSwitch")
+            await pilot.pause()
+
+            status = app.query_one("#clannStatus", Static)
+            assert "Active Clann: Example Clann" in str(status.renderable)
+            navHint = app.query_one("#navHint", Static)
+            assert "Example Clann" in str(navHint.renderable)
+
+    asyncio.run(exercise())
+
+
+def test_tuiQuickCapturePersistsToActiveClann(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    """Quick Capture prepares and writes through the shared capture services."""
+
+    from eolas.clann.models import ClannInput, PersonInput
+    from eolas.clann.service import clannCreate
+
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+    clannCreate(
+        ClannInput(
+            "Example Clann",
+            "Family Home",
+            [PersonInput("Alex Example", "Alex", "householder", True, True)],
+        ),
+        tmp_path / "eolas",
+    )
+
+    async def exercise() -> None:
+        app = EolasApp()
+        async with app.run_test(size=(140, 60)) as pilot:
+            await pilot.press("2")
+            await pilot.pause()
+            await pilot.click("#clannSwitch")
+            await pilot.pause()
+
+            await pilot.press("8")
+            await pilot.pause()
+
+            app.query_one("#captureDomain", Select).value = "banking"
+            await pilot.click("#captureFieldsLoad")
+            await pilot.pause()
+
+            app.query_one("#captureLabel", Input).value = "Household current account"
+            app.query_one("#captureSource", Input).value = "Bank statement"
+
+            values = {
+                "institution": "Example Bank",
+                "accountCategory": "current",
+                "productName": "Current Account",
+                "purpose": "Household bills",
+                "owners": "Alex Example",
+                "status": "active",
+                "classification": "private",
+                "lastReviewed": "2026-10-03",
+            }
+            for field, value in values.items():
+                app.query_one(f"#captureField-{field}", Input).value = value
+
+            await pilot.click("#captureReview")
+            await pilot.pause()
+            await pilot.click("#captureConfirm")
+            await pilot.pause()
+
+            target = (
+                tmp_path
+                / "eolas"
+                / "clanns"
+                / "example-clann"
+                / "shared"
+                / "banking"
+                / "household-current-account.yaml"
+            )
+            assert target.is_file()
+            status = app.query_one("#captureValidation", Static)
+            assert "Saved:" in str(status.renderable)
+
+    asyncio.run(exercise())

@@ -43,6 +43,7 @@ preserving the scriptable CLI and keeping domain behaviour outside the UI.
 
 ## Immediate next action
 
-Run and correct the updated Clann/Create Clann interaction tests, then enable
-active Clann selection/switching in the Clann area and migrate Quick Capture
-from curses before retiring the old curses presentation layer.
+Run and correct the expanded TUI interaction tests. Then replace the People
+sample page with the active Clann's real people projection and migrate any
+remaining curses-only interactive capture paths before retiring the old curses
+presentation layer.
