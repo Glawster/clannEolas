@@ -15,6 +15,7 @@ from textual.events import Resize
 from textual.screen import ModalScreen
 from eolas.tui.views.clann import ClannView
 from eolas.tui.views.clannCreate import ClannCreateView
+from eolas.tui.views.quickCapture import QuickCaptureView
 
 from textual.widgets import (
     Button,
@@ -130,33 +131,6 @@ PAGES = {
 }
 
 
-class ConfirmationModal(ModalScreen[None]):
-    """Show safe confirmation before a data-changing action."""
-
-    def __init__(self, label: str, source: str) -> None:
-        super().__init__()
-        self.label = label
-        self.source = source
-
-    def compose(self) -> ComposeResult:
-        with Vertical(id="dialog"):
-            yield Label("Save capture?", id="dialogTitle")
-            yield Static(
-                f"Label: {self.label}\nSource: {self.source}\n\n"
-                "Review the details before continuing.",
-                id="dialogBody",
-            )
-            with Horizontal(id="dialogButtons"):
-                yield Button("Cancel", id="cancel")
-                yield Button("Confirm preview", id="confirm", variant="primary")
-
-    @on(Button.Pressed)
-    def buttonPressed(self, event: Button.Pressed) -> None:
-        """Close the confirmation dialog."""
-
-        self.dismiss()
-
-
 class EolasApp(App[None]):
     """Full-screen terminal interface for Eolas."""
 
@@ -176,6 +150,10 @@ class EolasApp(App[None]):
         ("8", "page('capture')", "Capture"),
         ("9", "page('help')", "Help"),
     ]
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._activeClann = None
 
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
@@ -216,28 +194,7 @@ class EolasApp(App[None]):
                 yield ClannView(id="clannView")
                 yield ClannCreateView(id="clannCreateView")
 
-                with Vertical(id="captureForm"):
-                    yield Label("Quick capture", id="captureTitle")
-                    yield Static(
-                        "Enter the record label and information source. "
-                        "This screen will use the shared Eolas capture service."
-                    )
-                    yield Label("Record label")
-                    yield Input(
-                        placeholder="e.g. Household emergency contact",
-                        id="captureLabel",
-                    )
-                    yield Label("Information source")
-                    yield Input(
-                        placeholder="e.g. Policy document, conversation, statement",
-                        id="captureSource",
-                    )
-                    yield Static("", id="validation")
-                    yield Button(
-                        "Preview save",
-                        id="savePreview",
-                        variant="primary",
-                    )
+                yield QuickCaptureView(id="captureView")
         yield Footer()
 
     def on_mount(self) -> None:
@@ -271,27 +228,19 @@ class EolasApp(App[None]):
 
         self.pageShow("clann-create")
 
-    @on(Button.Pressed, "#savePreview")
-    def savePreviewPressed(self) -> None:
-        """Validate form fields before showing confirmation."""
+    @on(ClannView.SelectRequested)
+    def clannSelected(self, message: ClannView.SelectRequested) -> None:
+        """Set the selected Clann as the active application context."""
 
-        label = self.query_one("#captureLabel", Input).value.strip()
-        source = self.query_one("#captureSource", Input).value.strip()
-        validation = self.query_one("#validation", Static)
-
-        missing = []
-        if not label:
-            missing.append("record label")
-        if not source:
-            missing.append("information source")
-        if missing:
-            validation.update("Required: " + ", ".join(missing))
-            validation.add_class("error")
-            return
-
-        validation.update("Validated — ready for confirmation.")
-        validation.remove_class("error")
-        self.push_screen(ConfirmationModal(label, source))
+        self._activeClann = message.clann
+        self.query_one("#clannView", ClannView).activeShow(message.clann)
+        self.query_one("#captureView", QuickCaptureView).activeClannSet(
+            message.clann.name,
+            message.clann.path,
+        )
+        self.query_one("#navHint", Static).update(
+            f"Active Clann\n{message.clann.name}\n\nKeyboard first\nMouse optional"
+        )
 
     def action_page(self, pageName: str) -> None:
         """Open one of the numbered TUI pages."""
@@ -301,7 +250,7 @@ class EolasApp(App[None]):
     def pageShow(self, pageName: str) -> None:
         """Render one page while preserving the shared application shell."""
 
-        capture = self.query_one("#captureForm", Vertical)
+        capture = self.query_one("#captureView", QuickCaptureView)
         clannView = self.query_one("#clannView", ClannView)
         clannCreate = self.query_one("#clannCreateView", ClannCreateView)
         cards = self.query_one("#summaryCards", Horizontal)
@@ -323,7 +272,11 @@ class EolasApp(App[None]):
             capture.display = True
             clannView.display = False
             clannCreate.display = False
-            self.query_one("#captureLabel", Input).focus()
+            if self._activeClann is None:
+                self.query_one("#pageSubtitle", Static).update(
+                    "Select an active Clann first, then capture structured continuity data."
+                )
+            self.query_one("#captureDomain").focus()
             return
 
         if pageName == "clann":
