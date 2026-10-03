@@ -43,5 +43,6 @@ preserving the scriptable CLI and keeping domain behaviour outside the UI.
 
 ## Immediate next action
 
-Replace remaining temporary display data with shared-service-backed Clann and
-domain projections, then add Textual interaction tests.
+Add Textual interaction tests for the Create Clann workflow, then migrate
+Clann selection and Quick Capture from curses to shared-service-backed TUI
+views before retiring the old curses presentation layer.
