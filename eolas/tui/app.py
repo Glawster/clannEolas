@@ -13,6 +13,7 @@ from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.events import Resize
 from textual.screen import ModalScreen
+from eolas.tui.views.clann import ClannView
 from eolas.tui.views.clannCreate import ClannCreateView
 
 from textual.widgets import (
@@ -166,7 +167,7 @@ class EolasApp(App[None]):
     BINDINGS = [
         ("q", "quit", "Quit"),
         ("1", "page('overview')", "Overview"),
-        ("2", "page('clann-create')", "Create Clann"),
+        ("2", "page('clann')", "Clann"),
         ("3", "page('people')", "People"),
         ("4", "page('banking')", "Banking"),
         ("5", "page('insurance')", "Insurance"),
@@ -183,7 +184,7 @@ class EolasApp(App[None]):
                 yield Label("EOLAS", id="brand")
                 yield Static("Knowledge for continuity", id="tagline")
                 yield Button("1  Overview", id="nav-overview", classes="navButton")
-                yield Button("2  Create Clann", id="nav-clann-create", classes="navButton")
+                yield Button("2  Clann", id="nav-clann", classes="navButton")
                 yield Button("3  People", id="nav-people", classes="navButton")
                 yield Button("4  Banking", id="nav-banking", classes="navButton")
                 yield Button("5  Insurance", id="nav-insurance", classes="navButton")
@@ -212,6 +213,7 @@ class EolasApp(App[None]):
                 yield DataTable(id="records", zebra_stripes=True)
                 yield Static("", id="detail")
 
+                yield ClannView(id="clannView")
                 yield ClannCreateView(id="clannCreateView")
 
                 with Vertical(id="captureForm"):
@@ -263,6 +265,12 @@ class EolasApp(App[None]):
 
         self.pageShow(event.button.id.removeprefix("nav-"))
 
+    @on(ClannView.CreateRequested)
+    def clannCreateRequested(self) -> None:
+        """Open Create Clann from the Clann management area."""
+
+        self.pageShow("clann-create")
+
     @on(Button.Pressed, "#savePreview")
     def savePreviewPressed(self) -> None:
         """Validate form fields before showing confirmation."""
@@ -294,6 +302,7 @@ class EolasApp(App[None]):
         """Render one page while preserving the shared application shell."""
 
         capture = self.query_one("#captureForm", Vertical)
+        clannView = self.query_one("#clannView", ClannView)
         clannCreate = self.query_one("#clannCreateView", ClannCreateView)
         cards = self.query_one("#summaryCards", Horizontal)
         progress = self.query_one("#readiness", ProgressBar)
@@ -312,8 +321,25 @@ class EolasApp(App[None]):
             progressLabel.display = False
             detail.display = False
             capture.display = True
+            clannView.display = False
             clannCreate.display = False
             self.query_one("#captureLabel", Input).focus()
+            return
+
+        if pageName == "clann":
+            self.query_one("#pageTitle", Label).update("Clann")
+            self.query_one("#pageSubtitle", Static).update(
+                "Manage Clanns and choose the family group you are working with."
+            )
+            table.display = False
+            cards.display = False
+            progress.display = False
+            progressLabel.display = False
+            detail.display = False
+            capture.display = False
+            clannCreate.display = False
+            clannView.display = True
+            clannView.refreshClanns()
             return
 
         if pageName == "clann-create":
@@ -327,6 +353,7 @@ class EolasApp(App[None]):
             progressLabel.display = False
             detail.display = False
             capture.display = False
+            clannView.display = False
             clannCreate.display = True
             self.query_one("#clannName", Input).focus()
             return
@@ -335,6 +362,7 @@ class EolasApp(App[None]):
         self.query_one("#pageTitle", Label).update(page.title)
         self.query_one("#pageSubtitle", Static).update(page.subtitle)
         capture.display = False
+        clannView.display = False
         clannCreate.display = False
         table.display = True
         detail.display = True
