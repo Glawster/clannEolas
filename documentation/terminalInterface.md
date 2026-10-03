@@ -60,8 +60,14 @@ people, allows the primary person to be selected, validates through the
 existing domain model, shows a review/confirmation step, and calls the shared
 `clannCreate()` service.
 
-Select/switch Clann belongs in this same area and will be enabled when active
-Clann session selection is migrated from the older interactive workflow.
+Select/switch Clann is handled in this same area. The selected Clann becomes
+the active session context and is shown in the navigation hint. Data-entry
+workflows use that active Clann rather than asking for a filesystem path.
+
+**Quick capture** now uses the shared capture profiles and persistence services.
+Choose a domain, load its required fields, enter the values, then use
+**Review & save** followed by **Save record**. The record is prepared by
+`capturePrepare()` and persisted atomically by `captureWrite()`.
 
 Sensitive values must be masked or omitted in summary views. A future detail
 view may reveal information only when appropriate to the user's explicit
