@@ -6,7 +6,8 @@ from pathlib import Path
 from textual.widgets import Button, DataTable, Input, Select, Static
 
 from eolas.tui.app import EolasApp
-from eolas.tui.views.clannCreate import ClannCreateView
+from eolas.tui.views.clannCreate import ClannCreateConfirmScreen, ClannCreateView
+from eolas.tui.views.quickCapture import CaptureConfirmScreen
 
 
 async def _buttonActivate(app: EolasApp, pilot, selector: str) -> None:
@@ -17,6 +18,20 @@ async def _buttonActivate(app: EolasApp, pilot, selector: str) -> None:
     await pilot.pause()
     await pilot.press("enter")
     await pilot.pause()
+
+
+async def _modalButtonActivate(app: EolasApp, pilot, screenType, selector: str) -> None:
+    """Wait for a pushed modal screen, then activate one of its buttons."""
+
+    for _attempt in range(10):
+        await pilot.pause()
+        if isinstance(app.screen, screenType):
+            button = app.screen.query_one(selector, Button)
+            button.focus()
+            await pilot.press("enter")
+            await pilot.pause()
+            return
+    raise AssertionError(f"Expected modal screen {screenType.__name__} was not shown.")
 
 
 def test_tuiNavigatesToCreateClann() -> None:
@@ -63,7 +78,12 @@ def test_tuiCreateClannUsesSharedService(
             assert table.row_count == 1
 
             await _buttonActivate(app, pilot, "#clannReview")
-            await _buttonActivate(app, pilot, "#clannCreateConfirm")
+            await _modalButtonActivate(
+                app,
+                pilot,
+                ClannCreateConfirmScreen,
+                "#clannCreateConfirm",
+            )
 
             assert (
                 tmp_path / "eolas" / "clanns" / "example-clann" / "clann.yaml"
@@ -223,7 +243,12 @@ def test_tuiQuickCapturePersistsToActiveClann(
                 app.query_one(f"#captureField-{field}", Input).value = value
 
             await _buttonActivate(app, pilot, "#captureReview")
-            await _buttonActivate(app, pilot, "#captureConfirm")
+            await _modalButtonActivate(
+                app,
+                pilot,
+                CaptureConfirmScreen,
+                "#captureConfirm",
+            )
 
             target = (
                 tmp_path
