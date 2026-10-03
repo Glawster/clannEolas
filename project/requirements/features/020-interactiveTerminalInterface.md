@@ -35,6 +35,8 @@ terminal environments.
 ## Scope
 
 - Provide a dedicated interactive terminal user interface for Clann Eolas.
+- Launch the TUI when the installed `eolas` command is invoked with no
+  arguments; when any argument is supplied, dispatch through the scriptable CLI.
 - Preserve the existing scriptable CLI as a first-class interface.
 - Reuse shared application/domain services for both CLI and TUI operations.
 - Keep UI framework dependencies out of core/domain code.
@@ -75,9 +77,9 @@ terminal environments.
 
 ## Acceptance criteria
 
-1. Given a supported Clann Eolas installation, when the user launches the
-   interactive terminal interface, then a full-screen navigable application
-   opens without requiring the user to compose a domain CLI command.
+1. Given a supported Clann Eolas installation, when the user runs `eolas`
+   with no arguments, then the full-screen navigable TUI opens; when one or more
+   arguments are supplied, the command is handled by the CLI parser.
 2. Given an existing Clann Eolas domain operation exposed through the TUI, when
    the user performs that operation, then the TUI calls shared application or
    domain services rather than invoking the CLI as a subprocess or duplicating
@@ -173,3 +175,5 @@ terminal environments.
 - 2026-10-03: Create Clann migrated into the Textual TUI using the existing
   Clann domain models and atomic creation service; the curses implementation
   remains temporarily for CLI compatibility while migration continues.
+- 2026-10-03: bare `eolas` made the primary TUI launcher; any supplied
+  argument continues through the CLI parser.
