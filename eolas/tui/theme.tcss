@@ -349,3 +349,32 @@ Screen.compact .twoColumnFields {
 Screen.compact .twoColumnFields > Vertical {
     width: 100%;
 }
+
+
+#clannView {
+    display: none;
+    width: 100%;
+    max-width: 100;
+    padding: 1 2;
+    background: $forest;
+    border: round $forest-soft;
+}
+
+#clannTitle {
+    color: $gold;
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+#availableClanns {
+    height: 10;
+    margin-bottom: 1;
+    background: $ink;
+    border: round $forest-soft;
+}
+
+#clannHint,
+#clannStatus {
+    color: $stone;
+    margin-bottom: 1;
+}
