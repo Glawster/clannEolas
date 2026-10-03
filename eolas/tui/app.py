@@ -13,6 +13,8 @@ from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.events import Resize
 from textual.screen import ModalScreen
+from eolas.tui.views.clannCreate import ClannCreateView
+
 from textual.widgets import (
     Button,
     DataTable,
@@ -171,6 +173,7 @@ class EolasApp(App[None]):
         ("6", "page('documents')", "Documents"),
         ("7", "page('capture')", "Capture"),
         ("8", "page('help')", "Help"),
+        ("9", "page('clann-create')", "Create Clann"),
     ]
 
     def compose(self) -> ComposeResult:
@@ -189,6 +192,7 @@ class EolasApp(App[None]):
                 yield Button("6  Documents", id="nav-documents", classes="navButton")
                 yield Button("7  Quick capture", id="nav-capture", classes="navButton")
                 yield Button("8  Help / User guide", id="nav-help", classes="navButton")
+                yield Button("9  Create Clann", id="nav-clann-create", classes="navButton")
                 yield Static(
                     "Keyboard first\nMouse optional",
                     id="navHint",
@@ -207,6 +211,8 @@ class EolasApp(App[None]):
                 yield ProgressBar(total=100, show_eta=False, id="readiness")
                 yield DataTable(id="records", zebra_stripes=True)
                 yield Static("", id="detail")
+
+                yield ClannCreateView(id="clannCreateView")
 
                 with Vertical(id="captureForm"):
                     yield Label("Quick capture", id="captureTitle")
@@ -288,6 +294,7 @@ class EolasApp(App[None]):
         """Render one page while preserving the shared application shell."""
 
         capture = self.query_one("#captureForm", Vertical)
+        clannCreate = self.query_one("#clannCreateView", ClannCreateView)
         cards = self.query_one("#summaryCards", Horizontal)
         progress = self.query_one("#readiness", ProgressBar)
         progressLabel = self.query_one("#readinessLabel", Label)
@@ -305,13 +312,30 @@ class EolasApp(App[None]):
             progressLabel.display = False
             detail.display = False
             capture.display = True
+            clannCreate.display = False
             self.query_one("#captureLabel", Input).focus()
+            return
+
+        if pageName == "clann-create":
+            self.query_one("#pageTitle", Label).update("Create a Clann")
+            self.query_one("#pageSubtitle", Static).update(
+                "Set up the Clann and primary household using the shared Eolas service."
+            )
+            table.display = False
+            cards.display = False
+            progress.display = False
+            progressLabel.display = False
+            detail.display = False
+            capture.display = False
+            clannCreate.display = True
+            self.query_one("#clannName", Input).focus()
             return
 
         page = PAGES[pageName]
         self.query_one("#pageTitle", Label).update(page.title)
         self.query_one("#pageSubtitle", Static).update(page.subtitle)
         capture.display = False
+        clannCreate.display = False
         table.display = True
         detail.display = True
         cards.display = pageName == "overview"

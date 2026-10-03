@@ -12,6 +12,7 @@ from eolas.capture.service import CaptureWriteError, capturePrepare, captureWrit
 from eolas.clann.models import ClannInput, ClannValidationError, PersonInput
 from eolas.clann.service import ClannCreationError, clannCreate
 from eolas.clann.slugs import slugCreate
+from eolas.paths import dataRootGet
 from eolas.curses_ui import (
     CursesCancelled,
     captureDomainCapture,
@@ -25,8 +26,14 @@ ROLE_SUGGESTIONS = "householder, partner, family, carer, lodger, other"
 
 
 def main() -> int:
-    """Run the installed ``eolas`` console command."""
-    return cliRun()
+    """Run the Eolas application or dispatch an explicit CLI command."""
+
+    arguments = sys.argv[1:]
+    if not arguments:
+        from eolas.tui.app import tuiRun
+
+        return tuiRun()
+    return cliRun(arguments)
 
 
 def cliRun(arguments: Optional[Sequence[str]] = None) -> int:
@@ -64,7 +71,7 @@ def _confirmationAsk(prompt: str, *, default: bool) -> bool:
 def _clannAsk(*, confirm: bool) -> int:
     try:
         clann = clannCapture()
-        outputDirectory = _dataRootGet()
+        outputDirectory = dataRootGet()
         clann.clannValidate()
         targetPath = outputDirectory / "clanns" / slugCreate(clann.name)
         _summaryPrint(clann, targetPath)
@@ -108,11 +115,6 @@ def _peopleAsk(personCount: int, *, resident: bool) -> List[PersonInput]:
             )
         )
     return people
-
-
-def _dataRootGet() -> Path:
-    """Return the private Eolas data root beneath the current user's home."""
-    return Path.home() / "eolas"
 
 
 def _captureInputLoad(path: Path) -> Mapping[str, Any]:
@@ -185,7 +187,7 @@ def _captureClannResolve(clannPath: Optional[Path], *, interactive: bool) -> Pat
     """Use an explicit Clann, the sole default, or an interactive choice."""
     if clannPath is not None:
         return clannPath
-    clannsPath = _dataRootGet() / "clanns"
+    clannsPath = dataRootGet() / "clanns"
     if not clannsPath.is_dir():
         raise CaptureValidationError(
             "No Clanns exist yet. Run `eolas clann --create` first."
@@ -277,7 +279,7 @@ def _parserBuild() -> argparse.ArgumentParser:
 
 
 def _logShow() -> int:
-    logPath = _dataRootGet() / "eolas.log"
+    logPath = dataRootGet() / "eolas.log"
     try:
         contents = logPath.read_text(encoding="utf-8")
     except FileNotFoundError:

@@ -95,11 +95,22 @@ secrets in this public repository. Examples must be fictional.
 
 ## Interactive terminal interface
 
-The main interactive UI is the Textual terminal interface:
+The main interactive UI is the Textual terminal interface. Launch it simply
+with:
 
 ```bash
-eolas tui
+eolas
 ```
+
+Any supplied argument switches to CLI mode, for example:
+
+```bash
+eolas --help
+eolas capture
+eolas log --show
+```
+
+The explicit `eolas tui` command remains available.
 
 The TUI is being connected incrementally to the same application/domain
 services used by the scriptable CLI. See the

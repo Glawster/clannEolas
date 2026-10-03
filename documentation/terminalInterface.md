@@ -14,7 +14,17 @@ Install the project in the active development environment:
 python -m pip install -e .
 ```
 
-Launch the terminal interface with:
+Launch Eolas with no arguments:
+
+```bash
+eolas
+```
+
+With no arguments, Eolas opens the Textual interface. Supplying any argument
+switches to the scriptable CLI, for example `eolas --help`,
+`eolas capture ...` or `eolas log --show`.
+
+The explicit TUI subcommand remains available:
 
 ```bash
 eolas tui
@@ -41,6 +51,12 @@ navigation remain available through Textual, and mouse interaction is optional.
 
 The overview presents a small number of summary cards, a full-width overall
 readiness indicator, and a table of areas requiring attention.
+
+The **Create Clann** workflow is the first migrated interactive workflow. It
+collects the Clann and primary-household names, stages one or more people,
+allows the primary person to be selected, validates through the existing
+domain model, shows a review/confirmation step, and calls the shared
+`clannCreate()` service.
 
 Sensitive values must be masked or omitted in summary views. A future detail
 view may reveal information only when appropriate to the user's explicit
