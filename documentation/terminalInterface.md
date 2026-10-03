@@ -42,6 +42,12 @@ navigation remain available through Textual, and mouse interaction is optional.
 The overview presents a small number of summary cards, a full-width overall
 readiness indicator, and a table of areas requiring attention.
 
+The **Create Clann** workflow is the first migrated interactive workflow. It
+collects the Clann and primary-household names, stages one or more people,
+allows the primary person to be selected, validates through the existing
+domain model, shows a review/confirmation step, and calls the shared
+`clannCreate()` service.
+
 Sensitive values must be masked or omitted in summary views. A future detail
 view may reveal information only when appropriate to the user's explicit
 action.
