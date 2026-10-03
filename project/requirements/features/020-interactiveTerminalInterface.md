@@ -41,7 +41,8 @@ terminal environments.
 - Reuse shared application/domain services for both CLI and TUI operations.
 - Keep UI framework dependencies out of core/domain code.
 - Provide keyboard-driven navigation between major Clann Eolas domains and
-  workflows.
+  workflows. Clann-level operations such as create and select/switch belong
+  beneath a single top-level Clann area rather than separate global entries.
 - Provide structured list/table views and drill-down detail views for domain
   records where applicable.
 - Provide form-based input for interactive create/edit workflows.
@@ -156,7 +157,7 @@ terminal environments.
 
 ## Traceability
 
-- Implementation: `eolas/tui/` production shell established; Create Clann now uses shared `ClannInput`/`PersonInput` validation and `clannCreate()`; remaining domain/service integration continues
+- Implementation: `eolas/tui/` production shell established; Clann is now a top-level management area, local Clanns are discovered through shared service code, and Create Clann uses shared `ClannInput`/`PersonInput` validation and `clannCreate()`; active Clann selection and remaining domain/service integration continue
 - Tests: `tests/test_terminalInterface.py` covers Create Clann navigation, domain validation and persistence integration; execution evidence pending
 - Documentation: terminal-interface usage documentation pending
 - Pull request: pending
@@ -177,3 +178,6 @@ terminal environments.
   remains temporarily for CLI compatibility while migration continues.
 - 2026-10-03: bare `eolas` made the primary TUI launcher; any supplied
   argument continues through the CLI parser.
+- 2026-10-03: Clann made the top-level navigation concept; Create Clann moved
+  beneath it and the Clann area now discovers existing local Clanns in
+  preparation for active-Clann selection.
