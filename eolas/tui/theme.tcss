@@ -148,9 +148,10 @@ Footer {
     color: $cream;
 }
 
-#captureForm {
+#captureView {
     display: none;
-    max-width: 76;
+    width: 100%;
+    max-width: 100;
     padding: 1 2;
     background: $forest;
     border: round $forest-soft;
@@ -171,26 +172,47 @@ Input:focus {
     border: tall $gold;
 }
 
-#validation {
-    height: 2;
+#captureValidation {
+    min-height: 2;
     color: $gold;
 }
 
-#validation.error {
+#captureValidation.error {
     color: $danger;
     text-style: bold;
 }
 
-#savePreview {
-    width: 24;
-    background: $gold;
-    color: $ink;
-    border: none;
+#captureFields {
+    height: auto;
+    max-height: 22;
+    margin: 1 0;
 }
 
-ConfirmationModal {
+#captureFieldsLoad,
+#captureReview {
+    width: 28;
+    margin-bottom: 1;
+}
+
+CaptureConfirmScreen {
     align: center middle;
     background: rgba(10, 18, 14, 0.75);
+}
+
+#captureConfirmDialog {
+    width: 72;
+    height: auto;
+    max-height: 80%;
+    background: $forest;
+    border: round $gold;
+    padding: 1 2;
+}
+
+#captureConfirmSummary {
+    margin: 1 0;
+    padding: 1;
+    background: $ink;
+    color: $cream;
 }
 
 #dialog {
