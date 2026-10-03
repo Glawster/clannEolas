@@ -43,6 +43,6 @@ preserving the scriptable CLI and keeping domain behaviour outside the UI.
 
 ## Immediate next action
 
-Run and correct the new Create Clann interaction tests, then migrate Clann
-selection and Quick Capture from curses to shared-service-backed TUI views
-before retiring the old curses presentation layer.
+Run and correct the updated Clann/Create Clann interaction tests, then enable
+active Clann selection/switching in the Clann area and migrate Quick Capture
+from curses before retiring the old curses presentation layer.
