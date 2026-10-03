@@ -10,12 +10,14 @@ from eolas.tui.views.clannCreate import ClannCreateView
 
 
 def test_tuiNavigatesToCreateClann() -> None:
-    """The production shell exposes Create Clann through keyboard navigation."""
+    """Create Clann is reached as an action within the Clann area."""
 
     async def exercise() -> None:
         app = EolasApp()
         async with app.run_test(size=(120, 40)) as pilot:
-            await pilot.press("9")
+            await pilot.press("2")
+            await pilot.pause()
+            await pilot.click("#clannCreate")
             await pilot.pause()
 
             view = app.query_one("#clannCreateView", ClannCreateView)
@@ -36,7 +38,9 @@ def test_tuiCreateClannUsesSharedService(
     async def exercise() -> None:
         app = EolasApp()
         async with app.run_test(size=(120, 50)) as pilot:
-            await pilot.press("9")
+            await pilot.press("2")
+            await pilot.pause()
+            await pilot.click("#clannCreate")
             await pilot.pause()
 
             app.query_one("#clannName", Input).value = "Example Clann"
@@ -71,7 +75,9 @@ def test_tuiCreateClannRejectsIncompletePerson() -> None:
     async def exercise() -> None:
         app = EolasApp()
         async with app.run_test(size=(120, 40)) as pilot:
-            await pilot.press("9")
+            await pilot.press("2")
+            await pilot.pause()
+            await pilot.click("#clannCreate")
             await pilot.pause()
 
             await pilot.click("#personAdd")
