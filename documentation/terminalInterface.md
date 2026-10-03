@@ -14,7 +14,17 @@ Install the project in the active development environment:
 python -m pip install -e .
 ```
 
-Launch the terminal interface with:
+Launch Eolas with no arguments:
+
+```bash
+eolas
+```
+
+With no arguments, Eolas opens the Textual interface. Supplying any argument
+switches to the scriptable CLI, for example `eolas --help`,
+`eolas capture ...` or `eolas log --show`.
+
+The explicit TUI subcommand remains available:
 
 ```bash
 eolas tui
