@@ -157,8 +157,8 @@ terminal environments.
 
 ## Traceability
 
-- Implementation: `eolas/tui/` production shell established; Clann is now a top-level management area, local Clanns are discovered through shared service code, and Create Clann uses shared `ClannInput`/`PersonInput` validation and `clannCreate()`; active Clann selection and remaining domain/service integration continue
-- Tests: `tests/test_terminalInterface.py` covers Create Clann navigation, domain validation and persistence integration; execution evidence pending
+- Implementation: `eolas/tui/` production shell established; Clann is a top-level management area, local Clanns are discovered and selectable as the active session context, Create Clann uses shared `ClannInput`/`PersonInput` validation and `clannCreate()`, and Quick Capture uses shared capture profiles plus `capturePrepare()`/`captureWrite()`; remaining domain projections and edit workflows continue
+- Tests: `tests/test_terminalInterface.py` covers Create Clann navigation/domain validation/persistence, active Clann selection, default TUI dispatch and persisted Quick Capture; execution evidence pending
 - Documentation: terminal-interface usage documentation pending
 - Pull request: pending
 - Agent runs: pending or `None`
@@ -179,5 +179,7 @@ terminal environments.
 - 2026-10-03: bare `eolas` made the primary TUI launcher; any supplied
   argument continues through the CLI parser.
 - 2026-10-03: Clann made the top-level navigation concept; Create Clann moved
-  beneath it and the Clann area now discovers existing local Clanns in
-  preparation for active-Clann selection.
+  beneath it and the Clann area now discovers existing local Clanns.
+- 2026-10-03: active Clann selection implemented as TUI session context and
+  Quick Capture connected to shared capture validation/preparation and atomic
+  persistence services.
