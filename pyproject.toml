@@ -12,11 +12,13 @@ license = { file = "LICENSE" }
 dependencies = [
     "filelock>=3.12,<4",
     "PyYAML>=6.0,<7",
+    "textual>=0.89",
     "windows-curses>=2.4; platform_system == 'Windows'",
 ]
 
 [project.scripts]
 eolas = "eolas.cli:main"
+eolas-tui = "eolas.tui.app:main"
 
 [tool.setuptools.packages.find]
 include = ["eolas*"]

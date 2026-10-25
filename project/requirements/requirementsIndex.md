@@ -1,6 +1,6 @@
 # Requirements
 
-Next available number: 020
+Next available number: 021
 
 This directory is the source of truth for specific outcomes clanneolas.com
 intends to deliver and why. Requirements can govern handbook content, project
@@ -21,6 +21,7 @@ implementation and must distinguish current behaviour from planned work.
 
 ## InProgress
 
+- [020 — Interactive cross-platform terminal interface](features/020-interactiveTerminalInterface.md) — Textual production shell established; shared-service integration and verification remain
 - [009 — Banking module](features/009-bankingModule.md) — shared Phase 1 kernel and CLI input adapter implemented; Banking aggregates, workflows and projections remain
 - [010 — Credit cards](features/010-creditCards.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
 - [011 — Mortgages](features/011-mortgages.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
@@ -113,4 +114,5 @@ realistic identifiers.
 - [005-annualReviewProcess](prompt/005-annualReviewProcess.md)
 - [006-gettingStartedGuide](prompt/006-gettingStartedGuide.md)
 - [007-legalDocumentCustodyAndAccess](prompt/007-legalDocumentCustodyAndAccess.md)
+- [020-interactiveTerminalInterface](prompt/020-interactiveTerminalInterface.md)
 <!-- OMP-PROMPT-INDEX-END -->

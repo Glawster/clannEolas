@@ -1,0 +1,348 @@
+"""Textual terminal interface for Eolas.
+
+The TUI is a presentation layer over Eolas application and domain services.
+Business rules and persistence remain outside this package.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from pathlib import Path
+
+from textual import on
+from textual.app import App, ComposeResult
+from textual.containers import Horizontal, Vertical, VerticalScroll
+from textual.events import Resize
+from textual.screen import ModalScreen
+from eolas.tui.views.clann import ClannView
+from eolas.tui.views.clannCreate import ClannCreateView
+from eolas.tui.views.quickCapture import QuickCaptureView
+
+from textual.widgets import (
+    Button,
+    DataTable,
+    Footer,
+    Header,
+    Input,
+    Label,
+    ProgressBar,
+    Static,
+)
+
+
+@dataclass(frozen=True)
+class TuiPage:
+    """Display content for one TUI page."""
+
+    title: str
+    subtitle: str
+    columns: tuple[str, ...]
+    rows: tuple[tuple[str, ...], ...]
+    detail: str
+
+
+PAGES = {
+    "overview": TuiPage(
+        "Family overview",
+        "A calm summary of what is known, what is protected, and what needs attention.",
+        ("Area", "Readiness", "Records", "Attention"),
+        (
+            ("People", "Ready", "5", "0"),
+            ("Banking", "Good", "4", "1"),
+            ("Insurance", "Review", "3", "1"),
+            ("Subscriptions", "Good", "12", "2"),
+            ("Documents", "Good", "18", "1"),
+        ),
+        "Next review: 14 November 2026\n"
+        "3 items would benefit from attention. Nothing is urgent.",
+    ),
+    "people": TuiPage(
+        "People & households",
+        "Who belongs to the Clann, where they live, and the practical roles they hold.",
+        ("Person", "Role", "Household", "Status"),
+        (
+            ("Alex Morgan", "Primary", "Oak House", "Ready"),
+            ("Sam Morgan", "Partner", "Oak House", "Ready"),
+            ("Jamie Morgan", "Family", "Oak House", "Review"),
+            ("Pat Morgan", "Family", "Lives elsewhere", "Ready"),
+        ),
+        "Sensitive personal details are deliberately omitted from summary views.",
+    ),
+    "banking": TuiPage(
+        "Banking",
+        "Accounts are easy to find without exposing account numbers in the overview.",
+        ("Institution", "Account", "Purpose", "Status"),
+        (
+            ("Example Bank", "•••• 4821", "Household current", "Ready"),
+            ("Example Building Society", "•••• 1930", "Savings", "Ready"),
+            ("Example Bank", "•••• 7714", "Bills", "Review"),
+        ),
+        "Select a record in a production UI to reveal permitted details, "
+        "contacts, standing orders and continuity instructions.",
+    ),
+    "insurance": TuiPage(
+        "Insurance",
+        "Policies, renewal points and who to contact when something happens.",
+        ("Policy", "Provider", "Renewal", "Status"),
+        (
+            ("Home", "Example Mutual", "Mar 2027", "Ready"),
+            ("Car", "Example Cover", "Jan 2027", "Ready"),
+            ("Life", "Example Life", "Review due", "Review"),
+        ),
+        "A future detail view can show claim instructions without exposing "
+        "unnecessary personal data in the list.",
+    ),
+    "subscriptions": TuiPage(
+        "Subscriptions & services",
+        "Recurring commitments with clear cancellation and continuity information.",
+        ("Service", "Category", "Paid by", "Status"),
+        (
+            ("Example Broadband", "Essential", "•••• 4821", "Ready"),
+            ("Example Streaming", "Non-essential", "•••• 4821", "Ready"),
+            ("Example Storage", "Important", "•••• 1930", "Review"),
+        ),
+        "The goal is practical continuity: what should continue, what can stop, "
+        "and how a family member can act.",
+    ),
+    "documents": TuiPage(
+        "Documents",
+        "Important records presented by purpose rather than as an unstructured file list.",
+        ("Document", "Held", "Review", "Status"),
+        (
+            ("Will", "Original + scan", "2027", "Ready"),
+            ("Home insurance", "Digital", "Mar 2027", "Ready"),
+            ("Property deeds", "Original", "Check location", "Review"),
+        ),
+        "Production views should show custody and access instructions before "
+        "revealing protected document content.",
+    ),
+    "help": TuiPage(
+        "Help / User guide",
+        "Guidance for understanding Eolas and using the terminal interface.",
+        ("Section", "Purpose"),
+        (
+            ("Getting started", "What Eolas is and where to begin"),
+            ("Using the interface", "Navigation, forms, tables and shortcuts"),
+            ("Key concepts", "Clann, households, readiness, review and capture"),
+            ("Privacy & safety", "Sensitive data, masking and safe storage"),
+        ),
+        "Detailed user-guide content is maintained separately from the UI shell "
+        "and will be presented here.",
+    ),
+}
+
+
+class EolasApp(App[None]):
+    """Full-screen terminal interface for Eolas."""
+
+    CSS_PATH = Path(__file__).resolve().parents[2] / "styles" / "projectStyles.css"
+    TITLE = "Eolas"
+    SUB_TITLE = "Family continuity"
+
+    BINDINGS = [
+        ("q", "quit", "Quit"),
+        ("1", "page('overview')", "Overview"),
+        ("2", "page('clann')", "Clann"),
+        ("3", "page('people')", "People"),
+        ("4", "page('banking')", "Banking"),
+        ("5", "page('insurance')", "Insurance"),
+        ("6", "page('subscriptions')", "Services"),
+        ("7", "page('documents')", "Documents"),
+        ("8", "page('capture')", "Capture"),
+        ("9", "page('help')", "Help"),
+    ]
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._activeClann = None
+
+    def compose(self) -> ComposeResult:
+        yield Header(show_clock=True)
+        with Horizontal(id="body"):
+            with Vertical(id="navigation"):
+                yield Label("EOLAS", id="brand")
+                yield Static("Knowledge for continuity", id="tagline")
+                yield Button("1  Overview", id="nav-overview", classes="navButton")
+                yield Button("2  Clann", id="nav-clann", classes="navButton")
+                yield Button("3  People", id="nav-people", classes="navButton")
+                yield Button("4  Banking", id="nav-banking", classes="navButton")
+                yield Button("5  Insurance", id="nav-insurance", classes="navButton")
+                yield Button(
+                    "6  Subscriptions", id="nav-subscriptions", classes="navButton"
+                )
+                yield Button("7  Documents", id="nav-documents", classes="navButton")
+                yield Button("8  Quick capture", id="nav-capture", classes="navButton")
+                yield Button("9  Help / User guide", id="nav-help", classes="navButton")
+                yield Static(
+                    "Keyboard first\nMouse optional",
+                    id="navHint",
+                )
+
+            with VerticalScroll(id="workspace"):
+                yield Label("Family overview", id="pageTitle")
+                yield Static("", id="pageSubtitle")
+
+                with Horizontal(id="summaryCards"):
+                    yield Static("READINESS\n72%\nGood", classes="summaryCard")
+                    yield Static("PEOPLE\n5\n2 households", classes="summaryCard")
+                    yield Static("ATTENTION\n3\nNo urgent items", classes="summaryCard")
+
+                yield Label("Overall readiness", id="readinessLabel")
+                yield ProgressBar(total=100, show_eta=False, id="readiness")
+                yield DataTable(id="records", zebra_stripes=True)
+                yield Static("", id="detail")
+
+                yield ClannView(id="clannView")
+                yield ClannCreateView(id="clannCreateView")
+
+                yield QuickCaptureView(id="captureView")
+        yield Footer()
+
+    def on_mount(self) -> None:
+        """Initialise the default dashboard state."""
+
+        self.query_one("#readiness", ProgressBar).progress = 72
+        self.layoutResponsive(self.size.width)
+        self.pageShow("overview")
+
+    def on_resize(self, event: Resize) -> None:
+        """Apply responsive classes without relying on CSS media queries."""
+
+        self.layoutResponsive(event.size.width)
+
+    def layoutResponsive(self, width: int) -> None:
+        """Set layout classes for compact and narrow terminal widths."""
+
+        screen = self.screen
+        screen.set_class(width < 80, "compact")
+        screen.set_class(width < 60, "narrow")
+
+    @on(Button.Pressed, ".navButton")
+    def navigationPressed(self, event: Button.Pressed) -> None:
+        """Switch page when a navigation button is pressed."""
+
+        self.pageShow(event.button.id.removeprefix("nav-"))
+
+    @on(ClannView.CreateRequested)
+    def clannCreateRequested(self) -> None:
+        """Open Create Clann from the Clann management area."""
+
+        self.pageShow("clann-create")
+
+    @on(ClannView.SelectRequested)
+    def clannSelected(self, message: ClannView.SelectRequested) -> None:
+        """Set the selected Clann as the active application context."""
+
+        self._activeClann = message.clann
+        self.query_one("#clannView", ClannView).activeShow(message.clann)
+        self.query_one("#captureView", QuickCaptureView).activeClannSet(
+            message.clann.name,
+            message.clann.path,
+        )
+        self.query_one("#navHint", Static).update(
+            f"Active Clann\n{message.clann.name}\n\nKeyboard first\nMouse optional"
+        )
+
+    def action_page(self, pageName: str) -> None:
+        """Open one of the numbered TUI pages."""
+
+        self.pageShow(pageName)
+
+    def pageShow(self, pageName: str) -> None:
+        """Render one page while preserving the shared application shell."""
+
+        capture = self.query_one("#captureView", QuickCaptureView)
+        clannView = self.query_one("#clannView", ClannView)
+        clannCreate = self.query_one("#clannCreateView", ClannCreateView)
+        cards = self.query_one("#summaryCards", Horizontal)
+        progress = self.query_one("#readiness", ProgressBar)
+        progressLabel = self.query_one("#readinessLabel", Label)
+        table = self.query_one("#records", DataTable)
+        detail = self.query_one("#detail", Static)
+
+        if pageName == "capture":
+            self.query_one("#pageTitle", Label).update("Quick capture")
+            self.query_one("#pageSubtitle", Static).update(
+                "Structured entry without remembering a CLI command."
+            )
+            table.display = False
+            cards.display = False
+            progress.display = False
+            progressLabel.display = False
+            detail.display = False
+            capture.display = True
+            clannView.display = False
+            clannCreate.display = False
+            if self._activeClann is None:
+                self.query_one("#pageSubtitle", Static).update(
+                    "Select an active Clann first, then capture structured continuity data."
+                )
+            self.query_one("#captureDomain").focus()
+            return
+
+        if pageName == "clann":
+            self.query_one("#pageTitle", Label).update("Clann")
+            self.query_one("#pageSubtitle", Static).update(
+                "Manage Clanns and choose the family group you are working with."
+            )
+            table.display = False
+            cards.display = False
+            progress.display = False
+            progressLabel.display = False
+            detail.display = False
+            capture.display = False
+            clannCreate.display = False
+            clannView.display = True
+            clannView.refreshClanns()
+            return
+
+        if pageName == "clann-create":
+            self.query_one("#pageTitle", Label).update("Create a Clann")
+            self.query_one("#pageSubtitle", Static).update(
+                "Set up the Clann and primary household using the shared Eolas service."
+            )
+            table.display = False
+            cards.display = False
+            progress.display = False
+            progressLabel.display = False
+            detail.display = False
+            capture.display = False
+            clannView.display = False
+            clannCreate.display = True
+            self.query_one("#clannName", Input).focus()
+            return
+
+        page = PAGES[pageName]
+        self.query_one("#pageTitle", Label).update(page.title)
+        self.query_one("#pageSubtitle", Static).update(page.subtitle)
+        capture.display = False
+        clannView.display = False
+        clannCreate.display = False
+        table.display = True
+        detail.display = True
+        cards.display = pageName == "overview"
+        progress.display = pageName == "overview"
+        progressLabel.display = pageName == "overview"
+
+        table.clear(columns=True)
+        table.add_columns(*page.columns)
+        table.add_rows(page.rows)
+        table.cursor_type = "row"
+        detail.update(page.detail)
+
+
+def tuiRun() -> int:
+    """Run the Eolas terminal interface."""
+
+    EolasApp().run()
+    return 0
+
+
+def main() -> int:
+    """Console entry point for the Eolas terminal interface."""
+
+    return tuiRun()
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,0 +1,97 @@
+# Terminal interface
+
+Eolas provides a full-screen terminal interface built with Textual.
+
+The TUI is the primary interactive application interface. The existing
+`eolas` command-line interface remains available for scripted and
+non-interactive workflows.
+
+## Launch
+
+Install the project in the active development environment:
+
+```bash
+python -m pip install -e .
+```
+
+Launch Eolas with no arguments:
+
+```bash
+eolas
+```
+
+With no arguments, Eolas opens the Textual interface. Supplying any argument
+switches to the scriptable CLI, for example `eolas --help`,
+`eolas capture ...` or `eolas log --show`.
+
+The explicit TUI subcommand remains available:
+
+```bash
+eolas tui
+```
+
+The direct entry point is also available:
+
+```bash
+eolas-tui
+```
+
+or, during development:
+
+```bash
+python -m eolas.tui
+```
+
+## Interaction model
+
+The interface uses persistent left-hand navigation and a central workspace.
+
+Number keys provide direct navigation between major areas. Tab and arrow-key
+navigation remain available through Textual, and mouse interaction is optional.
+
+The overview presents a small number of summary cards, a full-width overall
+readiness indicator, and a table of areas requiring attention.
+
+**Clann** is a top-level area rather than exposing creation as a global
+navigation item. It lists locally available Clanns and contains Clann-level
+actions. **Create new Clann** opens the first migrated interactive workflow,
+which collects the Clann and primary-household names, stages one or more
+people, allows the primary person to be selected, validates through the
+existing domain model, shows a review/confirmation step, and calls the shared
+`clannCreate()` service.
+
+Select/switch Clann is handled in this same area. The selected Clann becomes
+the active session context and is shown in the navigation hint. Data-entry
+workflows use that active Clann rather than asking for a filesystem path.
+
+**Quick capture** now uses the shared capture profiles and persistence services.
+Choose a domain, load its required fields, enter the values, then use
+**Review & save** followed by **Save record**. The record is prepared by
+`capturePrepare()` and persisted atomically by `captureWrite()`.
+
+Sensitive values must be masked or omitted in summary views. A future detail
+view may reveal information only when appropriate to the user's explicit
+action.
+
+### Warp Terminal
+
+Warp may interpret `eolas tui` as an agent prompt.
+Prefix it with `!` to force shell execution:
+
+    ! eolas tui
+
+Alternatively use:
+
+    eolas-tui
+
+## Architecture
+
+Textual is confined to `eolas/tui/`. The TUI must use the same
+application/domain services as the command-line interface and must not shell
+out to CLI commands.
+
+The framework decision is recorded in
+[ADR-019](../project/adr/019-textualTerminalInterface.md).
+
+REQ-020 remains in progress while shared-service integration, interaction tests
+and cross-platform smoke testing are completed.

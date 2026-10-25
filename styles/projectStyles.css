@@ -1,0 +1,564 @@
+/* Eolas project-owned Textual theme. */
+
+/* The FMSAT palette is expressed once through shared semantic roles. */
+$canvas: #f1ead9;
+$canvas-text: #19211d;
+$canvas-muted: #2f6651;
+$surface: #15372a;
+$surface-raised: #1f4d3a;
+$surface-deep: #19211d;
+$surface-ink: #f1ead9;
+$canvas-ink: #f1ead9;
+$muted-ink: #b8b2a4;
+$accent-strong: #1f4d3a;
+$accent: #2f6651;
+$accent-hover: #3c7a65;
+$accent-focus: #d1aa5b;
+$on-accent: #f1ead9;
+$text-primary: #f1ead9;
+$text-secondary: #f1ead9;
+$text-muted: #b8b2a4;
+$success-surface: #1f4d3a;
+$success-text: #d1aa5b;
+$success-border: #2f6651;
+$warning-surface: #4f421d;
+$warning-text: #f1ead9;
+$warning-border: #d1aa5b;
+$error-surface: #572d29;
+$error-text: #f1ead9;
+$error-border: #b85c52;
+$warning: #d1aa5b;
+$error: #b85c52;
+$border: #2f6651;
+$border-strong: #3c7a65;
+
+Screen {
+    background: $canvas;
+    color: $canvas-text;
+    scrollbar-background: $surface;
+    scrollbar-background-hover: $surface-raised;
+    scrollbar-background-active: $surface-raised;
+    scrollbar-color: $surface-ink;
+    scrollbar-color-hover: $surface-ink;
+    scrollbar-color-active: $surface-ink;
+    scrollbar-corner-color: $surface;
+}
+
+Header,
+Footer {
+    background: $canvas;
+    color: $canvas-text;
+}
+
+Label,
+Static {
+    background: transparent;
+    color: $canvas-text;
+}
+
+.surface,
+.surface-raised {
+    color: $text-primary;
+}
+
+.surface {
+    background: $surface;
+    border: solid $border;
+}
+
+.surface-raised {
+    background: $surface-raised;
+    border: solid $border-strong;
+}
+
+.surface Label,
+.surface Static,
+.surface-raised Label,
+.surface-raised Static {
+    color: $text-secondary;
+}
+
+Button {
+    height: 1;
+    min-height: 1;
+    border: none;
+    padding: 0 1;
+    background: $accent;
+    color: $on-accent;
+    text-style: bold;
+}
+
+Button:hover,
+Button:focus {
+    height: 1;
+    min-height: 1;
+    border: none;
+    padding: 0 1;
+    background: $accent-hover;
+    color: $on-accent;
+}
+
+Button:disabled {
+    height: 1;
+    min-height: 1;
+    border: none;
+    padding: 0 1;
+    background: $border;
+    color: $text-muted;
+}
+
+Button.-primary {
+    background: $accent;
+    color: $on-accent;
+}
+
+Button.-success {
+    background: $success-surface;
+    color: $success-text;
+}
+
+Button.-warning {
+    background: $warning-surface;
+    color: $warning-text;
+}
+
+Button.-error {
+    background: $error-surface;
+    color: $error-text;
+}
+
+#body {
+    height: 1fr;
+}
+
+#navigation {
+    width: 28;
+    min-width: 24;
+    background: $surface-raised;
+    border-right: solid $accent-focus;
+    padding: 1;
+}
+
+#navigation Label,
+#navigation Static {
+    color: $text-primary;
+}
+
+#brand {
+    color: $accent-focus;
+    text-style: bold;
+    text-align: center;
+    height: 2;
+}
+
+#tagline {
+    text-align: center;
+    margin-bottom: 1;
+}
+
+.navButton {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    background: $surface-raised;
+    color: $text-primary;
+    text-align: left;
+    content-align: left middle;
+}
+
+.navButton:hover,
+.navButton:focus {
+    background: $canvas-muted;
+    color: $accent-focus;
+    text-style: bold;
+}
+
+#navHint {
+    color: $text-muted;
+    margin-top: 1;
+    padding: 1;
+    border-top: solid $border;
+}
+
+#workspace {
+    width: 1fr;
+    padding: 1 2 2 2;
+    background: $canvas;
+}
+
+#pageTitle,
+#captureTitle,
+#clannCreateTitle,
+#clannTitle,
+.formSectionTitle,
+#dialogTitle {
+    color: $accent-strong;
+    text-style: bold;
+}
+
+#pageTitle {
+    height: 2;
+}
+
+#pageSubtitle,
+.formIntro,
+#clannHint,
+#clannStatus {
+    color: $canvas-muted;
+    margin-bottom: 1;
+}
+
+#summaryCards {
+    height: 7;
+    margin-bottom: 1;
+}
+
+.summaryCard,
+#captureView,
+#clannCreateView,
+#clannView,
+#captureConfirmDialog,
+#clannConfirmDialog,
+#dialog {
+    background: $surface;
+    border: solid $border;
+}
+
+.summaryCard {
+    width: 1fr;
+    margin-right: 1;
+    padding: 1;
+    color: $text-primary;
+    text-align: center;
+}
+
+#readinessLabel {
+    color: $canvas-muted;
+    text-style: bold;
+    margin-top: 1;
+}
+
+#readiness {
+    width: 100%;
+    margin-bottom: 1;
+}
+
+DataTable,
+#clannPeople,
+#availableClanns {
+    background: $surface;
+    color: $text-primary;
+    border: solid $surface-ink;
+}
+
+#records {
+    height: auto;
+    min-height: 10;
+    max-height: 18;
+}
+
+DataTable > .datatable--header {
+    background: $surface;
+    color: $text-secondary;
+    text-style: bold;
+}
+
+DataTable > .datatable--cursor {
+    background: $success-surface;
+    color: $success-text;
+}
+
+ListView {
+    background: $surface;
+    color: $text-primary;
+    border: solid $surface-ink;
+}
+
+ListView > ListItem {
+    background: $surface;
+    color: $text-primary;
+    padding: 0 1;
+}
+
+ListView > ListItem Label,
+ListView > ListItem Static {
+    background: transparent;
+    color: $text-primary;
+}
+
+ListView > ListItem.-highlight,
+ListView:focus > ListItem.-highlight {
+    background: $success-surface;
+    color: $success-text;
+}
+
+ListView > ListItem.-highlight Label,
+ListView > ListItem.-highlight Static,
+ListView:focus > ListItem.-highlight Label,
+ListView:focus > ListItem.-highlight Static {
+    color: $success-text;
+}
+
+#detail {
+    margin-top: 1;
+    padding: 1 2;
+    background: $surface-raised;
+    border: solid $border;
+    color: $text-secondary;
+}
+
+Input,
+Select {
+    height: 3;
+    margin-bottom: 1;
+    background: $surface;
+    color: $text-primary;
+    border: solid $surface-ink;
+    content-align: left middle;
+}
+
+Input:focus,
+Select:focus {
+    border: solid $accent-focus;
+}
+
+Select > SelectCurrent {
+    border: none;
+    background: $surface;
+    color: $text-primary;
+}
+
+Select:focus > SelectCurrent {
+    background: $surface-raised;
+}
+
+Select > SelectOverlay {
+    border: solid $surface-ink;
+    background: $surface;
+    color: $text-primary;
+}
+
+Select > SelectOverlay:focus {
+    border: solid $accent-focus;
+}
+
+#captureView,
+#clannCreateView,
+#clannView {
+    display: none;
+    width: 100%;
+    max-width: 100;
+    padding: 1 2;
+}
+
+#captureTitle,
+#clannCreateTitle,
+#clannTitle,
+.formSectionTitle,
+#dialogTitle {
+    margin-bottom: 1;
+}
+
+#captureFields {
+    height: auto;
+    max-height: 22;
+    margin: 1 0;
+}
+
+#captureValidation,
+#personValidation,
+#clannValidation {
+    min-height: 2;
+    color: $warning-text;
+}
+
+#captureValidation.error,
+#personValidation.error,
+#clannValidation.error {
+    color: $error-text;
+    text-style: bold;
+}
+
+.success {
+    background: $success-surface;
+    color: $success-text;
+    border: solid $success-border;
+}
+
+.warning {
+    background: $warning-surface;
+    color: $warning-text;
+    border: solid $warning-border;
+}
+
+.error {
+    background: $error-surface;
+    color: $error-text;
+    border: solid $error-border;
+}
+
+ListView .warning {
+    height: 1;
+    padding: 0;
+    border: none;
+}
+
+#captureConfirmDialog,
+#clannConfirmDialog,
+#dialog {
+    width: 72;
+    height: auto;
+    max-height: 80%;
+    border: solid $border;
+    padding: 1 2;
+}
+
+#dialog {
+    width: 58;
+}
+
+#captureConfirmSummary,
+#clannConfirmSummary {
+    margin: 1 0;
+    padding: 1;
+    background: $surface;
+}
+
+CaptureConfirmScreen,
+ClannCreateConfirmScreen {
+    align: center middle;
+    background: rgba(10, 18, 14, 0.75);
+}
+
+.button-group {
+    height: auto;
+    margin: 1 0;
+}
+
+.button-group > Button {
+    width: 1fr;
+    margin-right: 1;
+}
+
+.button-group > Button:last-child {
+    margin-right: 0;
+}
+
+Horizontal > Button {
+    margin-right: 1;
+}
+
+Horizontal > Button:last-child {
+    margin-right: 0;
+}
+
+.twoColumnFields {
+    height: auto;
+}
+
+.twoColumnFields > Vertical {
+    width: 1fr;
+    margin-right: 1;
+}
+
+#personOptions {
+    height: 3;
+    margin-bottom: 1;
+}
+
+#personOptions Checkbox {
+    width: 1fr;
+}
+
+#clannPeople,
+#availableClanns {
+    height: 10;
+    margin-bottom: 1;
+}
+
+Screen.compact #navigation {
+    width: 21;
+    min-width: 20;
+}
+
+Screen.compact #tagline,
+Screen.compact #navHint {
+    display: none;
+}
+
+Screen.compact #workspace {
+    padding: 1;
+}
+
+Screen.compact #summaryCards {
+    height: 9;
+}
+
+Screen.compact .twoColumnFields {
+    layout: vertical;
+}
+
+Screen.compact .twoColumnFields > Vertical {
+    width: 100%;
+}
+
+Screen.narrow #navigation {
+    width: 18;
+    min-width: 18;
+}
+
+Screen.narrow .navButton {
+    padding: 0;
+}
+
+Screen.narrow #summaryCards {
+    display: none;
+}
+
+/* The shared mockup uses these generic layout classes to preview this theme. */
+#style-mockup {
+    height: 1fr;
+    padding: 1 2;
+}
+
+#mockup-title,
+.mockup-heading {
+    color: $accent-strong;
+    text-style: bold;
+}
+
+#mockup-title {
+    height: 1;
+}
+
+.mockup-row {
+    height: 1fr;
+    margin-top: 1;
+}
+
+.mockup-panel,
+.mockup-message {
+    width: 1fr;
+    height: 1fr;
+    padding: 1;
+    margin-right: 1;
+}
+
+.mockup-row > *:last-child {
+    margin-right: 0;
+}
+
+.mockup-panel Input,
+.mockup-panel Select {
+    margin-top: 1;
+}
+
+#mockup-list,
+#mockup-table {
+    height: 1fr;
+    margin-top: 1;
+}
+
+.mockup-message {
+    height: auto;
+}

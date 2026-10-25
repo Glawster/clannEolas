@@ -6,8 +6,8 @@ capacity or death.
 
 The repository is at an early, content-first stage. It contains a draft
 handbook outline, project requirements, an implemented UI-independent shared
-knowledge kernel and a working command-line prototype for creating private
-Clann records and capturing structured continuity information.
+knowledge kernel, a scriptable command-line interface and an in-progress
+Textual terminal interface for working with private Clann information.
 It does not yet contain a web or desktop application. The handbook is intended
 to remain useful as human-readable and printable documents without software.
 
@@ -17,6 +17,9 @@ to remain useful as human-readable and printable documents without software.
 - [Requirements management](documentation/requirementsManagement.md)
 - [Testing process](documentation/testingProcess.md)
 - [Release process](documentation/howToRelease.md)
+- [Agent implementation workflow](documentation/agentImplementationWorkflow.md)
+- [TUI styling](documentation/tuiStyling.md)
+- [Linter](documentation/linter.md)
 - [Product vision](documentation/productVision.md)
 - [Project principles](documentation/principles.md)
 - [Design principles](documentation/designPrinciples.md)
@@ -29,6 +32,7 @@ to remain useful as human-readable and printable documents without software.
 - [Architecture decisions](project/adr/adrIndex.md)
 - [Banking guidance](documentation/banking/bankingIndex.md)
 - [Clann bootstrap wizard](documentation/clannBootstrap.md)
+- [Terminal interface](documentation/terminalInterface.md)
 - [Project planning and governance](project/projectIndex.md)
 - [Requirements workflow](project/requirements/requirementsIndex.md)
 - [Repository assessment](project/reviews/repositoryAssessment.md)
@@ -91,6 +95,29 @@ created only when `--push` is supplied and published files changed.
 
 Do not put real household data, passwords, PINs, recovery codes or other
 secrets in this public repository. Examples must be fictional.
+
+## Interactive terminal interface
+
+The main interactive UI is the Textual terminal interface. Launch it simply
+with:
+
+```bash
+eolas
+```
+
+Any supplied argument switches to CLI mode, for example:
+
+```bash
+eolas --help
+eolas capture
+eolas log --show
+```
+
+The explicit `eolas tui` command remains available.
+
+The TUI is being connected incrementally to the same application/domain
+services used by the scriptable CLI. See the
+[terminal interface guide](documentation/terminalInterface.md).
 
 ## Command-line tools
 
