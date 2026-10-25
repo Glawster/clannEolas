@@ -2,5 +2,8 @@
 
 from eolas.clann.models import ClannInput, PersonInput
 from eolas.clann.service import clannCreate
+from eolas.version import VERSION
 
-__all__ = ["ClannInput", "PersonInput", "clannCreate"]
+__version__ = VERSION
+
+__all__ = ["ClannInput", "PersonInput", "VERSION", "__version__", "clannCreate"]

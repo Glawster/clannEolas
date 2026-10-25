@@ -1,7 +1,7 @@
 # Eolas User Guide
 
 **Current CLI prototype**  
-**Version covered:** current `feature/banking-core` functionality  
+**Version covered:** `0.1a2` (`feature/banking-core` functionality)
 **Purpose:** help a family create and maintain a practical continuity record safely and simply.
 
 ## 1. What Eolas is
@@ -105,12 +105,17 @@ If Eolas has already been installed, open a terminal and run:
 
 ```bash
 eolas --help
+eolas --version
 ```
 
 The main commands currently available are:
 
 ```text
 eolas clann --create
+eolas clann --list
+eolas clann --status
+eolas clann --repair
+eolas clann --remove DIRECTORY
 eolas capture
 eolas capture banking
 eolas log --show
@@ -136,6 +141,32 @@ eolas clann --create
 
 Eolas opens an interactive terminal wizard.
 
+### Finding and repairing a Clann
+
+You do not need to know where Eolas stores private files. Use:
+
+```bash
+eolas clann --list
+eolas clann --status
+eolas clann --repair
+```
+
+`--list` shows usable Clanns by name. `--status` explains whether a Clann needs
+attention. `--repair` selects an incomplete Clann automatically when there is
+one, or presents a choice when there are several; it previews the missing
+bootstrap details before writing anything. If the directory is empty, Eolas
+cannot infer a household or people: enter those details in the repair wizard
+and confirm the preview to complete it. Cancelling leaves the directory
+incomplete by design.
+
+To remove an incomplete directory instead, use the directory name displayed by
+`--status`, for example `eolas clann --remove wilson`. Eolas asks for
+confirmation, moves the directory to a private wastebasket, and refuses to
+remove a usable Clann. Recover it later with `eolas clann --restore`, which
+lists the available directories and lets you choose one. Use
+`eolas clann --restore wilson` to select one directly. Add `-y` to remove or
+restore without the final confirmation.
+
 ### What the wizard asks
 
 The wizard asks for information such as:
@@ -147,6 +178,11 @@ The wizard asks for information such as:
 - Clann members who live elsewhere;
 - practical household roles;
 - whether each person is legally an adult.
+
+The wizard gives safe examples for every free-text bootstrap field. For
+example, use `Wilson Family` for a Clann name, `29A` for a household name,
+`Andy Wilson` for a full name, and `owner`, `partner`, `family`, `carer`, or
+`lodger` for a household role.
 
 ### Controls
 
@@ -261,6 +297,31 @@ During Banking capture you may be asked for information such as:
 - continuity role;
 - account identifiers;
 - balance and balance date, where supplied.
+
+### Guided Banking entry
+
+Every required Banking question now explains what Eolas needs, why it is useful
+and a fictional example. Account category and account status are selected from
+clear menus, so you do not need to guess their stored values. For text answers:
+
+- use a familiar provider name for the financial institution;
+- use a purpose such as `Household bills and salary`, not a credential or
+  account number;
+- list known account holders by their Clann names, separated by commas;
+- enter `unknown` when the form allows it rather than guessing; and
+- enter the last reviewed date as `YYYY-MM-DD`, for example `2026-10-23`.
+
+Eolas rejects passwords, PINs, one-time codes, recovery codes and complete card
+numbers. Keep them outside Eolas; knowing them does not grant authority to use
+an account.
+
+### Entry casing
+
+Eolas corrects only entries that are entirely lower case or entirely upper
+case. Names and labels become title case, explanatory text becomes sentence
+case, and short codes such as currencies become upper case. Deliberately
+mixed-case input, such as `iPhone`, `McDonald` or `eBay`, stays unchanged.
+Identifiers and other protected values are never case-converted.
 
 ### Safe labels
 

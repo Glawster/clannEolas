@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, Optional
 
 from eolas.capture.adapter import captureCommandBuild
-from eolas.capture.models import CaptureInput
+from eolas.capture.models import CaptureInput, captureNormalise
 from eolas.clann.slugs import slugCreate
 from eolas.clann.yaml_io import yamlWrite
 
@@ -26,6 +26,7 @@ def capturePrepare(
     timestampProvider: Optional[TimestampProvider] = None,
 ) -> tuple[Path, Dict[str, Any]]:
     """Validate a capture and return its destination and canonical document."""
+    capture = captureNormalise(capture)
     clannPath = clannPath.expanduser().resolve()
     if not clannPath.is_dir() or not (clannPath / "clann.yaml").is_file():
         raise CaptureWriteError(f"Not an Eolas Clann directory: {clannPath}")

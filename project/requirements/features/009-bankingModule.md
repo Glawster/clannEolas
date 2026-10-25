@@ -1194,11 +1194,13 @@ workflow event must record the guidance ID and version/effective date it used.
 - Implementation: shared Phase 1 kernel; Banking Core in `eolas/banking/`
   (`FinancialInstitution`, `BankingRelationship`, `AccountParty`, continuity
   roles, typed identifiers, `BalanceObservation`, `Obligation`,
-  `PaymentArrangement`, `MoneyMovement`, `TransactionObservation`); typed
-  `eolas capture banking` adapter with identity reuse; statement import,
-  payment processing, workflows and projections pending
-- Tests: shared-kernel tests plus `tests/test_bankingCore.py` and
-  `tests/test_bankingPayments.py`; remaining 009 acceptance criteria pending
+  `PaymentArrangement`, `MoneyMovement`, `TransactionObservation` and
+  Banking-owned dependency edges); typed `eolas capture banking` adapter with
+  identity reuse; account-impact and closure-readiness queries; statement
+  import, payment processing, workflows and projections pending
+- Tests: shared-kernel tests plus `tests/test_bankingCore.py`,
+  `tests/test_bankingPayments.py` and `tests/test_bankingDependencies.py`;
+  remaining 009 acceptance criteria pending
 - Documentation: [product vision](../../../documentation/productVision.md),
   [principles](../../../documentation/principles.md),
   [domain model](../../../documentation/domainModel.md),
@@ -1223,3 +1225,5 @@ workflow event must record the guidance ID and version/effective date it used.
   by stable identity; new bootstrap allocates opaque `rec_` IDs.
 - 2026-09-10: Money movements and payment arrangements added as separate
   records from obligations and transaction evidence.
+- 2026-10-23: Banking-owned dependency edges, cycle-safe account impact and
+  essential-dependency closure blocking added; requirement remains in progress.

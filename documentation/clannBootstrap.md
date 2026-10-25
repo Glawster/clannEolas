@@ -20,6 +20,58 @@ Private Eolas data is always rooted at `~/eolas`. A Clann named `Example
 Clann` is therefore written beneath `~/eolas/clanns/example-clann/`. Creation
 is atomic and refuses to overwrite a non-empty Clann directory.
 
+To see usable Clanns without opening their data, run:
+
+```bash
+eolas clann --list
+```
+
+For a recovery-oriented view that also reports directories that cannot be used
+as Clanns, run:
+
+```bash
+eolas clann --status
+```
+
+`--status` is read-only. It reports a directory such as one missing
+`clann.yaml` and directs you to repair it. `--list` also directs you to repair
+an incomplete Clann instead of suggesting a second Clann be created.
+
+When an incomplete Clann is found, complete it with:
+
+```bash
+eolas clann --repair
+```
+
+When exactly one incomplete directory exists, `eolas clann --repair` selects it
+automatically. When there are several, it lists each directory and reason, then
+opens a selection menu. You do not need to know the data-folder layout.
+
+To remove an incomplete directory you no longer need, use its name from
+`eolas clann --status`:
+
+```bash
+eolas clann --remove wilson
+```
+
+Eolas asks for confirmation and moves only an incomplete directory to its
+private `.wastebasket` folder. It refuses to remove a usable Clann. Restore a
+removed directory when needed:
+
+```bash
+eolas clann --restore
+```
+
+`--restore` lists removed directories and lets you choose one. Pass a name to
+restore that directory directly, for example `eolas clann --restore wilson`.
+Add `-y` to either `--remove` or `--restore` to bypass its final confirmation.
+
+Repair asks for the missing Clann, household and person details, then writes
+only missing canonical files. An empty directory has no bootstrap facts to
+recover, so Eolas cannot complete it until you enter those details and confirm
+the preview. It refuses to overwrite a file or infer data from an ambiguous
+folder.
+
 ## Generated structure
 
 ```text

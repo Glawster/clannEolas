@@ -3,6 +3,8 @@
 from dataclasses import dataclass
 from typing import List
 
+from eolas.inputNormalise import sentenceNormalise, titleNormalise
+
 
 class ClannValidationError(ValueError):
     """Raised when Clann bootstrap input is invalid."""
@@ -53,3 +55,22 @@ class ClannInput:
             raise ClannValidationError(
                 "The primary household must have at least one resident."
             )
+
+
+def clannNormalise(clann: ClannInput) -> ClannInput:
+    """Normalise unambiguous human-entered names before durable storage."""
+    return ClannInput(
+        titleNormalise(clann.name),
+        titleNormalise(clann.primary_household_name),
+        [
+            PersonInput(
+                titleNormalise(person.full_name),
+                titleNormalise(person.preferred_name),
+                sentenceNormalise(person.household_role),
+                person.is_adult,
+                person.is_primary,
+                person.lives_in_primary_household,
+            )
+            for person in clann.people
+        ],
+    )

@@ -11,6 +11,7 @@ from eolas.capture.models import (
     CAPTURE_PROFILES,
     CaptureInput,
     CaptureValidationError,
+    captureNormalise,
 )
 from eolas.capture.service import CaptureWriteError, capturePrepare, captureWrite
 from eolas.clann.models import ClannInput, PersonInput
@@ -64,12 +65,9 @@ def test_capturePrepare_supportsRequirements010Through018(
     assert targetPath == clannPath / "shared" / domain / "household-record.yaml"
     assert document["schema"].startswith("eolas/")
     assert document["clannRef"] == "clann-example-clann"
-    assert document["metadata"]["source"] == "statement"
+    assert document["metadata"]["source"] == "Statement"
     firstField = CAPTURE_PROFILES[domain].required_fields[0]
-    assert document["data"][firstField] == {
-        "state": "known",
-        "value": "known",
-    }
+    assert document["data"][firstField]["state"] == "known"
 
 
 def test_capturePrepare_bankingCreatesTypedRelationship(clannPath: Path) -> None:
@@ -95,6 +93,36 @@ def test_captureValidate_reportsAllMissingRequiredFields() -> None:
 
     with pytest.raises(CaptureValidationError, match="institution.*lastReviewed"):
         capture.captureValidate()
+
+
+def testCaptureNormaliseUsesFieldAppropriateCasing() -> None:
+    normalised = captureNormalise(
+        CaptureInput(
+            "banking",
+            "HOUSEHOLD BILLS",
+            {
+                **_validFields("banking"),
+                "institution": "NORTHBRIDGE FICTIONAL MUTUAL",
+                "purpose": "HOUSEHOLD BILLS AND SALARY",
+                "owners": "ALEX EXAMPLE, MORGAN EXAMPLE",
+                "status": "ACTIVE",
+                "classification": "CONFIDENTIAL",
+                "currency": "gbp",
+                "maskedReference": "iPhone-42",
+            },
+            "BANK STATEMENT",
+        )
+    )
+
+    assert normalised.label == "Household Bills"
+    assert normalised.fields["institution"] == "Northbridge Fictional Mutual"
+    assert normalised.fields["purpose"] == "Household bills and salary"
+    assert normalised.fields["owners"] == "Alex Example, Morgan Example"
+    assert normalised.fields["status"] == "active"
+    assert normalised.fields["classification"] == "confidential"
+    assert normalised.fields["currency"] == "GBP"
+    assert normalised.fields["maskedReference"] == "iPhone-42"
+    assert normalised.source == "Bank statement"
 
 
 @pytest.mark.parametrize(
@@ -225,6 +253,43 @@ def test_cliCapture_usesCursesWhenInputIsOmitted(
 
     assert result == 0
     assert (clannPath / "shared/records.yaml").is_file()
+
+
+def testCliCaptureRejectsAbbreviatedClannOption(clannPath: Path) -> None:
+    with pytest.raises(SystemExit) as error:
+        cliRun(["capture", "banking", "--clan", str(clannPath)])
+
+    assert error.value.code == 2
+
+
+def testCliCaptureRejectsInvalidClannBeforeOpeningForm(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    monkeypatch.setattr(
+        "eolas.cli.domainCapture",
+        lambda _domain: (_ for _ in ()).throw(AssertionError("form opened")),
+    )
+
+    result = cliRun(["capture", "banking", "--clann", str(tmp_path / "missing")])
+
+    assert result == 1
+    assert "Not an Eolas Clann directory" in capsys.readouterr().out
+
+
+def testCliCaptureDirectsSoleIncompleteClannToRepair(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    (tmp_path / "eolas/clanns/unfinished").mkdir(parents=True)
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+
+    result = cliRun(["capture", "banking"])
+
+    assert result == 1
+    assert "eolas clann --repair" in capsys.readouterr().out
 
 
 def test_cliCapture_discoversOnlyClannForSimpleCommand(

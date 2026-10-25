@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Mapping
 
-from eolas.capture.models import CAPTURE_PROFILES, CaptureInput
+from eolas.capture.models import CAPTURE_PROFILES, CaptureInput, captureNormalise
 from eolas.domain.security import classificationResolve, secretsValidate
 from eolas.domain.values import Classification, FactState, Provenance, RecordIdentity
 
@@ -31,6 +31,7 @@ def captureCommandBuild(
     capture: CaptureInput, clann_id: str, captured_at: datetime
 ) -> CaptureRecordCommand:
     """Validate loose adapter input and produce a typed, Clann-owned command."""
+    capture = captureNormalise(capture)
     capture.captureValidate()
     profile = CAPTURE_PROFILES[capture.domain]
     command = CaptureRecordCommand(

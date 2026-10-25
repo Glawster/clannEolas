@@ -5,7 +5,16 @@ from typing import List
 
 import pytest
 
-from eolas.curses_ui import CursesCancelled, CursesForm, FieldChoice
+from eolas.capture.guidance import fieldGuidanceGet
+from eolas.curses_ui import (
+    ACCOUNT_CATEGORY_CHOICES,
+    BANKING_STATUS_CHOICES,
+    CursesCancelled,
+    CursesForm,
+    FieldChoice,
+    _clannCaptureRun,
+    _fieldChoicesGet,
+)
 
 
 class FakeWindow:
@@ -134,3 +143,49 @@ def test_textAsk_usesEnterTextAndRecognisesImmediateControlKeys() -> None:
 def test_textAsk_supportsBackspace() -> None:
     keys: List[str | int] = [*"Billx", curses.KEY_BACKSPACE, "s", "\n"]
     assert CursesForm(FakeWindow(textKeys=keys)).textAsk("Label") == "Bills"
+
+
+def testBankingCaptureGuidanceExplainsSafeInputAndControlledValues() -> None:
+    owners = fieldGuidanceGet("banking", "owners")
+    reviewed = fieldGuidanceGet("banking", "lastReviewed")
+
+    assert owners is not None
+    assert "separated by commas" in owners.purpose
+    assert reviewed is not None
+    assert "YYYY-MM-DD" in reviewed.purpose
+    assert _fieldChoicesGet("banking", "accountCategory") == ACCOUNT_CATEGORY_CHOICES
+    assert _fieldChoicesGet("banking", "status") == BANKING_STATUS_CHOICES
+
+
+def testTextAskDrawsGuidedPromptLines() -> None:
+    window = FakeWindow(textKeys=[*"Bills", "\n"])
+
+    CursesForm(window).textAsk(("Purpose", "Why this matters", "Example: Bills"))
+
+    drawn = [str(call[2]) for call in window.drawCalls if len(call) == 5]
+    assert drawn[:3] == ["Purpose", "Why this matters", "Example: Bills"]
+
+
+def testClannCaptureExplainsAcceptableBootstrapInput() -> None:
+    window = FakeWindow(
+        keys=[ord("y"), ord("y"), ord("n"), 10],
+        textKeys=[
+            *"Wilson Family",
+            "\n",
+            *"29A",
+            "\n",
+            *"Andy Wilson",
+            "\n",
+            *"Andy",
+            "\n",
+            *"Owner",
+            "\n",
+        ],
+    )
+
+    captured = _clannCaptureRun(window)
+
+    assert captured.name == "Wilson Family"
+    drawn = [str(call[2]) for call in window.drawCalls if len(call) == 5]
+    assert "Example: Wilson Family" in drawn
+    assert "Examples: owner, partner, family, carer, lodger" in drawn

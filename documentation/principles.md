@@ -96,6 +96,29 @@ content is proposed, not tested only after completion.
 Stress and grief can make any interface harder to understand. Clear headings,
 short explanations and predictable structure help everyone.
 
+## Applying principles to software workflows
+
+Software should apply these principles consistently as new modules are built:
+
+- **Discover records by meaning, not storage layout.** People select a Clann,
+  person, document or relationship by a safe familiar name. Normal workflows
+  must not require private directory paths, opaque IDs or knowledge of the
+  application data layout.
+- **Guide recovery instead of exposing implementation failures.** When local
+  data is incomplete, explain what is missing, offer a safe recovery path and
+  let the person preview the result. Refuse ambiguous or destructive recovery
+  rather than guessing or overwriting data.
+- **Explain each requested value at the point of entry.** Prompts state their
+  purpose, safe examples and controlled choices before asking. Missing,
+  unknown and not-applicable information remains explicit rather than being
+  silently invented.
+- **Normalise only unambiguous input.** Apply field-aware presentation
+  corrections to all-lowercase/all-uppercase entry, preserve deliberately
+  mixed-case names and labels, and never transform identifiers or secrets.
+- **Preview before durable change.** Creation, repair, capture, export and
+  other consequential actions show their scope before confirmation and leave
+  no partial data when cancelled or rejected.
+
 ## Applying the principles
 
 Each requirement links to the principles it advances. Reviews should test the

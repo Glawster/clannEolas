@@ -6,6 +6,12 @@ from typing import Any, Dict, Mapping, Tuple
 
 from eolas.domain.security import secretsValidate
 from eolas.domain.values import Classification, DomainValidationError
+from eolas.inputNormalise import (
+    codeNormalise,
+    controlledValueNormalise,
+    sentenceNormalise,
+    titleNormalise,
+)
 
 
 class CaptureValidationError(ValueError):
@@ -173,6 +179,46 @@ CAPTURE_PROFILES: Dict[str, CaptureProfile] = {
 }
 
 ALLOWED_CLASSIFICATIONS = {item.value for item in Classification}
+CONTROLLED_VALUES = {
+    "classification": {item.value.casefold(): item.value for item in Classification},
+    "status": {
+        "active": "active",
+        "inactive": "inactive",
+        "dormant": "dormant",
+        "restricted": "restricted",
+        "closurepending": "closurePending",
+        "closed": "closed",
+        "unknown": "unknown",
+    },
+    "essentiality": {
+        "essential": "essential",
+        "important": "important",
+        "nonessential": "nonEssential",
+        "unknown": "unknown",
+    },
+}
+TITLE_FIELDS = {
+    "institution",
+    "productName",
+    "owners",
+    "issuer",
+    "borrowers",
+    "provider",
+    "memberRef",
+    "insurer",
+    "administrator",
+    "policyholders",
+    "authority",
+    "supplier",
+    "accountHolders",
+    "beneficiaries",
+}
+SENTENCE_FIELDS = {"purpose", "service", "obligationPurpose", "paymentPurpose"}
+CODE_FIELDS = {"currency", "transactionCurrency", "balanceCurrency"}
+FACT_STATE_VALUES = {
+    "unknown": "unknown",
+    "notapplicable": "notApplicable",
+}
 
 
 @dataclass(frozen=True)
@@ -231,3 +277,32 @@ class CaptureInput:
 
 def _valueMissing(value: Any) -> bool:
     return value is None or value == "" or value == [] or value == {}
+
+
+def captureNormalise(capture: CaptureInput) -> CaptureInput:
+    """Apply field-aware casing while preserving mixed case and identifiers."""
+    fields = {
+        field: _fieldNormalise(field, value) for field, value in capture.fields.items()
+    }
+    return CaptureInput(
+        capture.domain,
+        titleNormalise(capture.label),
+        fields,
+        sentenceNormalise(capture.source),
+    )
+
+
+def _fieldNormalise(field: str, value: Any) -> Any:
+    if isinstance(value, str) and value.strip().casefold() in FACT_STATE_VALUES:
+        return FACT_STATE_VALUES[value.strip().casefold()]
+    if field in CONTROLLED_VALUES:
+        return controlledValueNormalise(value, CONTROLLED_VALUES[field])
+    if not isinstance(value, str):
+        return value
+    if field in TITLE_FIELDS:
+        return titleNormalise(value)
+    if field in SENTENCE_FIELDS:
+        return sentenceNormalise(value)
+    if field in CODE_FIELDS:
+        return codeNormalise(value)
+    return value.strip()

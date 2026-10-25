@@ -9,6 +9,13 @@ from eolas.banking.codec import (
     relationshipDecode,
     relationshipEncode,
 )
+from eolas.banking.dependencies import (
+    DEPENDENCY_AGGREGATE,
+    AccountClosureReadiness,
+    AccountImpact,
+    BankingDependency,
+)
+from eolas.banking.dependenciesCodec import dependencyDecode, dependencyEncode
 from eolas.banking.models import (
     BANKING_MODULE,
     INSTITUTION_AGGREGATE,
@@ -40,6 +47,7 @@ from eolas.banking.paymentsCodec import (
 )
 from eolas.banking.roles import PRIMARY_OPERATING_ROLE
 from eolas.domain.storage import RecordStore, WriteOperation
+from eolas.domain.graph import DependencyGraph
 from eolas.domain.values import (
     Classification,
     DomainValidationError,
@@ -317,10 +325,122 @@ class BankingService:
         """Load a TransactionObservation by opaque identity."""
         return transactionDecode(self.store.recordGet(identity))
 
+    ## dependency
+
+    def dependencyCreate(self, dependency: BankingDependency) -> BankingDependency:
+        """Persist a validated Banking-published continuity dependency."""
+        self.dependencyValidate(dependency)
+        return dependencyDecode(self._recordCreate(dependencyEncode(dependency)))
+
+    def dependencyGet(self, identity: RecordIdentity) -> BankingDependency:
+        """Load a Banking-published dependency by opaque identity."""
+        return dependencyDecode(self.store.recordGet(identity))
+
+    def dependencyImpact(self, relationship: RecordReference) -> AccountImpact:
+        """Return every cycle-safe upstream and downstream path for an account."""
+        self._relationshipReferenceValidate(relationship)
+        graph = DependencyGraph(
+            relationship.clann_id,
+            (item.dependency for item in self._dependenciesLoad()),
+        )
+        return AccountImpact(
+            graph.dependencyTraverse(relationship, reverse=True),
+            graph.dependencyTraverse(relationship),
+        )
+
+    def relationshipClosureReadiness(
+        self, relationship: RecordReference
+    ) -> AccountClosureReadiness:
+        """Block closure while an active essential dependency remains connected."""
+        impact = self.dependencyImpact(relationship)
+        edgeKeys = {
+            (
+                edge.source.record_id,
+                edge.target.record_id,
+                edge.dependency_type,
+                edge.effective_from,
+                edge.effective_to,
+            )
+            for path in (*impact.upstream, *impact.downstream)
+            for edge in path.edges
+        }
+        blockers = tuple(
+            dependency
+            for dependency in self._dependenciesLoad()
+            if dependency.essentiality == "essential"
+            and dependency.lifecycle.state.value == "active"
+            and (
+                dependency.dependency.source.record_id,
+                dependency.dependency.target.record_id,
+                dependency.dependency.dependency_type,
+                dependency.dependency.effective_from,
+                dependency.dependency.effective_to,
+            )
+            in edgeKeys
+        )
+        dependencies = tuple(
+            dependency
+            for dependency in self._dependenciesLoad()
+            if (
+                dependency.dependency.source.record_id,
+                dependency.dependency.target.record_id,
+                dependency.dependency.dependency_type,
+                dependency.dependency.effective_from,
+                dependency.dependency.effective_to,
+            )
+            in edgeKeys
+        )
+        return AccountClosureReadiness(not blockers, dependencies, blockers)
+
+    def dependencyValidate(self, dependency: BankingDependency) -> None:
+        """Require both dependency endpoints to be persisted canonical records."""
+        self._recordReferenceValidate(dependency.dependency.source)
+        self._recordReferenceValidate(dependency.dependency.target)
+
     ## utilities
 
     def _recordCreate(self, record):
         return self.store.recordsCommit((WriteOperation(record, None),))[0]
+
+    def _dependenciesLoad(self) -> Tuple[BankingDependency, ...]:
+        return tuple(
+            dependencyDecode(record)
+            for record in self.store.recordsList(
+                aggregate_type=DEPENDENCY_AGGREGATE, owner_module=BANKING_MODULE
+            )
+        )
+
+    def _recordReferenceValidate(self, reference: RecordReference) -> None:
+        """Confirm an endpoint exists and retains its declared type and Clann."""
+        try:
+            self.store.recordGet(
+                RecordIdentity(
+                    reference.record_id,
+                    reference.clann_id,
+                    reference.record_type,
+                    self._recordOwnerModule(reference.record_id),
+                )
+            )
+        except KeyError as error:
+            raise DomainValidationError(
+                "A Banking dependency requires persisted canonical endpoints."
+            ) from error
+
+    def _recordOwnerModule(self, record_id: str) -> str:
+        """Resolve owner metadata without letting callers invent it."""
+        for record in self.store.recordsList():
+            if record.identity.record_id == record_id:
+                return record.identity.owner_module
+        raise DomainValidationError(
+            "A Banking dependency requires persisted canonical endpoints."
+        )
+
+    def _relationshipReferenceValidate(self, relationship: RecordReference) -> None:
+        if relationship.record_type != RELATIONSHIP_AGGREGATE:
+            raise DomainValidationError(
+                "Account impact requires a BankingRelationship reference."
+            )
+        self._recordReferenceValidate(relationship)
 
     def _operatingRoleValidate(
         self,

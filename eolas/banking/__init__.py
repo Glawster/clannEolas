@@ -9,6 +9,11 @@ from eolas.banking.models import (
     BankingStatus,
     FinancialInstitution,
 )
+from eolas.banking.dependencies import (
+    AccountClosureReadiness,
+    AccountImpact,
+    BankingDependency,
+)
 from eolas.banking.payments import (
     MoneyMovement,
     MovementDirection,
@@ -26,10 +31,13 @@ from eolas.banking.service import (
 
 __all__ = [
     "AccountContinuityRole",
+    "AccountClosureReadiness",
+    "AccountImpact",
     "AccountParty",
     "AuthorityLink",
     "BalanceObservation",
     "BankingRelationship",
+    "BankingDependency",
     "BankingService",
     "BankingStatus",
     "FinancialInstitution",

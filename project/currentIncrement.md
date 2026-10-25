@@ -2,7 +2,7 @@
 
 ## Increment
 
-Money Movements and Payment Arrangements.
+Banking dependency graph and closure readiness.
 
 ## Branch
 
@@ -10,19 +10,16 @@ Money Movements and Payment Arrangements.
 
 ## Objective
 
-Represent how money is expected to move, and how obligations are paid, without
-collapsing the bill, the payment instruction, the expected flow and statement
-evidence into one record.
+Persist Banking-published continuity dependencies and explain the records
+upstream and downstream of an account without crossing a Clann boundary.
 
 ## Scope
 
-- `Obligation` — what has to be paid or maintained.
-- `PaymentArrangement` — Direct Debit, standing order and related instructions.
-- `MoneyMovement` — expected inflow or outflow.
-- `TransactionObservation` — dated evidence that a movement occurred.
-- Cancelling an arrangement does not end the obligation.
-- Optional banking capture fields can create these typed records.
-- Persistence through the shared `RecordStore` port.
+- `BankingDependency` — a classified, reviewed Banking-published graph edge.
+- Persistence and endpoint validation through the shared `RecordStore` port.
+- Cycle-safe upstream/downstream account impact.
+- Closure readiness that lists all connected dependencies and blocks active
+  essential ones.
 
 ## Explicit exclusion
 
@@ -32,19 +29,17 @@ Do not implement:
 - Direct Debit or standing-order processing and cancellation workflows;
 - bank-statement parsing, OCR or Open Banking;
 - payment instruments, banking reports or executor/attorney workflows;
-- the full continuity dependency graph.
+- dependencies owned by another module.
 
 ## Expected exit criteria
 
-- Tests prove the four-record boundary, distinct mechanisms, salary inflow
-  without an arrangement, transaction evidence that does not mutate an
-  arrangement, persistence, conflicts, secrets rejection, Clann isolation and
-  capture.
+- Tests prove dependency persistence, endpoint validation, Clann isolation,
+  cycle-safe impact traversal and closure blocking for essential dependencies.
 - Requirement 009 remains in progress.
 - `pytest` passes.
 - `manageProject --check` reports zero failures and zero warnings.
 
 ## Immediate next action
 
-Keep Banking Core on this branch until maintainers merge it, or continue with
-statement-import candidates and dependency edges as a later increment.
+Implement payment instruments and banking equipment, then add Banking Summary
+and dependency report projections.
