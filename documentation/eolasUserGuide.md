@@ -1,7 +1,7 @@
 # Eolas User Guide
 
 **Current CLI prototype**  
-**Version covered:** `0.1a2` (`feature/banking-core` functionality)
+**Version covered:** `0.2a1` (`feature/banking-core` functionality)
 **Purpose:** help a family create and maintain a practical continuity record safely and simply.
 
 ## 1. What Eolas is

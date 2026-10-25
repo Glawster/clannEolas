@@ -332,8 +332,7 @@ def test_tuiQuickCapturePersistsToActiveClann(
                 / "clanns"
                 / "example-clann"
                 / "shared"
-                / "banking"
-                / "household-current-account.yaml"
+                / "records.yaml"
             )
             assert target.is_file()
             status = app.query_one("#captureValidation", Static)

@@ -608,7 +608,7 @@ def testPackageMetadataUsesVersionModule() -> None:
     dynamic = project["dynamic"]
 
     assert "version" in dynamic
-    assert VERSION == "0.1a2"
+    assert VERSION == "0.2a1"
 
 
 def test_cliShowsLogFile(

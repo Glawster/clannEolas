@@ -1,6 +1,6 @@
 # Change log
 
-## 0.1a2
+## 0.2a1
 
 - Added recoverable removal and restoration of incomplete Clann directories.
   Removed directories are moved to a private wastebasket, `--restore` lists
