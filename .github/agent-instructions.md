@@ -1,4 +1,4 @@
-<!-- deployed from Glawster/organiseMyProjects release 0.6 -- do not edit directly -->
+<!-- deployed from Glawster/organiseMyProjects release 0.9a3 -- do not edit directly -->
 # Agent Instructions -- Master Development Guidelines (v2)
 
 ## Table of Contents
@@ -27,6 +27,7 @@ Read `documentation/requirementsManagement.md`.
 Read `documentation/repositoryLayout.md` before adding or moving repository content.
 Read `documentation/testingProcess.md` before planning or reviewing tests.
 Read `documentation/howToRelease.md` before planning or reviewing releases.
+Read `documentation/agentImplementationWorkflow.md` before implementing or modifying agent logic.
 
 Project-specific details belong in:
 
@@ -197,6 +198,13 @@ Short style fragments (<10 lines) are acceptable.
 
 Application themes belong in dedicated style resources.
 
+Textual applications must load `myStyles.css` through `App.CSS_PATH`. Keep
+Textual layout, presentation and colour rules in that stylesheet; use inline
+`App.CSS` only for a short, documented exception that cannot be shared.
+An intentional project-specific Textual theme must be stored at
+`styles/projectStyles.css` and loaded through `App.CSS_PATH`; do not place a
+project-owned override at the repository root.
+
 #### Sample Data
 
 Prototype or demonstration data must never be embedded in production views.
@@ -251,7 +259,7 @@ business logic and persistence.
 
 - Group functions by domain or purpose.
 - Use `##` section headers with short lowercase names.
-- Function names should use the `domainAction` pattern.
+- Module-level function names should use the `domainAction` pattern.
   - domain first, then action. Use camelCase.
   - examples:
     - `configLoad`
@@ -260,10 +268,18 @@ business logic and persistence.
     - `messageParse`
     - `whatsappWaitForReady`
   - avoid reversing the pattern (e.g. `loadConfig`, `extractMessage`).
+- Class methods, classmethods and staticmethods may use an action-only name
+  because the enclosing class already supplies the domain. `Project.update()`
+  is valid; `projectUpdate()` remains valid too. Module-level functions still
+  require `domainAction`.
+- Nested or local helper functions may use ordinary descriptive names such as
+  `fail`, `empty` or `box`. Do not require `domainAction` for them.
 - Keep functions alphabetically ordered within each section unless readability will be reduced or precedence order is needed.
 - Keep public workflow near the top.
 - Keep low-level utilities near the bottom.
 - Private helpers must start with `_`.
+- Private constants may use a leading underscore on UPPER_CASE names, for
+  example `_MAX_RETRIES`.
 
 #### Example
 
@@ -552,7 +568,7 @@ Initialise the application context before importing modules that rely on logging
 
 ``` python
 from pathlib import Path
-from organiseMyProjects.logUtils import getLogger, setApplication
+from organiseMyProjects.logUtils import getLogger, line, runStart, setApplication
 
 thisApplication = Path(__file__).parent.name
 setApplication(thisApplication)
@@ -583,8 +599,11 @@ def main() -> None:
 
     logger = getLogger(includeConsole=True, dryRun=dryRun)
 
+    runStart()
     logger.doing("starting")
+    line()
     # work here
+    line()
     logger.done("finished")
 ```
 
@@ -603,6 +622,53 @@ logger = getLogger()
 ```
 
 After context is set, do not pass `name` or `logDir` for normal app logging.
+
+#### Section separators
+
+Call `logUtils.runStart()` once after `setApplication()` and before the first
+application header. It writes a blank line, `>` followed by 80 hyphens and `<`,
+then another blank line, directly to stdout and today's application log file.
+Subcommands must not repeat a marker already emitted by their dispatcher.
+The Bash equivalent is `runStart` from `logUtils.sh`, called after
+`setApplication` and before the script header. Sourcing the helper does not emit
+a marker. Bash `line` provides the same 80-hyphen section separator as
+Python `logUtils.line()`, also writing directly to stdout and the log file.
+
+After the complete command header and immediately before any final summary,
+call `logUtils.line()`. It writes exactly 80 hyphens and a newline directly to
+stdout and today's application log file, without logging records or prefixes.
+Initialise the application context with `setApplication()` first. Use the shared
+helper instead of hand-built separator strings or `logger.info()` separators.
+The public `line()` helper is an explicit exception to module-level domainAction
+naming. Only entry points establish application context; helpers reuse it.
+
+```python
+from organiseMyProjects import logUtils
+
+logUtils.setApplication("example")
+logger = logUtils.getLogger(includeConsole=True)
+logUtils.runStart()
+logger.doing("starting")
+logUtils.line()
+# Perform the command's work and report details here.
+logUtils.line()
+logger.value("processed", count)
+logger.done("finished")
+```
+
+
+`runLinter` checks conventional Python entry points (`main()`, functions calling
+`setApplication()`, and inline `__main__` guards) that emit `logger.*` headers:
+
+- `LOG-SEC-001`: missing `runStart()` before the first header log call.
+- `LOG-SEC-002`: missing `line()` immediately after the contiguous header logs.
+- `LOG-SEC-003`: missing `line()` before summary logs ending with `logger.done()`.
+
+Direct calls and `logUtils.runStart()` / `logUtils.line()` are recognised.
+Comments and strings do not count. Tests, ordinary helpers and dispatchers with
+no header output are excluded. These are static convention checks: arbitrary
+logger aliases, print-only headers, output delegated to helper functions, and
+Bash scripts are not analysed for section placement.
 
 #### Semantic log methods
 

@@ -1,4 +1,4 @@
-<!-- deployed from Glawster/organiseMyProjects release 0.6 -- do not edit directly -->
+<!-- deployed from Glawster/organiseMyProjects release 0.9a3 -- do not edit directly -->
 # Requirements management
 
 This guide defines the shared OMP process for capturing, agreeing, delivering
@@ -276,6 +276,28 @@ Cleanup rules:
 - remove a legacy directory only when it is empty after successful migration;
 - dry-run reports intended changes without modifying files; and
 - successful reruns are idempotent.
+
+## Naming correction
+
+`manageProject --check` reports records, headings, index IDs and prompts that
+do not follow this guide (rules `REQ-007` to `REQ-012`). `manageProject
+--update` corrects them deterministically:
+
+- a project prefix is dropped and a hyphenated name becomes camelCase, keeping
+  the number (`MA-012-rolling-imap-retention.md` becomes
+  `012-rollingImapRetention.md`);
+- prompts move to `project/requirements/prompt/` beside their record, and an
+  empty legacy prompt directory is removed;
+- headings become `# nnn: Title`, a `Status:` line becomes a `## Status`
+  section, index Req IDs become the record number, and Markdown links to
+  renamed files are rewritten;
+- each renamed record gains a change-history entry;
+- mentions of old names or prefixed IDs outside links are listed for review,
+  not rewritten;
+- tracked files move with `git mv`, an existing destination is never
+  overwritten, and a corrected repository produces no further changes.
+
+Without `--confirm` the update only reports what it would change.
 
 ## Review checklist
 

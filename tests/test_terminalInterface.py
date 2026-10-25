@@ -34,6 +34,82 @@ async def _modalButtonActivate(app: EolasApp, pilot, screenType, selector: str) 
     raise AssertionError(f"Expected modal screen {screenType.__name__} was not shown.")
 
 
+def testTuiLoadsProjectStylesheetFromApplicationPath() -> None:
+    """The TUI stylesheet is independent of the process working directory."""
+
+    stylesheetPath = Path(EolasApp.CSS_PATH)
+
+    assert stylesheetPath.name == "projectStyles.css"
+    assert stylesheetPath.parent.name == "styles"
+    assert stylesheetPath.is_file()
+
+
+def testTuiStylesSelectWithSingleProjectBorder() -> None:
+    """The visible Select uses one Eolas border rather than nested outlines."""
+
+    stylesheet = Path(EolasApp.CSS_PATH).read_text(encoding="utf-8")
+
+    assert "Select > SelectCurrent" in stylesheet
+    assert "Input,\nSelect {" in stylesheet
+    assert "border: solid $surface-ink;" in stylesheet
+    assert "Select > SelectCurrent {\n    border: none;" in stylesheet
+    assert "Select:focus > SelectCurrent" in stylesheet
+    assert "border: solid $accent-focus;" in stylesheet
+
+
+def testTuiStylesUseDistinctPrimarySuccessAndPanelBorders() -> None:
+    """Eolas applies shared action hierarchy with its own palette."""
+
+    stylesheet = Path(EolasApp.CSS_PATH).read_text(encoding="utf-8")
+
+    assert "Button.-primary {\n    background: $accent;" in stylesheet
+    assert "Button.-success {\n    background: $success-surface;" in stylesheet
+    assert "$success-text: #d1aa5b;" in stylesheet
+    assert ".summaryCard," in stylesheet
+    assert "border: solid $border;" in stylesheet
+
+
+def testTuiStylesPreserveSharedMockupLayout() -> None:
+    """The project palette keeps the shared panel and mockup geometry."""
+
+    stylesheet = Path(EolasApp.CSS_PATH).read_text(encoding="utf-8")
+
+    assert ".surface {" in stylesheet
+    assert ".mockup-row {" in stylesheet
+    assert ".mockup-panel," in stylesheet
+    assert "#style-mockup {" in stylesheet
+
+
+def testTuiStylesKeepWarningListItemToOneRow() -> None:
+    """The warning list label remains compact while warning panels are bordered."""
+
+    stylesheet = Path(EolasApp.CSS_PATH).read_text(encoding="utf-8")
+
+    assert ".warning {\n    background: $warning-surface;" in stylesheet
+    assert "ListView .warning {\n    height: 1;" in stylesheet
+    assert "padding: 0;\n    border: none;" in stylesheet
+
+
+def testTuiStylesReplaceTextualBlueListHighlight() -> None:
+    """Focused list selection uses the Eolas success palette."""
+
+    stylesheet = Path(EolasApp.CSS_PATH).read_text(encoding="utf-8")
+
+    assert "ListView:focus > ListItem.-highlight" in stylesheet
+    assert "background: $success-surface;" in stylesheet
+    assert "color: $success-text;" in stylesheet
+
+
+def testTuiStylesUseCreamScrollbarThumb() -> None:
+    """Scrollbars retain contrast against Eolas dark surfaces."""
+
+    stylesheet = Path(EolasApp.CSS_PATH).read_text(encoding="utf-8")
+
+    assert "scrollbar-color: $surface-ink;" in stylesheet
+    assert "scrollbar-color-hover: $surface-ink;" in stylesheet
+    assert "scrollbar-color-active: $surface-ink;" in stylesheet
+
+
 def test_tuiNavigatesToCreateClann() -> None:
     """Create Clann is reached as an action within the Clann area."""
 

@@ -43,7 +43,7 @@ class ClannView(Vertical):
             "Manage the family group whose continuity information is held in Eolas.",
             classes="formIntro",
         )
-        with Horizontal(classes="formButtons"):
+        with Horizontal(classes="button-group"):
             yield Button("Create new Clann", id="clannCreate", variant="primary")
             yield Button("Select / switch Clann", id="clannSwitch", disabled=True)
         yield Static(

@@ -37,7 +37,7 @@ class CaptureConfirmScreen(ModalScreen[bool]):
         with Vertical(id="captureConfirmDialog"):
             yield Label("Save this record?", id="dialogTitle")
             yield Static(self.summary, id="captureConfirmSummary")
-            with Horizontal(id="dialogButtons"):
+            with Horizontal(id="dialogButtons", classes="button-group"):
                 yield Button("Back", id="captureBack")
                 yield Button("Save record", id="captureConfirm", variant="primary")
 

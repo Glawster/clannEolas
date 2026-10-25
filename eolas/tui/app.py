@@ -7,6 +7,7 @@ Business rules and persistence remain outside this package.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 
 from textual import on
 from textual.app import App, ComposeResult
@@ -134,7 +135,7 @@ PAGES = {
 class EolasApp(App[None]):
     """Full-screen terminal interface for Eolas."""
 
-    CSS_PATH = "theme.tcss"
+    CSS_PATH = Path(__file__).resolve().parents[2] / "styles" / "projectStyles.css"
     TITLE = "Eolas"
     SUB_TITLE = "Family continuity"
 

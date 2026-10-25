@@ -31,7 +31,7 @@ class ClannCreateConfirmScreen(ModalScreen[bool]):
                 "This creates private Eolas files on this computer.",
                 id="dialogBody",
             )
-            with Horizontal(id="dialogButtons"):
+            with Horizontal(id="dialogButtons", classes="button-group"):
                 yield Button("Back", id="clannCreateBack")
                 yield Button(
                     "Save Clann",
@@ -111,14 +111,14 @@ class ClannCreateView(Vertical):
                 id="personResident",
             )
 
-        with Horizontal(classes="formButtons"):
+        with Horizontal(classes="button-group"):
             yield Button("Add person", id="personAdd", variant="primary")
             yield Button("Remove selected", id="personRemove")
 
         yield Static("", id="personValidation")
         yield DataTable(id="clannPeople", zebra_stripes=True)
 
-        with Horizontal(classes="formButtons"):
+        with Horizontal(classes="button-group"):
             yield Button("Set selected as primary", id="personSetPrimary")
             yield Button("Review & save", id="clannReview", variant="primary")
 
