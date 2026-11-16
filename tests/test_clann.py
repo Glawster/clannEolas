@@ -66,18 +66,18 @@ def _yamlLoad(path: Path) -> Dict[str, Any]:
         ("../../unsafe", "unsafe"),
     ],
 )
-def test_slugCreate(value: str, expected: str) -> None:
+def testSlugCreate(value: str, expected: str) -> None:
     assert slugCreate(value) == expected
 
 
-def test_slugsCreateUnique_suffixesDuplicateNames() -> None:
+def testSlugsCreateUniqueSuffixesDuplicateNames() -> None:
     assert slugsCreateUnique(["John Smith", "John Smith"]) == [
         "john-smith",
         "john-smith-2",
     ]
 
 
-def test_clannValidate_requiresPrimaryPersonAndResident() -> None:
+def testClannValidateRequiresPrimaryPersonAndResident() -> None:
     withoutPrimary = ClannInput(
         "Test Clann",
         "Test Home",
@@ -95,7 +95,7 @@ def test_clannValidate_requiresPrimaryPersonAndResident() -> None:
         withoutResident.clannValidate()
 
 
-def test_documentsKeepClannAndResidenceSeparate(clann: ClannInput) -> None:
+def testDocumentsKeepClannAndResidenceSeparate(clann: ClannInput) -> None:
     personIds = {
         0: "person-morgan-river",
         1: "person-jamie-river",
@@ -132,7 +132,7 @@ def test_documentsKeepClannAndResidenceSeparate(clann: ClannInput) -> None:
     assert nonResidentDocument["householdMemberships"] == []
 
 
-def test_clannCreate_generatesCompleteReloadableTree(
+def testClannCreateGeneratesCompleteReloadableTree(
     tmp_path: Path,
     clann: ClannInput,
 ) -> None:
@@ -173,7 +173,7 @@ def test_clannCreate_generatesCompleteReloadableTree(
         assert "!!python" not in path.read_text(encoding="utf-8")
 
 
-def test_clannCreate_writesOpaquePeopleToRecordStore(
+def testClannCreateWritesOpaquePeopleToRecordStore(
     tmp_path: Path,
     clann: ClannInput,
 ) -> None:
@@ -197,7 +197,7 @@ def test_clannCreate_writesOpaquePeopleToRecordStore(
     assert all(person.identity.aggregate_type == "person" for person in people)
 
 
-def test_clannCreate_rejectsExistingNonEmptyTarget(
+def testClannCreateRejectsExistingNonEmptyTarget(
     tmp_path: Path, clann: ClannInput
 ) -> None:
     targetPath = tmp_path / "clanns" / "river-clann"
@@ -211,7 +211,7 @@ def test_clannCreate_rejectsExistingNonEmptyTarget(
     assert markerPath.read_text(encoding="utf-8") == "keep"
 
 
-def test_clannCreate_failureLeavesNoPartialClann(
+def testClannCreateFailureLeavesNoPartialClann(
     tmp_path: Path,
     clann: ClannInput,
     monkeypatch: pytest.MonkeyPatch,
@@ -228,7 +228,7 @@ def test_clannCreate_failureLeavesNoPartialClann(
     assert not (tmp_path / "data").exists()
 
 
-def test_cliCreatesClannThroughNaturalCommand(
+def testCliCreatesClannThroughNaturalCommand(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
@@ -611,7 +611,7 @@ def testPackageMetadataUsesVersionModule() -> None:
     assert VERSION == "0.2a1"
 
 
-def test_cliShowsLogFile(
+def testCliShowsLogFile(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
@@ -627,7 +627,7 @@ def test_cliShowsLogFile(
     assert capsys.readouterr().out == "Eolas started\n"
 
 
-def test_cliReportsMissingLogFile(
+def testCliReportsMissingLogFile(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],

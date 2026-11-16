@@ -44,8 +44,10 @@ class FakeWindow:
     def getmaxyx(self) -> tuple[int, int]:
         return 24, 80
 
-    def get_wch(self) -> str | int:
+    def wideCharGet(self) -> str | int:
         return self.textKeys.pop(0)
+
+    get_wch = wideCharGet  # curses window API name used by the UI
 
     def keypad(self, _enabled: bool) -> None:
         return None
@@ -55,17 +57,17 @@ class FakeWindow:
 
 
 @pytest.mark.parametrize(("key", "expected"), [(ord("y"), True), (ord("n"), False)])
-def test_confirmationAsk_usesSingleKey(key: int, expected: bool) -> None:
+def testConfirmationAskUsesSingleKey(key: int, expected: bool) -> None:
     assert CursesForm(FakeWindow([key])).confirmationAsk("Continue?") is expected
 
 
-def test_confirmationAsk_supportsSkipAndQuit() -> None:
+def testConfirmationAskSupportsSkipAndQuit() -> None:
     assert CursesForm(FakeWindow([ord("s")])).confirmationAsk("Continue?", default=True)
     with pytest.raises(CursesCancelled):
         CursesForm(FakeWindow([ord("q")])).confirmationAsk("Continue?")
 
 
-def test_menuAsk_usesArrowsEnterAndSkip() -> None:
+def testMenuAskUsesArrowsEnterAndSkip() -> None:
     choices = (FieldChoice("first", "First"), FieldChoice("second", "Second"))
 
     selected = CursesForm(FakeWindow([curses.KEY_DOWN, 10])).menuAsk("Choose", choices)
@@ -74,7 +76,7 @@ def test_menuAsk_usesArrowsEnterAndSkip() -> None:
     assert CursesForm(FakeWindow([ord("s")])).menuAsk("Choose", choices) == "unknown"
 
 
-def test_menuAsk_highlightsSelectedFullRowInReverseVideo() -> None:
+def testMenuAskHighlightsSelectedFullRowInReverseVideo() -> None:
     window = FakeWindow([10])
 
     CursesForm(window).menuAsk("Choose", (FieldChoice("first", "First"),))
@@ -87,7 +89,7 @@ def test_menuAsk_highlightsSelectedFullRowInReverseVideo() -> None:
     assert str(selectedCall[2]).endswith(" " * 73)
 
 
-def test_coloursInitialize_usesRequestedTheme(
+def testColoursInitializeUsesRequestedTheme(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     pairs: list[tuple[int, int, int]] = []
@@ -110,7 +112,7 @@ def test_coloursInitialize_usesRequestedTheme(
     assert form.successAttribute == 400 | curses.A_BOLD
 
 
-def test_coloursInitialize_prefersStable256ColourPalette(
+def testColoursInitializePrefersStable256ColourPalette(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     pairs: list[tuple[int, int, int]] = []
@@ -130,7 +132,7 @@ def test_coloursInitialize_prefersStable256ColourPalette(
     ]
 
 
-def test_textAsk_usesEnterTextAndRecognisesImmediateControlKeys() -> None:
+def testTextAskUsesEnterTextAndRecognisesImmediateControlKeys() -> None:
     textKeys: List[str | int] = [*"Household bills", "\n"]
     assert CursesForm(FakeWindow(textKeys=textKeys)).textAsk("Label") == (
         "Household bills"
@@ -140,7 +142,7 @@ def test_textAsk_usesEnterTextAndRecognisesImmediateControlKeys() -> None:
         CursesForm(FakeWindow(textKeys=["q"])).textAsk("Optional")
 
 
-def test_textAsk_supportsBackspace() -> None:
+def testTextAskSupportsBackspace() -> None:
     keys: List[str | int] = [*"Billx", curses.KEY_BACKSPACE, "s", "\n"]
     assert CursesForm(FakeWindow(textKeys=keys)).textAsk("Label") == "Bills"
 

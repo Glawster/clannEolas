@@ -51,7 +51,7 @@ def _bankingRelationships(
 @pytest.mark.parametrize(
     "domain", [name for name in CAPTURE_PROFILES if name != "banking"]
 )
-def test_capturePrepare_supportsRequirements010Through018(
+def testCapturePrepareSupportsRequirements010Through018(
     clannPath: Path, domain: str
 ) -> None:
     capture = CaptureInput(
@@ -70,7 +70,7 @@ def test_capturePrepare_supportsRequirements010Through018(
     assert document["data"][firstField]["state"] == "known"
 
 
-def test_capturePrepare_bankingCreatesTypedRelationship(clannPath: Path) -> None:
+def testCapturePrepareBankingCreatesTypedRelationship(clannPath: Path) -> None:
     fields = _validFields("banking")
     fields["institution"] = "Northbridge Fictional Mutual"
     fields["owners"] = "Morgan Example"
@@ -88,7 +88,7 @@ def test_capturePrepare_bankingCreatesTypedRelationship(clannPath: Path) -> None
     assert document["relationship"]["ownershipType"] == "sole"
 
 
-def test_captureValidate_reportsAllMissingRequiredFields() -> None:
+def testCaptureValidateReportsAllMissingRequiredFields() -> None:
     capture = CaptureInput("banking", "Bills", {}, "statement")
 
     with pytest.raises(CaptureValidationError, match="institution.*lastReviewed"):
@@ -133,7 +133,7 @@ def testCaptureNormaliseUsesFieldAppropriateCasing() -> None:
         {"notes": "4111 1111 1111 1111"},
     ],
 )
-def test_captureValidate_rejectsCredentialsAndFullCardNumbers(
+def testCaptureValidateRejectsCredentialsAndFullCardNumbers(
     unsafeFields: Dict[str, Any],
 ) -> None:
     fields = _validFields("banking")
@@ -147,14 +147,14 @@ def test_captureValidate_rejectsCredentialsAndFullCardNumbers(
     "harmlessField",
     ["shippingAddress", "opinion", "pensionProvider", "pinningNote"],
 )
-def test_captureValidate_allowsHarmlessSecretSubstrings(harmlessField: str) -> None:
+def testCaptureValidateAllowsHarmlessSecretSubstrings(harmlessField: str) -> None:
     fields = _validFields("banking")
     fields[harmlessField] = "fictional safe value"
 
     CaptureInput("banking", "Bills", fields, "statement").captureValidate()
 
 
-def test_captureAdapter_preservesUnknownAndNotApplicable(
+def testCaptureAdapterPreservesUnknownAndNotApplicable(
     clannPath: Path,
 ) -> None:
     fields = _validFields("utilities")
@@ -171,7 +171,7 @@ def test_captureAdapter_preservesUnknownAndNotApplicable(
     assert document["data"]["utilityType"] == {"state": "notApplicable"}
 
 
-def test_captureAdapter_bankingUnknownInstitutionIsAFinding(clannPath: Path) -> None:
+def testCaptureAdapterBankingUnknownInstitutionIsAFinding(clannPath: Path) -> None:
     fields = _validFields("banking")
     fields["institution"] = "unknown"
     fields["owners"] = "unknown"
@@ -188,7 +188,7 @@ def test_captureAdapter_bankingUnknownInstitutionIsAFinding(clannPath: Path) -> 
     assert document["relationship"]["status"] == "unknown"
 
 
-def test_captureWrite_isAtomicAndRefusesOverwrite(clannPath: Path) -> None:
+def testCaptureWriteIsAtomicAndRefusesOverwrite(clannPath: Path) -> None:
     capture = CaptureInput(
         "utilities", "Electricity", _validFields("utilities"), "bill"
     )
@@ -207,7 +207,7 @@ def test_captureWrite_isAtomicAndRefusesOverwrite(clannPath: Path) -> None:
     assert list(targetPath.parent.glob(".*.yaml")) == []
 
 
-def test_cliCapture_previewsThenWritesOnlyWithConfirm(
+def testCliCapturePreviewsThenWritesOnlyWithConfirm(
     tmp_path: Path,
     clannPath: Path,
     capsys: pytest.CaptureFixture[str],
@@ -240,7 +240,7 @@ def test_cliCapture_previewsThenWritesOnlyWithConfirm(
     assert "Capture complete:" in capsys.readouterr().out
 
 
-def test_cliCapture_usesCursesWhenInputIsOmitted(
+def testCliCaptureUsesCursesWhenInputIsOmitted(
     clannPath: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -292,7 +292,7 @@ def testCliCaptureDirectsSoleIncompleteClannToRepair(
     assert "eolas clann --repair" in capsys.readouterr().out
 
 
-def test_cliCapture_discoversOnlyClannForSimpleCommand(
+def testCliCaptureDiscoversOnlyClannForSimpleCommand(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -315,7 +315,7 @@ def test_cliCapture_discoversOnlyClannForSimpleCommand(
     assert (clannPath / "shared/records.yaml").is_file()
 
 
-def test_cliCapture_usesClannMenuWhenSeveralExist(
+def testCliCaptureUsesClannMenuWhenSeveralExist(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -338,7 +338,7 @@ def test_cliCapture_usesClannMenuWhenSeveralExist(
     assert (secondPath / "shared/records.yaml").is_file()
 
 
-def test_cliCapture_usesDomainMenuWhenDomainIsOmitted(
+def testCliCaptureUsesDomainMenuWhenDomainIsOmitted(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -362,7 +362,7 @@ def test_cliCapture_usesDomainMenuWhenDomainIsOmitted(
     assert (clannPath / "shared/utilities/electricity.yaml").is_file()
 
 
-def test_cliCapture_interactiveConfirmationSavesWithoutFlags(
+def testCliCaptureInteractiveConfirmationSavesWithoutFlags(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
