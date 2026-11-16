@@ -5,7 +5,7 @@ Owner: project maintainers
 
 ## Status
 
-ToDo
+InProgress
 
 ## Outcome
 
@@ -113,8 +113,12 @@ storage, sharing, backup and disposal without guaranteeing a storage method.
 
 ## Traceability
 
-- Implementation: pending
-- Tests: pending
+- Implementation: shared-kernel classification order with fail-closed
+  `highlyConfidential` default, masking and prohibited-secret rejection in
+  `eolas/domain/values.py` and `eolas/domain/security.py`; repository scans
+  and privacy reviews pending
+- Tests: `tests/test_domainKernel.py` and capture credential-rejection tests in
+  `tests/test_capture.py`; remaining acceptance criteria pending
 - Documentation: [information classification](../../../documentation/informationClassification.md), [privacy and security](../../../documentation/privacyAndSecurity.md)
 - Pull request: pending
 - Agent runs: 2026-07-28 — Codex, refinement role, criteria 1–4, using
@@ -129,3 +133,4 @@ storage, sharing, backup and disposal without guaranteeing a storage method.
   recorded the maintainer-approved private data location in ADR-0010.
 - 2026-07-28: superseded the fixed-path decision with ADR-0011 so desktop,
   mobile, CLI and browser interfaces use platform-resolved local storage.
+- 2026-11-16: status set to InProgress because branch `feature/002-privacyAndSecurityModel` exists for this requirement. Shared-kernel classification, masking and prohibited-secret policy recorded in Traceability.

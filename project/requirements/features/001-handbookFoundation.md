@@ -5,7 +5,7 @@ Owner: Andy Wilson
 
 ## Status
 
-ToDo
+InProgress
 
 ## Outcome
 
@@ -126,3 +126,4 @@ clear that it is not legal, medical or financial advice.
   handbook projection and required tooling to hide both formats from users.
 - 2026-07-28: project maintainer accepted ADR-0009; requirement remains `ToDo`
   pending requirement 002 and readiness review.
+- 2026-11-16: status set to InProgress because branch `feature/001-handbookFoundation` exists for this requirement.

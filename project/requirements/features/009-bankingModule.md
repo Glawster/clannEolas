@@ -110,7 +110,7 @@ it does not make every value applicable to every account.
 - **Future:** reserved for a later approved capability and not required by the
   initial module.
 
-## Banking relationship coverage
+## Scope
 
 ### Supported relationship categories
 
@@ -1227,3 +1227,4 @@ workflow event must record the guidance ID and version/effective date it used.
   records from obligations and transaction evidence.
 - 2026-10-23: Banking-owned dependency edges, cycle-safe account impact and
   essential-dependency closure blocking added; requirement remains in progress.
+- 2026-11-16: renamed relationship coverage to Scope to match the requirement template.
