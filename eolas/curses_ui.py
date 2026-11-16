@@ -2,9 +2,11 @@
 
 import curses
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
-from typing import Dict, List, Mapping, Sequence, Tuple
+from typing import Dict, List, Mapping, Sequence, Tuple, Union
 
+from eolas.capture.guidance import fieldGuidanceGet
 from eolas.capture.models import CAPTURE_PROFILES
 from eolas.clann.models import ClannInput, PersonInput
 
@@ -30,6 +32,26 @@ STATUS_CHOICES = (
     FieldChoice("inactive", "Inactive"),
     FieldChoice("closed", "Closed"),
     FieldChoice("unknown", "Unknown"),
+)
+BANKING_STATUS_CHOICES = (
+    FieldChoice("active", "Active"),
+    FieldChoice("dormant", "Dormant"),
+    FieldChoice("restricted", "Restricted"),
+    FieldChoice("closurePending", "Closure pending"),
+    FieldChoice("closed", "Closed"),
+    FieldChoice("unknown", "Unknown"),
+)
+ACCOUNT_CATEGORY_CHOICES = (
+    FieldChoice("current", "Current or transaction account"),
+    FieldChoice("savings", "Savings or deposit account"),
+    FieldChoice("creditCard", "Credit or charge card account"),
+    FieldChoice("cashIsa", "Cash ISA"),
+    FieldChoice("fixedTerm", "Notice or fixed-term deposit"),
+    FieldChoice("foreignCurrency", "Foreign-currency account"),
+    FieldChoice("business", "Business, partnership or charity account"),
+    FieldChoice("trust", "Trust, client or nominee account"),
+    FieldChoice("onlineOnly", "Online-only or app-based bank"),
+    FieldChoice("other", "Other Banking relationship"),
 )
 ESSENTIALITY_CHOICES = (
     FieldChoice("essential", "Essential"),
@@ -78,7 +100,7 @@ class CursesForm:
 
     def menuAsk(
         self,
-        prompt: str,
+        prompt: Union[str, Sequence[str]],
         choices: Sequence[FieldChoice],
         *,
         allowSkip: bool = True,
@@ -102,7 +124,9 @@ class CursesForm:
             elif key in (ord("q"), ord("Q")):
                 raise CursesCancelled("Data entry cancelled.")
 
-    def textAsk(self, prompt: str, *, allowSkip: bool = True) -> str:
+    def textAsk(
+        self, prompt: Union[str, Sequence[str]], *, allowSkip: bool = True
+    ) -> str:
         """Read editable text; q and s act immediately on an empty field."""
         while True:
             hint = "Enter text, then press Enter"
@@ -111,7 +135,9 @@ class CursesForm:
             hint += " | q quit"
             value = ""
             while True:
-                self._linesDraw([prompt, "", hint, "", f"> {value}"])
+                self._linesDraw(
+                    [*self._promptLines(prompt), "", hint, "", f"> {value}"]
+                )
                 key = self.window.get_wch()
                 if not value and key in ("q", "Q"):
                     raise CursesCancelled("Data entry cancelled.")
@@ -152,7 +178,7 @@ class CursesForm:
 
     def _menuDraw(
         self,
-        prompt: str,
+        prompt: Union[str, Sequence[str]],
         hint: str,
         choices: Sequence[FieldChoice],
         selected: int,
@@ -160,10 +186,13 @@ class CursesForm:
         self.window.erase()
         height, width = self.window.getmaxyx()
         usableWidth = max(1, width - 1)
-        self.window.addnstr(0, 0, prompt, usableWidth, self.instructionAttribute)
-        self.window.addnstr(2, 0, hint, usableWidth, self.instructionAttribute)
+        promptLines = self._promptLines(prompt)
+        for row, line in enumerate(promptLines):
+            self.window.addnstr(row, 0, line, usableWidth, self.instructionAttribute)
+        hintRow = len(promptLines) + 1
+        self.window.addnstr(hintRow, 0, hint, usableWidth, self.instructionAttribute)
         for index, choice in enumerate(choices):
-            row = index + 4
+            row = index + hintRow + 2
             if row >= height - 1:
                 break
             label = f" {choice.label}".ljust(usableWidth)
@@ -203,6 +232,10 @@ class CursesForm:
 
     def _pageDraw(self, heading: str, hint: str) -> None:
         self._linesDraw([heading, "", hint])
+
+    def _promptLines(self, prompt: Union[str, Sequence[str]]) -> Sequence[str]:
+        """Normalise one-line and guided multi-line prompts for curses drawing."""
+        return (prompt,) if isinstance(prompt, str) else prompt
 
 
 def clannCapture() -> ClannInput:
@@ -250,13 +283,48 @@ def domainCapture(domain: str) -> Tuple[str, str, Dict[str, str]]:
 
 def _clannCaptureRun(window: "curses.window") -> ClannInput:
     form = CursesForm(window)
-    name = form.textAsk("Clann name", allowSkip=False)
-    householdName = form.textAsk("Primary household name", allowSkip=False)
+    name = form.textAsk(
+        (
+            "Clann name",
+            "The wider family or trusted group represented by Eolas.",
+            "Example: Wilson Family",
+        ),
+        allowSkip=False,
+    )
+    householdName = form.textAsk(
+        (
+            "Primary household name",
+            "A memorable name for the home used for this first setup.",
+            "Example: Home or 29A",
+        ),
+        allowSkip=False,
+    )
     people: List[PersonInput] = []
     while True:
-        fullName = form.textAsk("Person's full name", allowSkip=False)
-        preferredName = form.textAsk("Preferred name", allowSkip=False)
-        householdRole = form.textAsk("Household role", allowSkip=False)
+        fullName = form.textAsk(
+            (
+                "Person's full name",
+                "Use the name you would recognise in a practical emergency.",
+                "Example: Andy Wilson",
+            ),
+            allowSkip=False,
+        )
+        preferredName = form.textAsk(
+            (
+                "Preferred name",
+                "The name this person normally uses.",
+                "Example: Andy",
+            ),
+            allowSkip=False,
+        )
+        householdRole = form.textAsk(
+            (
+                "Household role",
+                "A practical relationship to the primary household.",
+                "Examples: owner, partner, family, carer, lodger",
+            ),
+            allowSkip=False,
+        )
         isAdult = form.confirmationAsk("Is this person legally an adult?", default=True)
         isResident = form.confirmationAsk(
             "Does this person live in the primary household?", default=True
@@ -304,13 +372,45 @@ def _domainCaptureRun(
     source = form.textAsk("Information source", allowSkip=False)
     fields: Dict[str, str] = {}
     for field in CAPTURE_PROFILES[domain].required_fields:
-        prompt = _fieldLabel(field)
-        choices = FIELD_CHOICES.get(field)
+        guidance = fieldGuidanceGet(domain, field)
+        prompt = (
+            guidance.promptLines() if guidance is not None else (_fieldLabel(field),)
+        )
+        choices = _fieldChoicesGet(domain, field)
         if choices:
-            fields[field] = form.menuAsk(prompt, choices)
+            fields[field] = form.menuAsk(
+                prompt,
+                choices,
+                allowSkip=field not in {"classification", "lastReviewed"},
+            )
         else:
-            fields[field] = form.textAsk(prompt)
+            fields[field] = _fieldTextCapture(form, prompt, field)
     return label, source, fields
+
+
+def _fieldChoicesGet(domain: str, field: str) -> Sequence[FieldChoice]:
+    """Return domain-specific choices before shared generic choices."""
+    if domain == "banking" and field == "accountCategory":
+        return ACCOUNT_CATEGORY_CHOICES
+    if domain == "banking" and field == "status":
+        return BANKING_STATUS_CHOICES
+    return FIELD_CHOICES.get(field, ())
+
+
+def _fieldTextCapture(
+    form: CursesForm, prompt: Sequence[str], field: str
+) -> str:
+    """Capture text and keep date-format errors at the field that caused them."""
+    while True:
+        value = form.textAsk(prompt, allowSkip=field != "lastReviewed")
+        if field != "lastReviewed" or value == "unknown":
+            return value
+        try:
+            date.fromisoformat(value)
+        except ValueError:
+            form._messageShow("Use YYYY-MM-DD, for example 2026-10-23.")
+            continue
+        return value
 
 
 def _fieldLabel(field: str) -> str:

@@ -5,7 +5,7 @@ Owner: project maintainers
 
 ## Status
 
-InProgress
+ToDo
 
 ## Outcome
 
@@ -22,11 +22,13 @@ additional cardholder, account owner and person who made a purchase may differ.
 Eolas must describe those relationships without storing card credentials or
 encouraging use by an unauthorised person.
 
-## Scope and information priorities
+## Scope
 
 The module must support personal, joint-liability where offered, business,
 corporate, charge, store, secured, balance-transfer, purchase, rewards, travel
 and virtual-card facilities.
+
+### Information priorities
 
 **Mandatory when applicable:** issuer, facility type and purpose, principal
 borrower(s), liability basis, status, masked account reference, currency,
@@ -176,7 +178,7 @@ Models must include `CreditFacility`, `FacilityParty`, `CardInstrument`,
   chargeback or insurance outcome.
 - UI design or implementation.
 
-## Dependencies and traceability
+## Dependencies and decisions
 
 - Requires [002](002-privacyAndSecurityModel.md) and [009](009-bankingModule.md);
   integrates with [008](008-documentImportFramework.md).
@@ -187,7 +189,30 @@ Models must include `CreditFacility`, `FacilityParty`, `CardInstrument`,
   [007](../../adr/007-knowledgeBeforeDocuments.md),
   [011](../../adr/011-platformPrivateDataRoot.md).
 - Principles: [P-001, P-002, P-004, P-005, P-007, P-009 and P-010](../../../documentation/principles.md).
-- Implementation: shared Phase 1 kernel, dependency graph and typed capture input adapter; domain aggregate and workflows pending
+
+## Verification
+
+- Automate acceptance criteria 1-7 as domain acceptance tests using
+  conspicuously fictional Clann data.
+- Walk through the emergency/hospitalisation, incapacity, death and
+  relationship/business-role change workflows from the principal cardholder,
+  additional cardholder, attorney and executor perspectives; confirm each
+  action is event-specific and never infers authority or liability.
+- Trace every captured field to a continuity purpose, priority, classification
+  and report or workflow use; remove fields without a justified use.
+- Test all reports for masking, dated values, classification-aware export,
+  accessibility, offline operation and cross-Clann isolation.
+- Scan code, fixtures, documentation, logs and generated reports for full card
+  numbers, CVV/CVC, PINs, card data, other prohibited credentials and real
+  private data.
+- Complete jurisdiction and subject-matter review of any dated guidance while
+  preserving the product's non-advice boundary.
+
+## Traceability
+
+- Implementation: not started; a generic capture profile of mandatory field
+  names in `eolas/capture/models.py` uses the shared Phase 1 kernel. Domain
+  model, validation, workflows and reports pending
 - Tests: shared-kernel, storage, security, graph and capture-adapter conformance tests implemented; domain acceptance tests pending
 - Documentation: pending
 - Pull request: pending
@@ -196,3 +221,5 @@ Models must include `CreditFacility`, `FacilityParty`, `CardInstrument`,
 ## Change history
 
 - 2026-07-31: created.
+- 2026-11-16: aligned sections with the requirement template; added Verification.
+- 2026-11-16: status set to ToDo; no branch exists for this requirement and only a generic capture profile is implemented.

@@ -110,7 +110,7 @@ it does not make every value applicable to every account.
 - **Future:** reserved for a later approved capability and not required by the
   initial module.
 
-## Banking relationship coverage
+## Scope
 
 ### Supported relationship categories
 
@@ -1136,11 +1136,21 @@ The initial Banking module does not include:
 - [ADR-0008](../../adr/008-handbookAsProjection.md): reports are projections.
 - [ADR-0011](../../adr/011-platformPrivateDataRoot.md): platform-private local
   storage.
+- [ADR-0012](../../adr/012-sharedIdentityAndOwnership.md): opaque IDs and
+  aggregate ownership.
+- [ADR-0013](../../adr/013-persistenceHistoryAndTransactions.md): RecordStore
+  port, history and expected versions.
+- [ADR-0014](../../adr/014-partiesOrganisationsAndContacts.md): Organisation is
+  not free text.
+- [ADR-0015](../../adr/015-authorityAndProviderRecognition.md): authority is not
+  ownership or application access.
 
 ### Decisions still required
 
-- Approved banking entity and relationship extensions to the shared domain
-  model.
+- Banking Core has implemented `FinancialInstitution`, `BankingRelationship`,
+  `AccountParty`, continuity roles, typed identifiers and
+  `BalanceObservation` on the shared kernel. Remaining entity extensions
+  include money movements, payment arrangements and payment instruments.
 - Default classification and masking for each identifier and report.
 - Governance, review triggers and release process for jurisdiction guidance,
   including packages beyond the initial UK content.
@@ -1181,8 +1191,16 @@ workflow event must record the guidance ID and version/effective date it used.
 
 ## Traceability
 
-- Implementation: shared Phase 1 kernel, dependency graph and typed capture input adapter; domain aggregate and workflows pending
-- Tests: shared-kernel, storage, security, graph and capture-adapter conformance tests implemented; domain acceptance tests pending
+- Implementation: shared Phase 1 kernel; Banking Core in `eolas/banking/`
+  (`FinancialInstitution`, `BankingRelationship`, `AccountParty`, continuity
+  roles, typed identifiers, `BalanceObservation`, `Obligation`,
+  `PaymentArrangement`, `MoneyMovement`, `TransactionObservation` and
+  Banking-owned dependency edges); typed `eolas capture banking` adapter with
+  identity reuse; account-impact and closure-readiness queries; statement
+  import, payment processing, workflows and projections pending
+- Tests: shared-kernel tests plus `tests/test_bankingCore.py`,
+  `tests/test_bankingPayments.py` and `tests/test_bankingDependencies.py`;
+  remaining 009 acceptance criteria pending
 - Documentation: [product vision](../../../documentation/productVision.md),
   [principles](../../../documentation/principles.md),
   [domain model](../../../documentation/domainModel.md),
@@ -1202,3 +1220,11 @@ workflow event must record the guidance ID and version/effective date it used.
 - 2026-07-31: created as the Banking module domain and continuity requirement.
 - 2026-07-31: separated mutable UK guidance, clarified credit-card ownership,
   and added typed continuity roles and bidirectional dependency graphs.
+- 2026-09-10: Banking Core implemented; requirement remains in progress.
+- 2026-09-10: Banking capture reuses Clann people and financial institutions
+  by stable identity; new bootstrap allocates opaque `rec_` IDs.
+- 2026-09-10: Money movements and payment arrangements added as separate
+  records from obligations and transaction evidence.
+- 2026-10-23: Banking-owned dependency edges, cycle-safe account impact and
+  essential-dependency closure blocking added; requirement remains in progress.
+- 2026-11-16: renamed relationship coverage to Scope to match the requirement template.

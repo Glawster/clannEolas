@@ -110,7 +110,7 @@ def testTuiStylesUseCreamScrollbarThumb() -> None:
     assert "scrollbar-color-active: $surface-ink;" in stylesheet
 
 
-def test_tuiNavigatesToCreateClann() -> None:
+def testTuiNavigatesToCreateClann() -> None:
     """Create Clann is reached as an action within the Clann area."""
 
     async def exercise() -> None:
@@ -127,7 +127,7 @@ def test_tuiNavigatesToCreateClann() -> None:
     asyncio.run(exercise())
 
 
-def test_tuiCreateClannUsesSharedService(
+def testTuiCreateClannUsesSharedService(
     tmp_path: Path,
     monkeypatch,
 ) -> None:
@@ -170,7 +170,7 @@ def test_tuiCreateClannUsesSharedService(
     asyncio.run(exercise())
 
 
-def test_tuiCreateClannRejectsIncompletePerson() -> None:
+def testTuiCreateClannRejectsIncompletePerson() -> None:
     """Person validation is supplied by the existing Clann domain model."""
 
     async def exercise() -> None:
@@ -190,7 +190,7 @@ def test_tuiCreateClannRejectsIncompletePerson() -> None:
 
 
 
-def test_eolasWithoutArgumentsLaunchesTui(monkeypatch) -> None:
+def testEolasWithoutArgumentsLaunchesTui(monkeypatch) -> None:
     """The installed Eolas command opens the TUI when no CLI arguments are supplied."""
 
     import sys
@@ -211,7 +211,7 @@ def test_eolasWithoutArgumentsLaunchesTui(monkeypatch) -> None:
     assert launched["value"]
 
 
-def test_eolasWithArgumentsUsesCli(monkeypatch) -> None:
+def testEolasWithArgumentsUsesCli(monkeypatch) -> None:
     """Any supplied argument is dispatched through the CLI parser."""
 
     import sys
@@ -232,7 +232,7 @@ def test_eolasWithArgumentsUsesCli(monkeypatch) -> None:
 
 
 
-def test_tuiSelectsActiveClann(
+def testTuiSelectsActiveClann(
     tmp_path: Path,
     monkeypatch,
 ) -> None:
@@ -270,7 +270,7 @@ def test_tuiSelectsActiveClann(
     asyncio.run(exercise())
 
 
-def test_tuiQuickCapturePersistsToActiveClann(
+def testTuiQuickCapturePersistsToActiveClann(
     tmp_path: Path,
     monkeypatch,
 ) -> None:
@@ -332,8 +332,7 @@ def test_tuiQuickCapturePersistsToActiveClann(
                 / "clanns"
                 / "example-clann"
                 / "shared"
-                / "banking"
-                / "household-current-account.yaml"
+                / "records.yaml"
             )
             assert target.is_file()
             status = app.query_one("#captureValidation", Static)

@@ -5,7 +5,7 @@ Owner: project maintainers
 
 ## Status
 
-InProgress
+ToDo
 
 ## Outcome
 
@@ -21,12 +21,14 @@ conditions, property and evidence. Cover may lapse, renew or depend on prompt
 notification. Eolas must support continuity and claim preparation without
 interpreting cover, underwriting, or promising a claim outcome.
 
-## Scope and information priorities
+## Scope
 
 Support life, term, whole-of-life, critical illness, income protection, health,
 travel, home/buildings/contents, landlord/tenant, motor, pet, legal expenses,
 breakdown, business/key-person, liability, accident, funeral and packaged
 insurance, including group/employer cover and self-insurance references.
+
+### Information priorities
 
 **Mandatory:** policy type/purpose, insurer and administrator, policyholder,
 insured person/property/risk, status, jurisdiction, masked reference,
@@ -140,7 +142,7 @@ Banking, Property, Asset, Vehicle, Debt, Pension, Authority and documents.
   valuation, fraud assessment, emergency response or insurer notification.
 - UI design or implementation.
 
-## Dependencies and traceability
+## Dependencies and decisions
 
 - Requires [002](002-privacyAndSecurityModel.md) and [009](009-bankingModule.md);
   related to 010-014, 017 and 018; integrates with [008](008-documentImportFramework.md).
@@ -148,7 +150,30 @@ Banking, Property, Asset, Vehicle, Debt, Pension, Authority and documents.
   [005](../../adr/005-informationClassification.md), [006](../../adr/006-sharedDomainModel.md),
   [007](../../adr/007-knowledgeBeforeDocuments.md), [011](../../adr/011-platformPrivateDataRoot.md).
 - Principles: [P-001, P-002, P-004, P-005, P-007, P-009 and P-010](../../../documentation/principles.md).
-- Implementation: shared Phase 1 kernel, dependency graph and typed capture input adapter; domain aggregate and workflows pending
+
+## Verification
+
+- Automate acceptance criteria 1-6 as domain acceptance tests using
+  conspicuously fictional Clann data.
+- Walk through the preparation, emergency/incident, incapacity, death and
+  move/change/disposal workflows from the policyholder, life assured,
+  beneficiary or trustee, attorney and executor perspectives; confirm each
+  action is event-specific and never infers authority or liability.
+- Trace every captured field to a continuity purpose, priority, classification
+  and report or workflow use; remove fields without a justified use.
+- Test all reports for masking, dated values, classification-aware export,
+  accessibility, offline operation and cross-Clann isolation.
+- Scan code, fixtures, documentation, logs and generated reports for access or
+  alarm codes, unnecessary health detail, other prohibited credentials and
+  real private data.
+- Complete jurisdiction and subject-matter review of any dated guidance while
+  preserving the product's non-advice boundary.
+
+## Traceability
+
+- Implementation: not started; a generic capture profile of mandatory field
+  names in `eolas/capture/models.py` uses the shared Phase 1 kernel. Domain
+  model, validation, workflows and reports pending
 - Tests: shared-kernel, storage, security, graph and capture-adapter conformance tests implemented; domain acceptance tests pending
 - Documentation: pending
 - Pull request: pending
@@ -157,3 +182,5 @@ Banking, Property, Asset, Vehicle, Debt, Pension, Authority and documents.
 ## Change history
 
 - 2026-07-31: created.
+- 2026-11-16: aligned sections with the requirement template; added Verification.
+- 2026-11-16: status set to ToDo; no branch exists for this requirement and only a generic capture profile is implemented.

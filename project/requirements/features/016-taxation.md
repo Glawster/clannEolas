@@ -5,7 +5,7 @@ Owner: project maintainers
 
 ## Status
 
-InProgress
+ToDo
 
 ## Outcome
 
@@ -21,13 +21,15 @@ event and changing law. Death can create separate pre-death and estate-
 administration obligations. Eolas must organise provenance and actions, never
 infer liability from incomplete household data or expose government credentials.
 
-## Scope and information priorities
+## Scope
 
 Support personal income/self assessment, PAYE records, National Insurance,
 capital gains, inheritance/estate, property/rental, council/local property,
 vehicle, VAT, corporation/business, payroll, trust, foreign and other
 jurisdictional taxes as typed relationships. This list does not assert that a
 person is liable for every type.
+
+### Information priorities
 
 **Mandatory:** taxpayer/entity, authority, jurisdiction, tax type, registration/
 filing status, relevant period, classification and review date.
@@ -140,7 +142,7 @@ links to Person, Estate, Trust, Business, Asset, Income, Banking and documents.
   refund claim, valuation, avoidance planning or authority impersonation.
 - UI design or implementation.
 
-## Dependencies and traceability
+## Dependencies and decisions
 
 - Requires [002](002-privacyAndSecurityModel.md) and shared domain records;
   related to 009-015 and integrates with [008](008-documentImportFramework.md).
@@ -148,7 +150,30 @@ links to Person, Estate, Trust, Business, Asset, Income, Banking and documents.
   [005](../../adr/005-informationClassification.md), [006](../../adr/006-sharedDomainModel.md),
   [007](../../adr/007-knowledgeBeforeDocuments.md), [011](../../adr/011-platformPrivateDataRoot.md).
 - Principles: [P-001, P-002, P-004, P-005, P-007, P-009 and P-010](../../../documentation/principles.md).
-- Implementation: shared Phase 1 kernel, dependency graph and typed capture input adapter; domain aggregate and workflows pending
+
+## Verification
+
+- Automate acceptance criteria 1-6 as domain acceptance tests using
+  conspicuously fictional Clann data.
+- Walk through the preparation, incapacity, death, estate administration and
+  move/residency/business change workflows from the taxpayer, agent, attorney
+  and personal representative perspectives; confirm each action is
+  event-specific and never infers authority or liability.
+- Trace every captured field to a continuity purpose, priority, classification
+  and report or workflow use; remove fields without a justified use.
+- Test all reports for masking, dated values, classification-aware export,
+  accessibility, offline operation and cross-Clann isolation.
+- Scan code, fixtures, documentation, logs and generated reports for tax-portal
+  credentials, authentication codes, other prohibited credentials and real
+  private data.
+- Complete jurisdiction and subject-matter review of any dated guidance while
+  preserving the product's non-advice boundary.
+
+## Traceability
+
+- Implementation: not started; a generic capture profile of mandatory field
+  names in `eolas/capture/models.py` uses the shared Phase 1 kernel. Domain
+  model, validation, workflows and reports pending
 - Tests: shared-kernel, storage, security, graph and capture-adapter conformance tests implemented; domain acceptance tests pending
 - Documentation: pending
 - Pull request: pending
@@ -157,3 +182,5 @@ links to Person, Estate, Trust, Business, Asset, Income, Banking and documents.
 ## Change history
 
 - 2026-07-31: created.
+- 2026-11-16: aligned sections with the requirement template; added Verification.
+- 2026-11-16: status set to ToDo; no branch exists for this requirement and only a generic capture profile is implemented.

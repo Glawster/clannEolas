@@ -354,5 +354,72 @@ The implemented YAML adapter demonstrates the contract but its document shape
 is not a domain schema.
 
 The existing generic capture profiles remain prototype input support for
-requirements 009–018. They now translate into typed commands and shared
-validation, but they are not the completed Banking or other domain models.
+requirements 010–018. They translate into typed commands and shared
+validation, but they are not those modules' completed domain models.
+
+## Implemented Banking Core
+
+Banking Core is the first domain module built on the shared kernel. It models
+the real-world banking relationship, not a statement, screen or YAML document.
+
+`FinancialInstitution` is a Banking-owned aggregate that must reference a shared
+`Organisation`. Institution identity is never free text. Trading names live on
+the institution or on `OrganisationBrand`; legal identity remains the
+Organisation.
+
+`BankingRelationship` is the aggregate for a deposit or payment account
+relationship: category, purpose, operational status, currency, servicing
+context, classification, provenance, review state and record lifecycle. Its
+stable ID is an opaque `rec_` identifier. Account numbers, IBANs and other
+provider references are typed `Identifier` values with masked display and must
+not be used as aggregate identity.
+
+`AccountParty` records legal holders, beneficial owners, trustees, signatories
+and similar interest. It is not legal authority and cannot represent an
+attorney, deputy, executor or Eolas `AccessGrant`. Non-owner authority is an
+`AuthorityLink` to the shared `Authority` aggregate, with a separate readiness
+state such as expected-but-not-registered.
+
+`AccountContinuityRole` uses a versioned registry (primary operating account,
+bills, salary receipt, emergency reserve, child/savings/business/estate roles
+and `other`). Unknown role identifiers are preserved for compatibility but
+cannot drive a current workflow. At most one active
+`primaryHouseholdOperatingAccount` may exist per household unless an explicit
+exception is recorded.
+
+`BalanceObservation` is a dated `Observation` of `Money` with `asOf`, source
+and purpose. A balance is never timeless account state.
+
+Cards as instruments, statement parsing, Open Banking, executor/attorney
+workflows and banking reports remain later increments.
+
+CLI `eolas capture banking` still collects the existing mandatory fields, then
+the capture adapter creates typed Organisation, FinancialInstitution,
+AccountParty and BankingRelationship records through the Banking service and
+the shared `RecordStore` port. YAML remains the current local adapter, not the
+domain contract.
+
+Capture reuses canonical identities from that store. An `AccountParty` points
+at an existing `Person` when `ownerRefs` is supplied or when an owner name
+matches exactly one Clann person. It creates a `Contact` only for an unresolved
+external name. Duplicate person names are not merged; the caller must supply
+`ownerRefs`. A `FinancialInstitution` and its `Organisation` are reused when
+`institutionRef` or `organisationRef` is supplied, or when exactly one stored
+provider matches the captured name. Duplicate provider names require an
+explicit reference. `createInstitution` forces a new provider.
+
+## Implemented money movements and payment arrangements
+
+Banking keeps four separate records:
+
+- `Obligation` — what has to be paid or maintained.
+- `PaymentArrangement` — how that obligation is normally paid.
+- `MoneyMovement` — an expected recurring inflow or outflow.
+- `TransactionObservation` — dated evidence that a movement occurred.
+
+A Direct Debit or standing order is a `PaymentArrangement`, not the bill.
+Cancelling the arrangement leaves the obligation open. A salary credit is a
+`MoneyMovement` and does not require an arrangement. A statement amount is a
+`TransactionObservation` with `asOf`; it does not become the standing
+instruction. Full ledgers, statement parsing, Open Banking and cancellation
+workflows are still out of scope.

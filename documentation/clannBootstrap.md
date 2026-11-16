@@ -20,6 +20,58 @@ Private Eolas data is always rooted at `~/eolas`. A Clann named `Example
 Clann` is therefore written beneath `~/eolas/clanns/example-clann/`. Creation
 is atomic and refuses to overwrite a non-empty Clann directory.
 
+To see usable Clanns without opening their data, run:
+
+```bash
+eolas clann --list
+```
+
+For a recovery-oriented view that also reports directories that cannot be used
+as Clanns, run:
+
+```bash
+eolas clann --status
+```
+
+`--status` is read-only. It reports a directory such as one missing
+`clann.yaml` and directs you to repair it. `--list` also directs you to repair
+an incomplete Clann instead of suggesting a second Clann be created.
+
+When an incomplete Clann is found, complete it with:
+
+```bash
+eolas clann --repair
+```
+
+When exactly one incomplete directory exists, `eolas clann --repair` selects it
+automatically. When there are several, it lists each directory and reason, then
+opens a selection menu. You do not need to know the data-folder layout.
+
+To remove an incomplete directory you no longer need, use its name from
+`eolas clann --status`:
+
+```bash
+eolas clann --remove wilson
+```
+
+Eolas asks for confirmation and moves only an incomplete directory to its
+private `.wastebasket` folder. It refuses to remove a usable Clann. Restore a
+removed directory when needed:
+
+```bash
+eolas clann --restore
+```
+
+`--restore` lists removed directories and lets you choose one. Pass a name to
+restore that directory directly, for example `eolas clann --restore wilson`.
+Add `-y` to either `--remove` or `--restore` to bypass its final confirmation.
+
+Repair asks for the missing Clann, household and person details, then writes
+only missing canonical files. An empty directory has no bootstrap facts to
+recover, so Eolas cannot complete it until you enter those details and confirm
+the preview. It refuses to overwrite a file or infer data from an ambiguous
+folder.
+
 ## Generated structure
 
 ```text
@@ -39,7 +91,15 @@ is atomic and refuses to overwrite a non-empty Clann directory.
         ├── professionals/
         ├── documents/
         └── shared/
+            └── records.yaml
 ```
+
+Directory names remain slugs for a stable filesystem layout. New person and
+household document IDs are opaque `rec_` values, not `person-alex-example`.
+Those IDs are also written as `Person` aggregates in `shared/records.yaml` so
+later modules can reuse them through the shared `RecordStore` port. Older Clann
+directories that still use slug IDs remain readable; new Clanns do not allocate
+slug identities.
 
 `clann.yaml` indexes all people and households. Household records contain
 residence memberships; person records refer to the Clann and repeat their
@@ -111,9 +171,19 @@ eolas capture banking \
 
 The preview validates mandatory fields and shows the complete record without
 writing it. Add `--confirm` to create the record atomically under
-`shared/<domain>/`. Run `eolas capture --help` to see the supported
-domain names. Missing mandatory fields are reported together so the input can
-be corrected in one pass.
+`shared/<domain>/`. Banking capture writes typed
+`FinancialInstitution` and `BankingRelationship` records through the shared
+Clann store at `shared/records.yaml`. If an owner name matches exactly one
+Clann `Person`, that person is reused; unknown names become `Contact` records.
+Existing institutions are reused when `institutionRef` is supplied, or when
+exactly one stored provider has that display name. Duplicate names require
+`ownerRefs` or `institutionRef` rather than silent matching. Optional payment
+fields such as `obligationPurpose`, `paymentMechanism`, `movementDirection`
+and `transactionAmount`/`transactionAsOf` create separate obligation,
+arrangement, movement and transaction-evidence records. Other capture
+domains still write one prototype YAML document per label. Run
+`eolas capture --help` to see the supported domain names. Missing mandatory
+fields are reported together so the input can be corrected in one pass.
 
 Every input needs the domain's required fields plus a valid `classification`
 and an ISO `lastReviewed` date. Unknown facts should be recorded explicitly as

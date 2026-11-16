@@ -3,6 +3,8 @@
 from dataclasses import dataclass
 from typing import List
 
+from eolas.inputNormalise import sentenceNormalise, titleNormalise
+
 
 class ClannValidationError(ValueError):
     """Raised when Clann bootstrap input is invalid."""
@@ -40,9 +42,7 @@ class ClannInput:
         if not self.name.strip():
             raise ClannValidationError("Clann name cannot be empty.")
         if not self.primary_household_name.strip():
-            raise ClannValidationError(
-                "Primary household name cannot be empty."
-            )
+            raise ClannValidationError("Primary household name cannot be empty.")
         if not self.people:
             raise ClannValidationError("A Clann must contain at least one person.")
 
@@ -50,10 +50,27 @@ class ClannInput:
             person.personValidate()
 
         if sum(person.is_primary for person in self.people) != 1:
-            raise ClannValidationError(
-                "A Clann must have exactly one primary person."
-            )
+            raise ClannValidationError("A Clann must have exactly one primary person.")
         if not any(person.lives_in_primary_household for person in self.people):
             raise ClannValidationError(
                 "The primary household must have at least one resident."
             )
+
+
+def clannNormalise(clann: ClannInput) -> ClannInput:
+    """Normalise unambiguous human-entered names before durable storage."""
+    return ClannInput(
+        titleNormalise(clann.name),
+        titleNormalise(clann.primary_household_name),
+        [
+            PersonInput(
+                titleNormalise(person.full_name),
+                titleNormalise(person.preferred_name),
+                sentenceNormalise(person.household_role),
+                person.is_adult,
+                person.is_primary,
+                person.lives_in_primary_household,
+            )
+            for person in clann.people
+        ],
+    )

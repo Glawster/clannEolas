@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, Optional
 
 from eolas.capture.adapter import captureCommandBuild
-from eolas.capture.models import CaptureInput
+from eolas.capture.models import CaptureInput, captureNormalise
 from eolas.clann.slugs import slugCreate
 from eolas.clann.yaml_io import yamlWrite
 
@@ -26,6 +26,7 @@ def capturePrepare(
     timestampProvider: Optional[TimestampProvider] = None,
 ) -> tuple[Path, Dict[str, Any]]:
     """Validate a capture and return its destination and canonical document."""
+    capture = captureNormalise(capture)
     clannPath = clannPath.expanduser().resolve()
     if not clannPath.is_dir() or not (clannPath / "clann.yaml").is_file():
         raise CaptureWriteError(f"Not an Eolas Clann directory: {clannPath}")
@@ -37,8 +38,14 @@ def capturePrepare(
             "Timestamp provider must return a timezone-aware value."
         )
 
+    clann_id = _clannIdRead(clannPath)
+    if capture.domain == "banking":
+        from eolas.capture.banking import bankingCapturePrepare
+
+        return bankingCapturePrepare(capture, clannPath, clann_id, timestamp)
+
     slug = slugCreate(capture.label)
-    command = captureCommandBuild(capture, _clannIdRead(clannPath), timestamp)
+    command = captureCommandBuild(capture, clann_id, timestamp)
     targetPath = clannPath / "shared" / capture.domain / f"{slug}.yaml"
     document = {
         "schema": f"eolas/{command.schema_name}/v1",
@@ -63,6 +70,11 @@ def capturePrepare(
 
 def captureWrite(targetPath: Path, document: Dict[str, Any]) -> Path:
     """Atomically create a prepared record without overwriting existing data."""
+    if document.get("ownerModule") == "banking":
+        from eolas.capture.banking import bankingCaptureWrite
+
+        return bankingCaptureWrite(targetPath, document)
+
     targetPath.parent.mkdir(parents=True, exist_ok=True)
     if targetPath.exists():
         raise CaptureWriteError(f"Capture record already exists: {targetPath}")

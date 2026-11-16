@@ -1,6 +1,6 @@
 # Requirements
 
-Next available number: 021
+Next available number: 022
 
 This directory is the source of truth for specific outcomes clanneolas.com
 intends to deliver and why. Requirements can govern handbook content, project
@@ -9,29 +9,30 @@ implementation and must distinguish current behaviour from planned work.
 
 ## ToDo
 
-- [001 — Handbook foundation](features/001-handbookFoundation.md) (legacy ID: HB-001)
-- [002 — Privacy and security model](features/002-privacyAndSecurityModel.md) (legacy ID: HB-002)
-- [003 — Handbook content structure](features/003-handbookContentStructure.md) (legacy ID: HB-003)
 - [004 — Fictional example household](features/004-fictionalExampleHousehold.md) (legacy ID: HB-004)
 - [005 — Annual review process](features/005-annualReviewProcess.md) (legacy ID: HB-005)
 - [006 — Getting Started guide](features/006-gettingStartedGuide.md) (legacy ID: HB-006)
 - [007 — Legal document custody and access](features/007-legalDocumentCustodyAndAccess.md) (legacy ID: APP-001)
 - [008 — Document Import Framework](features/008-documentImportFramework.md)
+- [010 — Credit cards](features/010-creditCards.md)
+- [011 — Mortgages](features/011-mortgages.md)
+- [012 — Loans and other borrowing](features/012-loans.md)
+- [013 — Investments](features/013-investments.md)
+- [014 — Pensions](features/014-pensions.md)
+- [015 — Insurance](features/015-insurance.md)
+- [016 — Taxation](features/016-taxation.md)
+- [017 — Subscriptions and recurring services](features/017-subscriptions.md)
+- [018 — Utilities and essential household services](features/018-utilities.md)
 - [019 — Secure Clann access and synchronisation](features/019-secureClannAccessAndSync.md)
+- [021 — Placeholder follow-up tasks](features/021-placeholderFollowUpTasks.md)
 
 ## InProgress
 
+- [001 — Handbook foundation](features/001-handbookFoundation.md) (legacy ID: HB-001) — refinement branch exists; handbook foundation content remains
+- [002 — Privacy and security model](features/002-privacyAndSecurityModel.md) (legacy ID: HB-002) — shared-kernel classification, masking and prohibited-secret policy implemented; repository scans and privacy reviews remain
+- [003 — Handbook content structure](features/003-handbookContentStructure.md) (legacy ID: HB-003) — refinement branch exists; handbook content structure remains
+- [009 — Banking module](features/009-bankingModule.md) — Banking Core, identity reuse, obligations, payment arrangements, money movements, dependency graph and closure readiness implemented; statement import, payment processing, workflows and projections remain
 - [020 — Interactive cross-platform terminal interface](features/020-interactiveTerminalInterface.md) — Textual production shell established; shared-service integration and verification remain
-- [009 — Banking module](features/009-bankingModule.md) — shared Phase 1 kernel and CLI input adapter implemented; Banking aggregates, workflows and projections remain
-- [010 — Credit cards](features/010-creditCards.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
-- [011 — Mortgages](features/011-mortgages.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
-- [012 — Loans and other borrowing](features/012-loans.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
-- [013 — Investments](features/013-investments.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
-- [014 — Pensions](features/014-pensions.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
-- [015 — Insurance](features/015-insurance.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
-- [016 — Taxation](features/016-taxation.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
-- [017 — Subscriptions and recurring services](features/017-subscriptions.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
-- [018 — Utilities and essential household services](features/018-utilities.md) — shared Phase 1 kernel and CLI input adapter implemented; full domain workflows and projections remain
 
 ## Completed
 
@@ -115,4 +116,5 @@ realistic identifiers.
 - [006-gettingStartedGuide](prompt/006-gettingStartedGuide.md)
 - [007-legalDocumentCustodyAndAccess](prompt/007-legalDocumentCustodyAndAccess.md)
 - [020-interactiveTerminalInterface](prompt/020-interactiveTerminalInterface.md)
+- [021-placeholderFollowUpTasks](prompt/021-placeholderFollowUpTasks.md)
 <!-- OMP-PROMPT-INDEX-END -->

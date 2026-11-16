@@ -10,9 +10,18 @@ import yaml
 from eolas.capture.models import CAPTURE_PROFILES, CaptureInput, CaptureValidationError
 from eolas.capture.service import CaptureWriteError, capturePrepare, captureWrite
 from eolas.clann.models import ClannInput, ClannValidationError, PersonInput
-from eolas.clann.service import ClannCreationError, clannCreate
+from eolas.clann.service import (
+    ClannCreationError,
+    ClannRepairError,
+    clannCreate,
+    clannRemoveIncomplete,
+    clannRepair,
+    clannRestoreIncomplete,
+)
 from eolas.clann.slugs import slugCreate
+from eolas.clann.status import clannsInspect, clannsRemoved
 from eolas.paths import dataRootGet
+from eolas.version import VERSION
 from eolas.curses_ui import (
     CursesCancelled,
     captureDomainCapture,
@@ -43,6 +52,16 @@ def cliRun(arguments: Optional[Sequence[str]] = None) -> int:
     args = parser.parse_args(arguments)
     if args.area == "clann" and args.action == "create":
         return _clannAsk(confirm=args.confirm)
+    if args.area == "clann" and args.action == "list":
+        return _clannsList()
+    if args.area == "clann" and args.action == "status":
+        return _clannsStatus()
+    if args.area == "clann" and args.remove is not None:
+        return _clannRemoveAsk(args.remove, confirm=args.confirm)
+    if args.area == "clann" and args.restore is not None:
+        return _clannRestoreAsk(args.restore, confirm=args.confirm)
+    if args.area == "clann" and args.repair is not None:
+        return _clannRepairAsk(args.repair, confirm=args.confirm)
     if args.area == "capture":
         return _captureRun(args)
     if args.area == "log" and args.action == "show":
@@ -89,10 +108,99 @@ def _clannAsk(*, confirm: bool) -> int:
         return 1
 
     residentCount = sum(person.lives_in_primary_household for person in clann.people)
-    _statusPrint(f"\nClann created: {createdPath}", colour="green")
+    _statusPrint(f"\nClann created: {createdPath.name}", colour="green")
     print(f"People created: {len(clann.people)}")
     print(f"Primary household residents: {residentCount}")
     return 0
+
+
+def _clannRepairAsk(targetPath: str, *, confirm: bool) -> int:
+    """Capture missing bootstrap facts and complete one partial Clann directory."""
+    try:
+        targetPath = _repairTargetResolve(targetPath)
+        print(f"Checking {targetPath.name} for missing Clann data.")
+        print("No readable bootstrap records were found in this directory.")
+        print(
+            "Enter the Clann, household, and first person details to complete it. "
+            "No files change until you confirm the preview; q cancels safely."
+        )
+        clann = clannCapture()
+        clann.clannValidate()
+        _summaryPrint(clann, targetPath)
+        if not confirm and not confirmationCapture(
+            "Write the missing Clann files?", default=True
+        ):
+            print("Clann repair cancelled; no files were changed.")
+            return 0
+        repairedPath = clannRepair(clann, targetPath)
+    except (CursesCancelled, EOFError, KeyboardInterrupt):
+        print("\nClann repair cancelled; no files were changed.")
+        return 130
+    except (ClannRepairError, ClannValidationError, OSError, ValueError) as error:
+        _statusPrint(f"Error: {error}", colour="red")
+        return 1
+
+    _statusPrint(f"\nClann repaired: {repairedPath.name}", colour="green")
+    return 0
+
+
+def _clannRemoveAsk(directoryName: str, *, confirm: bool) -> int:
+    """Confirm and move one incomplete Clann directory to the wastebasket."""
+    try:
+        if not confirm and not confirmationCapture(
+            f"Remove incomplete Clann directory '{directoryName}'?", default=False
+        ):
+            print("Clann removal cancelled; no files were changed.")
+            return 0
+        clannRemoveIncomplete(_dataRootGet(), directoryName)
+    except (CursesCancelled, EOFError, KeyboardInterrupt):
+        print("\nClann removal cancelled; no files were changed.")
+        return 130
+    except (ClannRepairError, OSError, ValueError) as error:
+        _statusPrint(f"Error: {error}", colour="red")
+        return 1
+
+    _statusPrint(
+        f"Moved incomplete Clann directory to the wastebasket: {directoryName}",
+        colour="green",
+    )
+    return 0
+
+
+def _clannRestoreAsk(directoryName: str, *, confirm: bool) -> int:
+    """Confirm and restore one incomplete Clann directory from the wastebasket."""
+    try:
+        directoryName = _restoreTargetResolve(directoryName)
+        if not confirm and not confirmationCapture(
+            f"Restore incomplete Clann directory '{directoryName}'?", default=False
+        ):
+            print("Clann restore cancelled; no files were changed.")
+            return 0
+        clannRestoreIncomplete(_dataRootGet(), directoryName)
+    except (CursesCancelled, EOFError, KeyboardInterrupt):
+        print("\nClann restore cancelled; no files were changed.")
+        return 130
+    except (ClannRepairError, OSError, ValueError) as error:
+        _statusPrint(f"Error: {error}", colour="red")
+        return 1
+
+    _statusPrint(f"Restored incomplete Clann directory: {directoryName}", colour="green")
+    return 0
+
+
+def _restoreTargetResolve(restore: str) -> str:
+    """Use an explicit removed directory or choose one from the wastebasket."""
+    if restore != "auto":
+        return restore
+    candidates = clannsRemoved(_dataRootGet())
+    if not candidates:
+        raise ClannRepairError("No removed incomplete Clann directory was found.")
+    print("Removed incomplete Clann directories:")
+    for candidate in candidates:
+        print(f"- {candidate.name}")
+    if len(candidates) == 1:
+        return candidates[0].name
+    return clannPathCapture(candidates).name
 
 
 def _peopleAsk(personCount: int, *, resident: bool) -> List[PersonInput]:
@@ -115,6 +223,64 @@ def _peopleAsk(personCount: int, *, resident: bool) -> List[PersonInput]:
             )
         )
     return people
+
+
+def _dataRootGet() -> Path:
+    """Return the private Eolas data root beneath the current user's home."""
+    return dataRootGet()
+
+
+def _clannsList() -> int:
+    """List usable Clanns without opening or changing their private records."""
+    summaries, issues = clannsInspect(_dataRootGet())
+    if not summaries:
+        print("No usable Clanns found. Run `eolas clann --create` to create one.")
+        if issues:
+            print(
+                "An incomplete Clann was found. Run `eolas clann --repair` "
+                "to complete its missing setup details."
+            )
+        return 0
+    print("Usable Clanns:")
+    for summary in summaries:
+        print(f"- {summary.name} ({summary.status}; {summary.people_count} people)")
+    return 0
+
+
+def _clannsStatus() -> int:
+    """Show usable Clanns plus directories requiring manual attention."""
+    dataRoot = _dataRootGet()
+    summaries, issues = clannsInspect(dataRoot)
+    print(f"Usable Clanns: {len(summaries)}")
+    for summary in summaries:
+        modified = f"; modified {summary.modified}" if summary.modified else ""
+        print(
+            f"- {summary.name} ({summary.status}; {summary.people_count} people"
+            f"{modified})"
+        )
+    if issues:
+        print("Directories needing attention:")
+        for issue in issues:
+            print(f"- {issue.path.name}: {issue.reason}; run `eolas clann --repair`")
+    return 0
+
+
+def _repairTargetResolve(repair: str) -> Path:
+    """Use an explicit repair folder or the sole incomplete Clann directory."""
+    if repair != "auto":
+        return Path(repair)
+    _summaries, issues = clannsInspect(_dataRootGet())
+    if not issues:
+        raise ClannRepairError(
+            "No incomplete Clann directory was found. "
+            "Use `eolas clann --create` to create a new Clann."
+        )
+    if len(issues) > 1:
+        print("Incomplete Clann directories:")
+        for issue in issues:
+            print(f"- {issue.path.name}: {issue.reason}")
+        return clannPathCapture(tuple(issue.path for issue in issues))
+    return issues[0].path
 
 
 def _captureInputLoad(path: Path) -> Mapping[str, Any]:
@@ -186,8 +352,14 @@ def _statusPrint(message: str, *, colour: str) -> None:
 def _captureClannResolve(clannPath: Optional[Path], *, interactive: bool) -> Path:
     """Use an explicit Clann, the sole default, or an interactive choice."""
     if clannPath is not None:
-        return clannPath
-    clannsPath = dataRootGet() / "clanns"
+        resolvedPath = clannPath.expanduser().resolve()
+        if not resolvedPath.is_dir() or not (resolvedPath / "clann.yaml").is_file():
+            raise CaptureValidationError(
+                f"Not an Eolas Clann directory: {resolvedPath}. "
+                "Run `eolas clann --status` to inspect available directories."
+            )
+        return resolvedPath
+    clannsPath = _dataRootGet() / "clanns"
     if not clannsPath.is_dir():
         raise CaptureValidationError(
             "No Clanns exist yet. Run `eolas clann --create` first."
@@ -198,6 +370,12 @@ def _captureClannResolve(clannPath: Optional[Path], *, interactive: bool) -> Pat
         if path.is_dir() and (path / "clann.yaml").is_file()
     )
     if not candidates:
+        _summaries, issues = clannsInspect(_dataRootGet())
+        if len(issues) == 1:
+            raise CaptureValidationError(
+                "No usable Clann exists. Repair the incomplete directory first "
+                "with `eolas clann --repair`."
+            )
         raise CaptureValidationError(
             "No Clanns exist yet. Run `eolas clann --create` first."
         )
@@ -214,10 +392,19 @@ def _parserBuild() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="eolas",
         description="Create and maintain private Eolas Clann records.",
+        allow_abbrev=False,
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {VERSION}",
+        help="show the installed Eolas version and exit",
     )
     areas = parser.add_subparsers(dest="area", title="functional areas")
 
-    clannParser = areas.add_parser("clann", help="work with a Clann")
+    clannParser = areas.add_parser(
+        "clann", help="work with a Clann", allow_abbrev=False
+    )
     clannActions = clannParser.add_mutually_exclusive_group(required=True)
     clannActions.add_argument(
         "--create",
@@ -226,15 +413,48 @@ def _parserBuild() -> argparse.ArgumentParser:
         dest="action",
         help="interactively create a Clann and primary household",
     )
+    clannActions.add_argument(
+        "--list",
+        action="store_const",
+        const="list",
+        dest="action",
+        help="list usable Clanns",
+    )
+    clannActions.add_argument(
+        "--status",
+        action="store_const",
+        const="status",
+        dest="action",
+        help="show usable Clanns and directories needing attention",
+    )
+    clannActions.add_argument(
+        "--repair",
+        nargs="?",
+        const="auto",
+        metavar="DIRECTORY",
+        help="repair the sole incomplete Clann, or a specified directory",
+    )
+    clannActions.add_argument(
+        "--remove",
+        metavar="DIRECTORY",
+        help="move a named incomplete Clann directory to the wastebasket",
+    )
+    clannActions.add_argument(
+        "--restore",
+        nargs="?",
+        const="auto",
+        metavar="DIRECTORY",
+        help="list and restore a removed incomplete Clann directory",
+    )
     clannParser.add_argument(
         "-y",
         "--confirm",
         action="store_true",
-        help="generate after displaying the summary without asking",
+        help="perform the selected action without the final confirmation",
     )
 
     captureParser = areas.add_parser(
-        "capture", help="capture a structured continuity record"
+        "capture", help="capture a structured continuity record", allow_abbrev=False
     )
     captureParser.add_argument(
         "domain",
@@ -265,7 +485,7 @@ def _parserBuild() -> argparse.ArgumentParser:
 
     areas.add_parser("tui", help="launch the interactive terminal interface")
 
-    logParser = areas.add_parser("log", help="inspect Eolas logs")
+    logParser = areas.add_parser("log", help="inspect Eolas logs", allow_abbrev=False)
     logActions = logParser.add_mutually_exclusive_group(required=True)
     logActions.add_argument(
         "--show",
@@ -334,7 +554,7 @@ def _summaryPrint(clann: ClannInput, targetPath: Path) -> None:
     print("\nSummary")
     print(f"  Clann: {clann.name}")
     print(f"  Primary household: {clann.primary_household_name}")
-    print(f"  Target: {targetPath}")
+    print(f"  Clann folder: {targetPath.name}")
     print("  People:")
     for person in clann.people:
         primaryMarker = " (primary)" if person.is_primary else ""

@@ -11,11 +11,13 @@ from eolas.capture.models import (
     CAPTURE_PROFILES,
     CaptureInput,
     CaptureValidationError,
+    captureNormalise,
 )
 from eolas.capture.service import CaptureWriteError, capturePrepare, captureWrite
 from eolas.clann.models import ClannInput, PersonInput
 from eolas.clann.service import clannCreate
 from eolas.cli import cliRun
+from eolas.domain.storage import YamlRecordStore
 
 TEST_TIME = datetime(2026, 8, 7, 9, 30, tzinfo=timezone.utc)
 
@@ -39,8 +41,17 @@ def _validFields(domain: str) -> Dict[str, Any]:
     return fields
 
 
-@pytest.mark.parametrize("domain", CAPTURE_PROFILES)
-def test_capturePrepare_supportsRequirements009Through018(
+def _bankingRelationships(
+    clannPath: Path, clann_id: str = "clann-example-clann"
+) -> int:
+    store = YamlRecordStore(clannPath / "shared" / "records.yaml", clann_id)
+    return len(store.recordsList(aggregate_type="bankingRelationship"))
+
+
+@pytest.mark.parametrize(
+    "domain", [name for name in CAPTURE_PROFILES if name != "banking"]
+)
+def testCapturePrepareSupportsRequirements010Through018(
     clannPath: Path, domain: str
 ) -> None:
     capture = CaptureInput(
@@ -54,19 +65,64 @@ def test_capturePrepare_supportsRequirements009Through018(
     assert targetPath == clannPath / "shared" / domain / "household-record.yaml"
     assert document["schema"].startswith("eolas/")
     assert document["clannRef"] == "clann-example-clann"
-    assert document["metadata"]["source"] == "statement"
+    assert document["metadata"]["source"] == "Statement"
     firstField = CAPTURE_PROFILES[domain].required_fields[0]
-    assert document["data"][firstField] == {
-        "state": "known",
-        "value": "known",
-    }
+    assert document["data"][firstField]["state"] == "known"
 
 
-def test_captureValidate_reportsAllMissingRequiredFields() -> None:
+def testCapturePrepareBankingCreatesTypedRelationship(clannPath: Path) -> None:
+    fields = _validFields("banking")
+    fields["institution"] = "Northbridge Fictional Mutual"
+    fields["owners"] = "Morgan Example"
+    fields["status"] = "active"
+    capture = CaptureInput("banking", "Household bills", fields, "statement")
+
+    targetPath, document = capturePrepare(
+        capture, clannPath, timestampProvider=lambda: TEST_TIME
+    )
+
+    assert targetPath == clannPath / "shared" / "records.yaml"
+    assert document["aggregateType"] == "bankingRelationship"
+    assert document["id"].startswith("rec_")
+    assert document["institution"]["displayName"] == "Northbridge Fictional Mutual"
+    assert document["relationship"]["ownershipType"] == "sole"
+
+
+def testCaptureValidateReportsAllMissingRequiredFields() -> None:
     capture = CaptureInput("banking", "Bills", {}, "statement")
 
     with pytest.raises(CaptureValidationError, match="institution.*lastReviewed"):
         capture.captureValidate()
+
+
+def testCaptureNormaliseUsesFieldAppropriateCasing() -> None:
+    normalised = captureNormalise(
+        CaptureInput(
+            "banking",
+            "HOUSEHOLD BILLS",
+            {
+                **_validFields("banking"),
+                "institution": "NORTHBRIDGE FICTIONAL MUTUAL",
+                "purpose": "HOUSEHOLD BILLS AND SALARY",
+                "owners": "ALEX EXAMPLE, MORGAN EXAMPLE",
+                "status": "ACTIVE",
+                "classification": "CONFIDENTIAL",
+                "currency": "gbp",
+                "maskedReference": "iPhone-42",
+            },
+            "BANK STATEMENT",
+        )
+    )
+
+    assert normalised.label == "Household Bills"
+    assert normalised.fields["institution"] == "Northbridge Fictional Mutual"
+    assert normalised.fields["purpose"] == "Household bills and salary"
+    assert normalised.fields["owners"] == "Alex Example, Morgan Example"
+    assert normalised.fields["status"] == "active"
+    assert normalised.fields["classification"] == "confidential"
+    assert normalised.fields["currency"] == "GBP"
+    assert normalised.fields["maskedReference"] == "iPhone-42"
+    assert normalised.source == "Bank statement"
 
 
 @pytest.mark.parametrize(
@@ -77,7 +133,7 @@ def test_captureValidate_reportsAllMissingRequiredFields() -> None:
         {"notes": "4111 1111 1111 1111"},
     ],
 )
-def test_captureValidate_rejectsCredentialsAndFullCardNumbers(
+def testCaptureValidateRejectsCredentialsAndFullCardNumbers(
     unsafeFields: Dict[str, Any],
 ) -> None:
     fields = _validFields("banking")
@@ -91,19 +147,35 @@ def test_captureValidate_rejectsCredentialsAndFullCardNumbers(
     "harmlessField",
     ["shippingAddress", "opinion", "pensionProvider", "pinningNote"],
 )
-def test_captureValidate_allowsHarmlessSecretSubstrings(harmlessField: str) -> None:
+def testCaptureValidateAllowsHarmlessSecretSubstrings(harmlessField: str) -> None:
     fields = _validFields("banking")
     fields[harmlessField] = "fictional safe value"
 
     CaptureInput("banking", "Bills", fields, "statement").captureValidate()
 
 
-def test_captureAdapter_preservesUnknownAndNotApplicable(
+def testCaptureAdapterPreservesUnknownAndNotApplicable(
     clannPath: Path,
 ) -> None:
+    fields = _validFields("utilities")
+    fields["supplier"] = "unknown"
+    fields["utilityType"] = "notApplicable"
+
+    _target, document = capturePrepare(
+        CaptureInput("utilities", "Electricity", fields, "bill"),
+        clannPath,
+        timestampProvider=lambda: TEST_TIME,
+    )
+
+    assert document["data"]["supplier"] == {"state": "unknown"}
+    assert document["data"]["utilityType"] == {"state": "notApplicable"}
+
+
+def testCaptureAdapterBankingUnknownInstitutionIsAFinding(clannPath: Path) -> None:
     fields = _validFields("banking")
     fields["institution"] = "unknown"
-    fields["accountCategory"] = "notApplicable"
+    fields["owners"] = "unknown"
+    fields["status"] = "unknown"
 
     _target, document = capturePrepare(
         CaptureInput("banking", "Bills", fields, "statement"),
@@ -111,12 +183,15 @@ def test_captureAdapter_preservesUnknownAndNotApplicable(
         timestampProvider=lambda: TEST_TIME,
     )
 
-    assert document["data"]["institution"] == {"state": "unknown"}
-    assert document["data"]["accountCategory"] == {"state": "notApplicable"}
+    assert document["institution"]["organisationLegalName"] == "Bills"
+    assert document["relationship"]["ownershipType"] == "unknown"
+    assert document["relationship"]["status"] == "unknown"
 
 
-def test_captureWrite_isAtomicAndRefusesOverwrite(clannPath: Path) -> None:
-    capture = CaptureInput("banking", "Bills", _validFields("banking"), "statement")
+def testCaptureWriteIsAtomicAndRefusesOverwrite(clannPath: Path) -> None:
+    capture = CaptureInput(
+        "utilities", "Electricity", _validFields("utilities"), "bill"
+    )
     targetPath, document = capturePrepare(
         capture, clannPath, timestampProvider=lambda: TEST_TIME
     )
@@ -128,11 +203,11 @@ def test_captureWrite_isAtomicAndRefusesOverwrite(clannPath: Path) -> None:
     loaded = yaml.safe_load(targetPath.read_text(encoding="utf-8"))
     assert loaded == document
     assert document["id"].startswith("rec_")
-    assert document["ownerModule"] == "banking"
+    assert document["ownerModule"] == "utilities"
     assert list(targetPath.parent.glob(".*.yaml")) == []
 
 
-def test_cliCapture_previewsThenWritesOnlyWithConfirm(
+def testCliCapturePreviewsThenWritesOnlyWithConfirm(
     tmp_path: Path,
     clannPath: Path,
     capsys: pytest.CaptureFixture[str],
@@ -153,18 +228,19 @@ def test_cliCapture_previewsThenWritesOnlyWithConfirm(
         "--source",
         "2026 statement",
     ]
-    targetPath = clannPath / "shared/banking/household-bills.yaml"
+    targetPath = clannPath / "shared/records.yaml"
 
     assert cliRun(arguments) == 0
-    assert not targetPath.exists()
+    assert _bankingRelationships(clannPath) == 0
     assert "Preview complete; no files were created" in capsys.readouterr().out
 
     assert cliRun([*arguments, "--confirm"]) == 0
     assert targetPath.is_file()
+    assert _bankingRelationships(clannPath) == 1
     assert "Capture complete:" in capsys.readouterr().out
 
 
-def test_cliCapture_usesCursesWhenInputIsOmitted(
+def testCliCaptureUsesCursesWhenInputIsOmitted(
     clannPath: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -176,10 +252,47 @@ def test_cliCapture_usesCursesWhenInputIsOmitted(
     result = cliRun(["capture", "banking", "--clann", str(clannPath), "--confirm"])
 
     assert result == 0
-    assert (clannPath / "shared/banking/household-bills.yaml").is_file()
+    assert (clannPath / "shared/records.yaml").is_file()
 
 
-def test_cliCapture_discoversOnlyClannForSimpleCommand(
+def testCliCaptureRejectsAbbreviatedClannOption(clannPath: Path) -> None:
+    with pytest.raises(SystemExit) as error:
+        cliRun(["capture", "banking", "--clan", str(clannPath)])
+
+    assert error.value.code == 2
+
+
+def testCliCaptureRejectsInvalidClannBeforeOpeningForm(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    monkeypatch.setattr(
+        "eolas.cli.domainCapture",
+        lambda _domain: (_ for _ in ()).throw(AssertionError("form opened")),
+    )
+
+    result = cliRun(["capture", "banking", "--clann", str(tmp_path / "missing")])
+
+    assert result == 1
+    assert "Not an Eolas Clann directory" in capsys.readouterr().out
+
+
+def testCliCaptureDirectsSoleIncompleteClannToRepair(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    (tmp_path / "eolas/clanns/unfinished").mkdir(parents=True)
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+
+    result = cliRun(["capture", "banking"])
+
+    assert result == 1
+    assert "eolas clann --repair" in capsys.readouterr().out
+
+
+def testCliCaptureDiscoversOnlyClannForSimpleCommand(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -199,10 +312,10 @@ def test_cliCapture_discoversOnlyClannForSimpleCommand(
     result = cliRun(["capture", "banking", "--confirm"])
 
     assert result == 0
-    assert (clannPath / "shared/banking/household-bills.yaml").is_file()
+    assert (clannPath / "shared/records.yaml").is_file()
 
 
-def test_cliCapture_usesClannMenuWhenSeveralExist(
+def testCliCaptureUsesClannMenuWhenSeveralExist(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -222,10 +335,10 @@ def test_cliCapture_usesClannMenuWhenSeveralExist(
     result = cliRun(["capture", "banking", "--confirm"])
 
     assert result == 0
-    assert (secondPath / "shared/banking/household-bills.yaml").is_file()
+    assert (secondPath / "shared/records.yaml").is_file()
 
 
-def test_cliCapture_usesDomainMenuWhenDomainIsOmitted(
+def testCliCaptureUsesDomainMenuWhenDomainIsOmitted(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -249,7 +362,7 @@ def test_cliCapture_usesDomainMenuWhenDomainIsOmitted(
     assert (clannPath / "shared/utilities/electricity.yaml").is_file()
 
 
-def test_cliCapture_interactiveConfirmationSavesWithoutFlags(
+def testCliCaptureInteractiveConfirmationSavesWithoutFlags(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -269,4 +382,4 @@ def test_cliCapture_interactiveConfirmationSavesWithoutFlags(
     monkeypatch.setattr("eolas.cli.confirmationCapture", lambda *_args, **_kwargs: True)
 
     assert cliRun(["capture"]) == 0
-    assert (clannPath / "shared/banking/bills.yaml").is_file()
+    assert (clannPath / "shared/records.yaml").is_file()

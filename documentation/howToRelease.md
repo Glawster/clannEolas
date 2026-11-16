@@ -1,4 +1,4 @@
-<!-- deployed from Glawster/organiseMyProjects release 0.9a3 -- do not edit directly -->
+<!-- deployed from Glawster/organiseMyProjects release 0.10a3 -- do not edit directly -->
 # Release Process
 
 ## Purpose
@@ -17,11 +17,22 @@ This guide defines a safe, repeatable release workflow for this repository.
 - Start at `a1` for each new target release and increment the suffix for each
   distinct development build that is shared or published. Do not reuse a
   published development version for different code.
+- Every development branch has its own alpha number, so a version always
+  identifies one branch's work. A number is unused only when no `v*` tag, no
+  `main`, no release branch and no other local or remote branch holds it:
+  check them all (`git fetch --tags --prune origin`, then the version source on
+  each branch) before taking one, and push the new branch promptly so other
+  checkouts see the number.
 - Keep the authoritative version source, package metadata and reported CLI/log
   version consistent. Git commit and dirty-state details may supplement the
   version, but must not cause development code to report the previous release.
-- If a development build is tagged, use an annotated tag such as `v1.4a1`.
-  Final releases omit the alpha suffix: version `1.4`, tag `v1.4`.
+- Tie each development version to its branch with an annotated tag such as
+  `v1.4a1` on the commit that completes the branch's work: its merge into the
+  release branch (or into `main`, where a project has no release branches).
+  The tag message names the version and the pull request or branch, for
+  example `1.4a1: Add requirement board (#74)`, so `git tag -n1` lists each
+  version with its work. Final releases omit the alpha suffix: version `1.4`,
+  tag `v1.4`.
 
 ## Branch Model
 
@@ -38,6 +49,13 @@ This guide defines a safe, repeatable release workflow for this repository.
   Increment again for each further shared development build.
 - `main` keeps the current final release version, for example `1.3`, while
   development branches work towards `1.4`.
+- When the version source conflicts as a branch is integrated, the release
+  branch takes the higher number, so it never goes back to an earlier
+  development version.
+- A project that deviates from this model, for example by squash-merging
+  each branch straight into `main` with no release branches, records the
+  exception in `.github/additional-instructions.md`; the alpha numbering, one
+  number per branch, and the tagging rules above still apply.
 - Changes land on `main` only as a complete, validated release. Remove the
   alpha suffix on the release branch during final release preparation, then
   merge and tag that final version on `main`.

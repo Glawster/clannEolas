@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "clann-eolas"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Privacy-conscious tools for maintaining a practical family record"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -22,6 +22,9 @@ eolas-tui = "eolas.tui.app:main"
 
 [tool.setuptools.packages.find]
 include = ["eolas*"]
+
+[tool.setuptools.dynamic]
+version = { attr = "eolas.version.VERSION" }
 
 [tool.black]
 line-length = 88

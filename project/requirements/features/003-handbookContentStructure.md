@@ -5,7 +5,7 @@ Owner: project maintainers
 
 ## Status
 
-ToDo
+InProgress
 
 ## Outcome
 
@@ -141,3 +141,4 @@ and review timing while keeping classifications visible.
 - 2026-07-28: refined the inventory, exemplar, portability, glossary,
   classification and domain-mapping evidence; applied ADR-0007 and ADR-0008 to
   emergency information and shared contacts.
+- 2026-11-16: status set to InProgress because branch `feature/003-handbookContentStructure` exists for this requirement.

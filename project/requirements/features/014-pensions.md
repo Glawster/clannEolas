@@ -5,7 +5,7 @@ Owner: project maintainers
 
 ## Status
 
-InProgress
+ToDo
 
 ## Outcome
 
@@ -21,12 +21,14 @@ active, deferred, crystallised, transferred or in payment. Death-benefit and tax
 rules vary by scheme, age, date, jurisdiction and legislation. Eolas must retain
 scheme evidence and dated guidance, not calculate retirement or tax advice.
 
-## Scope and information priorities
+## Scope
 
 Support State Pension, defined-benefit/final-salary/career-average schemes,
 defined-contribution pots, workplace/master-trust, personal/stakeholder/SIPP,
 annuities, drawdown, overseas pensions, AVCs, protected rights/guarantees and
 death-in-service benefits.
+
+### Information priorities
 
 **Mandatory:** pension type, member, provider/scheme/administrator, status,
 jurisdiction, masked reference, classification and review date.
@@ -142,7 +144,7 @@ and links to Employer, Banking, Insurance, Taxation, Authority and evidence.
   transfers, claims submission, beneficiary decisions or tax calculation.
 - UI design or implementation.
 
-## Dependencies and traceability
+## Dependencies and decisions
 
 - Requires [002](002-privacyAndSecurityModel.md) and [009](009-bankingModule.md);
   related to 013, 015 and 016; integrates with [008](008-documentImportFramework.md).
@@ -150,7 +152,30 @@ and links to Employer, Banking, Insurance, Taxation, Authority and evidence.
   [005](../../adr/005-informationClassification.md), [006](../../adr/006-sharedDomainModel.md),
   [007](../../adr/007-knowledgeBeforeDocuments.md), [011](../../adr/011-platformPrivateDataRoot.md).
 - Principles: [P-001, P-002, P-004, P-005, P-007, P-009 and P-010](../../../documentation/principles.md).
-- Implementation: shared Phase 1 kernel, dependency graph and typed capture input adapter; domain aggregate and workflows pending
+
+## Verification
+
+- Automate acceptance criteria 1-6 as domain acceptance tests using
+  conspicuously fictional Clann data.
+- Walk through the preparation, incapacity, death, retirement/transfer and lost
+  scheme workflows from the member, nominated beneficiary, attorney and
+  executor perspectives; confirm each action is event-specific and never
+  infers authority or liability.
+- Trace every captured field to a continuity purpose, priority, classification
+  and report or workflow use; remove fields without a justified use.
+- Test all reports for masking, dated values, classification-aware export,
+  accessibility, offline operation and cross-Clann isolation.
+- Scan code, fixtures, documentation, logs and generated reports for
+  scheme-portal credentials, activation codes, other prohibited credentials
+  and real private data.
+- Complete jurisdiction and subject-matter review of any dated guidance while
+  preserving the product's non-advice boundary.
+
+## Traceability
+
+- Implementation: not started; a generic capture profile of mandatory field
+  names in `eolas/capture/models.py` uses the shared Phase 1 kernel. Domain
+  model, validation, workflows and reports pending
 - Tests: shared-kernel, storage, security, graph and capture-adapter conformance tests implemented; domain acceptance tests pending
 - Documentation: pending
 - Pull request: pending
@@ -159,3 +184,5 @@ and links to Employer, Banking, Insurance, Taxation, Authority and evidence.
 ## Change history
 
 - 2026-07-31: created.
+- 2026-11-16: aligned sections with the requirement template; added Verification.
+- 2026-11-16: status set to ToDo; no branch exists for this requirement and only a generic capture profile is implemented.

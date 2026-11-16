@@ -2,48 +2,70 @@
 
 ## Increment
 
-REQ-020 — Interactive cross-platform terminal interface.
+Banking account closure lifecycle.
 
 ## Branch
 
-`feature/020-interactive-terminal-interface`
+`feature/banking-closure`
 
 ## Objective
 
-Turn the reviewed Textual shell into the main Eolas terminal interface while
-preserving the scriptable CLI and keeping domain behaviour outside the UI.
+Turn closure readiness into a guarded, evidenced closure lifecycle so a Banking
+relationship cannot be recorded as closed while essential payments, income or
+balance questions remain unresolved (requirement 009, validation rule 9 and
+acceptance criteria AC-4.4 and AC-10.1).
+
+## Starting point
+
+Delivered on `feature/banking-core` and carried into this branch:
+
+- `BankingDependency` edges with cycle-safe upstream/downstream account impact.
+- `relationshipClosureReadiness()`, which blocks closure only for active
+  essential dependency edges.
+- `BankingStatus` already includes `closurePending` and `closed`, but
+  `relationshipRevise()` accepts any status change without a readiness check.
 
 ## Scope
 
-- Maintain the approved left-navigation and central-workspace interaction model.
-- Use the Eolas/FMSAT visual language through externalised Textual styling.
-- Keep Textual code beneath `eolas/tui/`.
-- Connect representative views and forms to shared application/domain services.
-- Preserve masked/omitted sensitive values in summary contexts.
-- Add interaction tests for navigation, validation, confirmations and resizing.
-- Preserve existing CLI behaviour.
+- Extend closure readiness beyond dependency edges to report:
+  - active `PaymentArrangement` records funded from the account;
+  - active incoming `MoneyMovement` records into the account;
+  - a retained-balance question when the latest balance observation is
+    non-zero, unknown or undated; and
+  - linked products connected through Banking dependency edges.
+- Give every readiness item an explainable reason, the record it refers to and
+  whether it blocks closure.
+- Add closure lifecycle commands with expected-version checks:
+  - request closure: `active`, `dormant` or `restricted` to `closurePending`;
+  - record closure: `closurePending` to `closed` only when readiness is
+    `ready`, recording the closed date, source and evidence reference.
+- Prevent `relationshipRevise()` from bypassing the lifecycle by setting
+  `closurePending` or `closed` directly.
+- Record each closure transition in `RecordStore` history with actor context,
+  time and source, and with no prohibited secrets in logs.
 
 ## Explicit exclusion
 
-- Desktop, browser and mobile interfaces.
-- Business rules implemented in Textual views.
-- Completing unfinished Banking or other domain functionality solely to fill
-  TUI screens.
+Do not implement:
+
+- payment instruments or cards; readiness must be extended when they exist;
+- cancelling, redirecting or transferring payments, income or funds;
+- institution notification or any automated closure action;
+- bereavement, capacity or other event workflows;
+- Banking reports, projections or CLI/TUI closure screens;
+- statement import or Open Banking.
 
 ## Expected exit criteria
 
-- `eolas-tui` launches the production TUI shell.
-- Representative TUI workflows use shared services rather than CLI subprocesses.
-- Existing CLI workflows continue to pass regression tests.
-- Responsive layout, keyboard navigation, validation and confirmation have
-  automated interaction evidence.
-- Sensitive-data presentation has been reviewed.
-- Linux, macOS and Windows smoke tests are recorded.
-- `pytest`, repository linting and `manageProject --check` pass.
+- Tests prove each readiness item type, explainable blocker reasons, both
+  closure transitions, rejection of closure while blocked, rejection of a
+  direct status bypass, closure history and Clann isolation.
+- Requirement 009 remains in progress.
+- `pytest` passes.
+- `runLinter` reports no findings.
+- `manageProject --check` reports zero failures and zero warnings.
 
 ## Immediate next action
 
-Run and correct the expanded TUI interaction tests. Then replace the People
-sample page with the active Clann's real people projection and migrate any
-remaining curses-only interactive capture paths before retiring the old curses
-presentation layer.
+Extend `relationshipClosureReadiness()` to include funded payment arrangements
+and incoming money movements, each with an explainable blocker reason.

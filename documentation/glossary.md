@@ -244,15 +244,31 @@ not missing and must not be treated as unknown.
 **Observation** — A value known as of a particular time with provenance and a
 confirmation or estimation status.
 
-**Obligation** — A responsibility owned by its domain module. Stopping its
-payment arrangement does not settle or cancel it.
+**Obligation** — What has to be paid or maintained. Stopping its payment
+arrangement does not settle or cancel it.
 
-**Payment arrangement** — A future Banking-owned relationship describing how
-an obligation is paid. It is planned for Phase 2 and is not yet implemented.
+**Banking relationship** — The real-world account relationship with an
+institution. It is not a statement, document or credential container.
+
+**Financial institution** — The Banking-owned view of a provider, always linked
+to a shared Organisation rather than stored as free text.
+
+**Money movement** — An expected recurring inflow or outflow linked to a
+banking relationship. It is not proof that a payment occurred.
+
+**Payment arrangement** — How an obligation is normally paid, such as a Direct
+Debit or standing order. It is not the bill and not a statement line.
+
+**Transaction observation** — Dated evidence that a movement occurred, for
+example a fictional statement amount as of a date. It is not the standing
+arrangement that caused it.
 
 **Provenance** — The source, time, actor and derivation context of knowledge.
 
 **Record identity** — A stable opaque Clann-scoped ID with aggregate type and
 one owner module; it is never a name, filename, slug or provider reference.
+New records use `rec_` identifiers. Older prototype IDs such as
+`person-alex-example` remain readable during migration but are not allocated
+to new shared-domain records.
 
 **Unknown** — The fact applies but its value is not known.

@@ -6,6 +6,7 @@ from typing import Any, Dict
 
 import pytest
 import yaml
+import tomllib
 
 import eolas.clann.service as clannService
 from eolas.clann.documents import (
@@ -15,9 +16,18 @@ from eolas.clann.documents import (
 )
 from eolas.clann.manifest import CLANN_DIRECTORIES
 from eolas.clann.models import ClannInput, ClannValidationError, PersonInput
-from eolas.clann.service import ClannCreationError, clannCreate
+from eolas.clann.service import (
+    ClannCreationError,
+    ClannRepairError,
+    clannCreate,
+    clannRemoveIncomplete,
+    clannRepair,
+    clannRestoreIncomplete,
+)
 from eolas.clann.slugs import slugCreate, slugsCreateUnique
+from eolas.clann.status import clannsRemoved
 from eolas.cli import cliRun
+from eolas.version import VERSION
 
 TEST_TIME = datetime(2026, 7, 25, 14, 0, tzinfo=timezone.utc)
 
@@ -56,18 +66,18 @@ def _yamlLoad(path: Path) -> Dict[str, Any]:
         ("../../unsafe", "unsafe"),
     ],
 )
-def test_slugCreate(value: str, expected: str) -> None:
+def testSlugCreate(value: str, expected: str) -> None:
     assert slugCreate(value) == expected
 
 
-def test_slugsCreateUnique_suffixesDuplicateNames() -> None:
+def testSlugsCreateUniqueSuffixesDuplicateNames() -> None:
     assert slugsCreateUnique(["John Smith", "John Smith"]) == [
         "john-smith",
         "john-smith-2",
     ]
 
 
-def test_clannValidate_requiresPrimaryPersonAndResident() -> None:
+def testClannValidateRequiresPrimaryPersonAndResident() -> None:
     withoutPrimary = ClannInput(
         "Test Clann",
         "Test Home",
@@ -85,7 +95,7 @@ def test_clannValidate_requiresPrimaryPersonAndResident() -> None:
         withoutResident.clannValidate()
 
 
-def test_documentsKeepClannAndResidenceSeparate(clann: ClannInput) -> None:
+def testDocumentsKeepClannAndResidenceSeparate(clann: ClannInput) -> None:
     personIds = {
         0: "person-morgan-river",
         1: "person-jamie-river",
@@ -122,7 +132,7 @@ def test_documentsKeepClannAndResidenceSeparate(clann: ClannInput) -> None:
     assert nonResidentDocument["householdMemberships"] == []
 
 
-def test_clannCreate_generatesCompleteReloadableTree(
+def testClannCreateGeneratesCompleteReloadableTree(
     tmp_path: Path,
     clann: ClannInput,
 ) -> None:
@@ -138,7 +148,7 @@ def test_clannCreate_generatesCompleteReloadableTree(
     assert householdPath.is_file()
 
     documents = {path: _yamlLoad(path) for path in sorted(rootPath.rglob("*.yaml"))}
-    assert len(documents) == 8
+    assert len(documents) == 9
     clannDocument = documents[rootPath / "clann.yaml"]
     people = {
         document["id"]: document
@@ -148,17 +158,46 @@ def test_clannCreate_generatesCompleteReloadableTree(
     householdDocument = documents[householdPath]
 
     assert {entry["personRef"] for entry in clannDocument["people"]} == set(people)
-    assert {member["personRef"] for member in householdDocument["members"]} == {
-        "person-morgan-river",
-        "person-jamie-river",
-    }
-    assert people["person-alex-river"]["householdMemberships"] == []
+    assert all(person_id.startswith("rec_") for person_id in people)
+    assert householdDocument["id"].startswith("rec_")
+    residentIds = {member["personRef"] for member in householdDocument["members"]}
+    assert len(residentIds) == 2
+    nonResident = next(
+        document
+        for document in people.values()
+        if document["name"]["displayName"] == "Alex River"
+    )
+    assert nonResident["householdMemberships"] == []
     for path in documents:
         assert path.read_bytes().endswith(b"\n")
         assert "!!python" not in path.read_text(encoding="utf-8")
 
 
-def test_clannCreate_rejectsExistingNonEmptyTarget(
+def testClannCreateWritesOpaquePeopleToRecordStore(
+    tmp_path: Path,
+    clann: ClannInput,
+) -> None:
+    from eolas.clann.records import clannRecordStoreOpen
+    from eolas.domain.directory import peopleLoad
+    from eolas.domain.values import identityOpaque
+
+    rootPath = clannCreate(
+        clann, tmp_path / "data", timestampProvider=lambda: TEST_TIME
+    )
+    store = clannRecordStoreOpen(rootPath, "clann-river-clann")
+    people = peopleLoad(store)
+
+    assert len(people) == 3
+    assert {person.display_name for person in people} == {
+        "Morgan River",
+        "Jamie River",
+        "Alex River",
+    }
+    assert all(identityOpaque(person.identity.record_id) for person in people)
+    assert all(person.identity.aggregate_type == "person" for person in people)
+
+
+def testClannCreateRejectsExistingNonEmptyTarget(
     tmp_path: Path, clann: ClannInput
 ) -> None:
     targetPath = tmp_path / "clanns" / "river-clann"
@@ -172,7 +211,7 @@ def test_clannCreate_rejectsExistingNonEmptyTarget(
     assert markerPath.read_text(encoding="utf-8") == "keep"
 
 
-def test_clannCreate_failureLeavesNoPartialClann(
+def testClannCreateFailureLeavesNoPartialClann(
     tmp_path: Path,
     clann: ClannInput,
     monkeypatch: pytest.MonkeyPatch,
@@ -189,7 +228,7 @@ def test_clannCreate_failureLeavesNoPartialClann(
     assert not (tmp_path / "data").exists()
 
 
-def test_cliCreatesClannThroughNaturalCommand(
+def testCliCreatesClannThroughNaturalCommand(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
@@ -211,7 +250,368 @@ def test_cliCreatesClannThroughNaturalCommand(
     assert "household role: householder; age: adult; residence: resident" in output
 
 
-def test_cliShowsLogFile(
+def testClannListShowsUsableClanns(
+    tmp_path: Path, clann: ClannInput, monkeypatch, capsys
+) -> None:
+    rootPath = clannCreate(
+        clann, tmp_path / "eolas", timestampProvider=lambda: TEST_TIME
+    )
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+
+    result = cliRun(["clann", "--list"])
+
+    assert result == 0
+    output = capsys.readouterr().out
+    assert "River Clann (active; 3 people)" in output
+    assert str(rootPath) not in output
+
+
+def testClannStatusReportsIncompleteDirectories(
+    tmp_path: Path, clann: ClannInput, monkeypatch, capsys
+) -> None:
+    clannCreate(clann, tmp_path / "eolas", timestampProvider=lambda: TEST_TIME)
+    incomplete = tmp_path / "eolas/clanns/unfinished-clann"
+    incomplete.mkdir()
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+
+    result = cliRun(["clann", "--status"])
+
+    assert result == 0
+    output = capsys.readouterr().out
+    assert "Usable Clanns: 1" in output
+    assert "Directories needing attention:" in output
+    assert "unfinished-clann: missing clann.yaml; run `eolas clann --repair`" in output
+
+
+def testClannListExplainsWhenNoClannsExist(tmp_path: Path, monkeypatch, capsys) -> None:
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+
+    assert cliRun(["clann", "--list"]) == 0
+
+    assert "No usable Clanns found" in capsys.readouterr().out
+
+
+def testClannListDirectsIncompleteClannToRepair(
+    tmp_path: Path, monkeypatch, capsys
+) -> None:
+    (tmp_path / "eolas/clanns/unfinished-clann").mkdir(parents=True)
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+
+    assert cliRun(["clann", "--list"]) == 0
+
+    assert "Run `eolas clann --repair`" in capsys.readouterr().out
+
+
+def testClannCreateNormalisesUnambiguousHumanCasing(tmp_path: Path) -> None:
+    created = clannCreate(
+        ClannInput(
+            "WILSON",
+            "29A",
+            [PersonInput("ANDY WILSON", "ANDY", "OWNER", True, True)],
+        ),
+        tmp_path,
+        timestampProvider=lambda: TEST_TIME,
+    )
+
+    document = _yamlLoad(created / "clann.yaml")
+    person = _yamlLoad(created / "people/andy-wilson/person.yaml")
+
+    assert document["name"] == "Wilson"
+    assert person["name"]["displayName"] == "Andy Wilson"
+    assert person["name"]["preferredName"] == "Andy"
+    assert person["householdMemberships"][0]["role"] == "Owner"
+
+
+def testClannRepairCompletesPartialDirectory(tmp_path: Path, clann: ClannInput) -> None:
+    targetPath = tmp_path / "eolas/clanns/river-clann"
+    (targetPath / "contacts").mkdir(parents=True)
+    (targetPath / "shared").mkdir()
+
+    repairedPath = clannRepair(clann, targetPath, timestampProvider=lambda: TEST_TIME)
+
+    assert repairedPath == targetPath
+    assert (targetPath / "clann.yaml").is_file()
+    assert (targetPath / "contacts").is_dir()
+    assert (targetPath / "shared/records.yaml").is_file()
+
+
+def testClannRepairRefusesFilesAndMismatchedNames(
+    tmp_path: Path, clann: ClannInput
+) -> None:
+    targetPath = tmp_path / "eolas/clanns/river-clann"
+    targetPath.mkdir(parents=True)
+    (targetPath / "notes.txt").write_text("keep", encoding="utf-8")
+
+    with pytest.raises(ClannRepairError, match="containing files"):
+        clannRepair(clann, targetPath)
+
+    (targetPath / "notes.txt").unlink()
+    other = ClannInput(
+        "Other Clann",
+        "Family Home",
+        [PersonInput("Alex Example", "Alex", "householder", True, True)],
+    )
+    with pytest.raises(ClannRepairError, match="must match"):
+        clannRepair(other, targetPath)
+
+
+def testClannRemoveIncompleteMovesOnlyNamedIncompleteDirectoryToWastebasket(
+    tmp_path: Path, clann: ClannInput
+) -> None:
+    incompletePath = tmp_path / "eolas/clanns/wilson"
+    incompletePath.mkdir(parents=True)
+    usablePath = clannCreate(clann, tmp_path / "eolas", timestampProvider=lambda: TEST_TIME)
+
+    clannRemoveIncomplete(tmp_path / "eolas", "wilson")
+
+    assert not incompletePath.exists()
+    assert (tmp_path / "eolas/clanns/.wastebasket/wilson").is_dir()
+    assert (usablePath / "clann.yaml").is_file()
+    with pytest.raises(ClannRepairError, match="usable Clann"):
+        clannRemoveIncomplete(tmp_path / "eolas", usablePath.name)
+
+
+def testClannRemoveIncompleteRejectsPathTraversal(tmp_path: Path) -> None:
+    with pytest.raises(ClannRepairError, match="directory name only"):
+        clannRemoveIncomplete(tmp_path / "eolas", "../other")
+
+
+def testClannRestoreIncompleteMovesDirectoryBackToClanns(tmp_path: Path) -> None:
+    incompletePath = tmp_path / "eolas/clanns/wilson"
+    incompletePath.mkdir(parents=True)
+    clannRemoveIncomplete(tmp_path / "eolas", "wilson")
+
+    clannRestoreIncomplete(tmp_path / "eolas", "wilson")
+
+    assert incompletePath.is_dir()
+    assert not (tmp_path / "eolas/clanns/.wastebasket").exists()
+
+
+def testClannsRemovedListsWastebasketDirectories(tmp_path: Path) -> None:
+    firstPath = tmp_path / "eolas/clanns/first-clann"
+    secondPath = tmp_path / "eolas/clanns/second-clann"
+    firstPath.mkdir(parents=True)
+    secondPath.mkdir()
+    clannRemoveIncomplete(tmp_path / "eolas", firstPath.name)
+    clannRemoveIncomplete(tmp_path / "eolas", secondPath.name)
+
+    assert [path.name for path in clannsRemoved(tmp_path / "eolas")] == [
+        "first-clann",
+        "second-clann",
+    ]
+
+
+def testClannStatusIgnoresWastebasketDirectories(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    incompletePath = tmp_path / "eolas/clanns/wilson"
+    incompletePath.mkdir(parents=True)
+    clannRemoveIncomplete(tmp_path / "eolas", "wilson")
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+
+    assert cliRun(["clann", "--status"]) == 0
+
+    output = capsys.readouterr().out
+    assert "Usable Clanns: 0" in output
+    assert "Directories needing attention:" not in output
+    assert ".wastebasket" not in output
+
+
+def testCliRepairCompletesPartialDirectory(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    targetPath = tmp_path / "eolas/clanns/example-clann"
+    targetPath.mkdir(parents=True)
+    captured = ClannInput(
+        "Example Clann",
+        "Example Home",
+        [PersonInput("Alex Example", "Alex", "householder", True, True)],
+    )
+    monkeypatch.setattr("eolas.cli.clannCapture", lambda: captured)
+
+    result = cliRun(["clann", "--repair", str(targetPath), "--confirm"])
+
+    assert result == 0
+    assert (targetPath / "clann.yaml").is_file()
+    output = capsys.readouterr().out
+    assert "Checking" in output
+    assert "No readable bootstrap records were found" in output
+    assert "Clann repaired:" in output
+
+
+def testCliRepairSelectsSoleIncompleteDirectory(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    targetPath = tmp_path / "eolas/clanns/example-clann"
+    targetPath.mkdir(parents=True)
+    captured = ClannInput(
+        "Example Clann",
+        "Example Home",
+        [PersonInput("Alex Example", "Alex", "householder", True, True)],
+    )
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+    monkeypatch.setattr("eolas.cli.clannCapture", lambda: captured)
+
+    result = cliRun(["clann", "--repair", "--confirm"])
+
+    assert result == 0
+    assert (targetPath / "clann.yaml").is_file()
+    assert "Clann repaired:" in capsys.readouterr().out
+
+
+def testCliRepairListsAndChoosesIncompleteDirectories(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    firstPath = tmp_path / "eolas/clanns/first-clann"
+    secondPath = tmp_path / "eolas/clanns/second-clann"
+    firstPath.mkdir(parents=True)
+    secondPath.mkdir()
+    captured = ClannInput(
+        "Second Clann",
+        "Example Home",
+        [PersonInput("Alex Example", "Alex", "householder", True, True)],
+    )
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+    monkeypatch.setattr("eolas.cli.clannCapture", lambda: captured)
+    monkeypatch.setattr("eolas.cli.clannPathCapture", lambda _paths: secondPath)
+
+    result = cliRun(["clann", "--repair", "--confirm"])
+
+    assert result == 0
+    assert (secondPath / "clann.yaml").is_file()
+    output = capsys.readouterr().out
+    assert "Incomplete Clann directories:" in output
+    assert "first-clann: missing clann.yaml" in output
+    assert "second-clann: missing clann.yaml" in output
+
+
+def testCliRemoveConfirmsBeforeDeletingIncompleteDirectory(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    targetPath = tmp_path / "eolas/clanns/wilson"
+    targetPath.mkdir(parents=True)
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+    monkeypatch.setattr("eolas.cli.confirmationCapture", lambda *_args, **_kwargs: True)
+
+    result = cliRun(["clann", "--remove", "wilson"])
+
+    assert result == 0
+    assert not targetPath.exists()
+    assert (
+        tmp_path / "eolas/clanns/.wastebasket/wilson"
+    ).is_dir()
+    assert "Moved incomplete Clann directory to the wastebasket" in capsys.readouterr().out
+
+
+def testCliRemoveCancellationPreservesIncompleteDirectory(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    targetPath = tmp_path / "eolas/clanns/wilson"
+    targetPath.mkdir(parents=True)
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+    monkeypatch.setattr("eolas.cli.confirmationCapture", lambda *_args, **_kwargs: False)
+
+    result = cliRun(["clann", "--remove", "wilson"])
+
+    assert result == 0
+    assert targetPath.is_dir()
+    assert "Clann removal cancelled" in capsys.readouterr().out
+
+
+def testCliRemoveConfirmFlagBypassesConfirmation(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    targetPath = tmp_path / "eolas/clanns/wilson"
+    targetPath.mkdir(parents=True)
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+    monkeypatch.setattr(
+        "eolas.cli.confirmationCapture",
+        lambda *_args, **_kwargs: pytest.fail("confirmation should be bypassed"),
+    )
+
+    assert cliRun(["clann", "--remove", "wilson", "-y"]) == 0
+
+    assert (tmp_path / "eolas/clanns/.wastebasket/wilson").is_dir()
+
+
+def testCliRestoreConfirmsBeforeMovingIncompleteDirectoryBack(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    targetPath = tmp_path / "eolas/clanns/wilson"
+    targetPath.mkdir(parents=True)
+    clannRemoveIncomplete(tmp_path / "eolas", "wilson")
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+    monkeypatch.setattr("eolas.cli.confirmationCapture", lambda *_args, **_kwargs: True)
+
+    result = cliRun(["clann", "--restore", "wilson"])
+
+    assert result == 0
+    assert targetPath.is_dir()
+    assert "Restored incomplete Clann directory: wilson" in capsys.readouterr().out
+
+
+def testCliRestoreListsAndChoosesRemovedDirectories(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    firstPath = tmp_path / "eolas/clanns/first-clann"
+    secondPath = tmp_path / "eolas/clanns/second-clann"
+    firstPath.mkdir(parents=True)
+    secondPath.mkdir()
+    clannRemoveIncomplete(tmp_path / "eolas", firstPath.name)
+    clannRemoveIncomplete(tmp_path / "eolas", secondPath.name)
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
+    monkeypatch.setattr(
+        "eolas.cli.clannPathCapture",
+        lambda _paths: tmp_path / "eolas/clanns/.wastebasket/second-clann",
+    )
+
+    result = cliRun(["clann", "--restore", "-y"])
+
+    assert result == 0
+    assert firstPath.parent.joinpath(".wastebasket", firstPath.name).is_dir()
+    assert secondPath.is_dir()
+    output = capsys.readouterr().out
+    assert "Removed incomplete Clann directories:" in output
+    assert "- first-clann" in output
+    assert "- second-clann" in output
+
+
+def testCliVersionUsesPackageVersion(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    with pytest.raises(SystemExit) as error:
+        cliRun(["--version"])
+
+    assert error.value.code == 0
+    assert capsys.readouterr().out == f"eolas {VERSION}\n"
+
+
+def testPackageMetadataUsesVersionModule() -> None:
+    project = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))[
+        "project"
+    ]
+    dynamic = project["dynamic"]
+
+    assert "version" in dynamic
+    assert VERSION == "0.2a1"
+
+
+def testCliShowsLogFile(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
@@ -227,7 +627,7 @@ def test_cliShowsLogFile(
     assert capsys.readouterr().out == "Eolas started\n"
 
 
-def test_cliReportsMissingLogFile(
+def testCliReportsMissingLogFile(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
